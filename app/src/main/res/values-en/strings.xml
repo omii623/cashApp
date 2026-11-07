@@ -1,0 +1,348 @@
+<resources>
+    <string name="app_name">CashApp</string>
+
+    <!-- Date formats (java.time patterns) -->
+    <string name="fmt_month_year">LLLL yyyy</string>
+    <string name="fmt_date">MMM d, yyyy</string>
+    <string name="fmt_short_date">MMM d</string>
+    <string name="fmt_date_time">MMM d, yyyy HH:mm</string>
+    <string name="fmt_day_header">EEEE, MMM d</string>
+
+    <!-- Transactions tab -->
+    <string name="txl_prev_month">Previous month</string>
+    <string name="txl_next_month">Next month</string>
+    <string name="txl_net">Net</string>
+    <string name="txl_search">Search (note, category, account)</string>
+    <string name="txl_clear_search">Clear search</string>
+    <string name="txl_all_types">All types</string>
+    <string name="txl_all_accounts">All accounts</string>
+    <string name="txl_all_categories">All categories</string>
+    <string name="txl_clear_filters">Clear filters</string>
+    <string name="txl_empty">No transactions this month yet.</string>
+    <string name="txl_empty_filtered">No transactions match the filters.</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_transactions">Transactions</string>
+    <string name="nav_reports">Reports</string>
+    <string name="nav_more">More</string>
+
+    <!-- Main actions -->
+    <string name="action_income">Income</string>
+    <string name="action_expense">Expense</string>
+    <string name="action_exchange">Exchange</string>
+    <string name="back">Back</string>
+
+    <!-- Home -->
+    <string name="home_title">Home</string>
+    <string name="home_total_balance">Total balance (%1$s)</string>
+    <string name="home_missing_rates">No exchange rate: %1$s – left out of the total</string>
+    <string name="home_hide_amounts">Hide amounts</string>
+    <string name="home_show_amounts">Show amounts</string>
+    <string name="home_month_income">Income</string>
+    <string name="home_month_expense">Expense</string>
+    <string name="home_month_net">Monthly net</string>
+    <string name="home_accounts">Accounts</string>
+    <string name="home_recent">Recent transactions</string>
+    <string name="home_recent_empty">No transactions yet.\nStart with the buttons above!</string>
+    <plurals name="home_pending">
+        <item quantity="one">%d item awaiting approval</item>
+        <item quantity="other">%d items awaiting approval</item>
+    </plurals>
+
+    <!-- Transaction row -->
+    <string name="tx_today">Today</string>
+    <string name="tx_yesterday">Yesterday</string>
+    <string name="tx_exchange_title">Exchange %1$s → %2$s</string>
+    <string name="tx_uncategorized">Uncategorized</string>
+
+    <!-- Income / expense form -->
+    <string name="form_title_income">New income</string>
+    <string name="form_title_expense">New expense</string>
+    <string name="form_title_income_edit">Edit income</string>
+    <string name="form_title_expense_edit">Edit expense</string>
+    <string name="tx_delete_title">Delete transaction</string>
+    <string name="tx_delete_text">Delete this transaction? The account balance will change accordingly. This cannot be undone.</string>
+    <string name="form_amount_hint">0</string>
+    <string name="form_amount_error">Enter a valid, positive amount</string>
+    <string name="form_account">Account</string>
+    <string name="form_date">Date</string>
+    <string name="form_today_suffix">%1$s (today)</string>
+    <string name="form_category">Category</string>
+    <string name="form_category_error">Choose a category</string>
+    <string name="form_subcategory">Subcategory</string>
+    <string name="form_note">Note</string>
+    <string name="form_note_hint">e.g. weekly groceries</string>
+    <string name="form_rate">Exchange rate</string>
+    <string name="form_rate_manual">MANUAL</string>
+    <string name="form_rate_reset">Back to the stored rate</string>
+    <string name="form_rate_missing">No stored rate – enter it manually</string>
+    <string name="form_rate_error">Enter a valid rate</string>
+    <string name="form_save">Save</string>
+    <string name="form_currency">Currency</string>
+    <string name="save_failed_title">Could not save</string>
+    <string name="save_failed_text">The change was not saved. The related data may have been deleted or changed in the meantime. Check the details and try again.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Exchange -->
+    <string name="ex_title">Currency exchange</string>
+    <string name="ex_title_edit">Edit exchange</string>
+    <string name="ex_from">From</string>
+    <string name="ex_to">To</string>
+    <string name="ex_swap">Swap accounts</string>
+    <string name="ex_rate">Exchange rate</string>
+    <string name="ex_rate_manual">MANUAL</string>
+    <string name="ex_rate_stored">Fetched: %1$s</string>
+    <string name="ex_rate_none">No fetched rate yet</string>
+    <string name="ex_rate_fetched_at">fetched %1$s</string>
+    <string name="ex_rate_fetch">Fetch current rate</string>
+    <string name="ex_rate_fetch_failed">Could not fetch (no internet?). Enter it manually.</string>
+    <string name="ex_rate_reset">Back to the fetched rate</string>
+    <string name="ex_rate_error">Enter a valid rate</string>
+    <string name="ex_same_currency">Same currency – transfer at 1:1</string>
+    <string name="ex_same_account">The two accounts must be different</string>
+    <string name="ex_need_account">You need at least two accounts to exchange.</string>
+    <string name="ex_amount_error">Enter a valid amount</string>
+    <string name="ex_fee">Fee / commission (optional)</string>
+    <string name="ex_fee_hint">Added to the exchanged amount – this much more leaves the source account</string>
+    <string name="ex_total_debit">Total taken from the source account: %1$s</string>
+    <string name="ex_fee_error">Invalid fee</string>
+    <string name="ex_save">Save exchange</string>
+
+    <!-- Accounts -->
+    <string name="acc_title">Accounts</string>
+    <string name="acc_new">New account</string>
+    <string name="acc_archived_section">ARCHIVED ACCOUNTS</string>
+    <string name="acc_restore">Restore</string>
+    <string name="acc_empty">No accounts yet. Create one!</string>
+    <string name="acc_balance">Balance</string>
+    <string name="acc_initial_balance_info">Opening balance: %1$s</string>
+    <string name="acc_transactions">Transactions</string>
+    <string name="acc_no_transactions">No transactions on this account yet.</string>
+    <string name="acc_archived_badge">ARCHIVED</string>
+    <string name="acc_edit_title">Edit account</string>
+    <string name="acc_new_title">New account</string>
+    <string name="acc_name_hint">e.g. Cash, Bank, Revolut EUR</string>
+    <string name="acc_currency">Currency</string>
+    <string name="acc_currency_locked">The currency cannot be changed because this account already has transactions.</string>
+    <string name="acc_initial_balance">Opening balance</string>
+    <string name="acc_initial_balance_hint">How much was on it when you started tracking (can be negative)</string>
+    <string name="acc_initial_balance_error">Invalid amount</string>
+    <string name="acc_delete_title">Delete account</string>
+    <string name="acc_delete_text">Delete “%1$s”? If it already has transactions it will only be archived: hidden from pickers and the home screen, but restorable on the Accounts page.</string>
+
+    <!-- More -->
+    <string name="more_accounts">Accounts</string>
+    <string name="more_categories">Categories and budgets</string>
+    <string name="more_recurring">Recurring items</string>
+    <string name="more_currencies">Currencies and rates</string>
+    <string name="more_settings">Settings</string>
+
+    <!-- Categories -->
+    <string name="cat_title">Categories</string>
+    <string name="cat_tab_income">Income</string>
+    <string name="cat_tab_expense">Expense</string>
+    <string name="cat_new">New category</string>
+    <string name="cat_new_subcategory">New subcategory</string>
+    <string name="cat_no_budget">no budget</string>
+    <plurals name="cat_subcategory_count">
+        <item quantity="one">%d subcategory</item>
+        <item quantity="other">%d subcategories</item>
+    </plurals>
+    <string name="cat_budget_prefix">Budget: %1$s</string>
+    <string name="cat_move_up">Move up</string>
+    <string name="cat_move_down">Move down</string>
+    <string name="cat_edit">Edit</string>
+    <string name="cat_expand">Expand</string>
+    <string name="cat_empty">No categories. Create one!</string>
+    <string name="cat_archived_subcategory">The subcategory was in use, so it was archived (old transactions keep it).</string>
+    <string name="cat_rename_subcategory">Rename subcategory</string>
+    <string name="cat_delete_subcategory_title">Delete subcategory</string>
+    <string name="cat_delete_subcategory_text">Delete “%1$s”? If you have used it, it will only be archived and old transactions keep it.</string>
+    <string name="name">Name</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+
+    <!-- Edit category -->
+    <string name="cat_edit_title">Edit category</string>
+    <string name="cat_new_title">New category</string>
+    <string name="cat_name_error">Enter a name</string>
+    <string name="cat_type">Type</string>
+    <string name="cat_color">Color</string>
+    <string name="cat_icon">Icon</string>
+    <string name="cat_icon_mode_icon">Icon</string>
+    <string name="cat_icon_mode_letter">Letter</string>
+    <string name="cat_icon_letter_label">Letter or emoji</string>
+    <string name="cat_icon_letter_hint">Up to 2 characters, e.g. G, GR or 🍕</string>
+    <string name="cat_budget_section">MONTHLY BUDGET</string>
+    <string name="cat_budget_enable">Budget for this category</string>
+    <string name="cat_budget_amount">Monthly budget</string>
+    <string name="cat_budget_amount_error">Enter a valid amount</string>
+    <string name="cat_budget_threshold">Warn at: %1$d%%</string>
+    <string name="cat_budget_notify">Notify at threshold and when exceeded</string>
+    <string name="cat_subcategories_section">SUBCATEGORIES</string>
+    <string name="cat_subcategories_empty">No subcategories.</string>
+    <string name="cat_delete_title">Delete category</string>
+    <string name="cat_delete_text">Delete “%1$s”? If it already has transactions it will only be archived: hidden from lists, but old transactions keep it.</string>
+
+    <!-- Settings -->
+    <string name="set_title">Settings</string>
+    <string name="set_section_appearance">APPEARANCE</string>
+    <string name="set_section_currency">CURRENCY</string>
+    <string name="set_section_features">FEATURES</string>
+    <string name="set_section_data">DATA</string>
+    <string name="set_language">Language</string>
+    <string name="set_language_system">System default</string>
+    <string name="set_theme">Theme</string>
+    <string name="set_theme_light">Light</string>
+    <string name="set_theme_dark">Dark</string>
+    <string name="set_theme_system">System</string>
+    <string name="set_hide_amounts">Hide amounts</string>
+    <string name="set_hide_amounts_hint">Asterisks on the home screen and accounts (also toggled by the eye icon on Home)</string>
+    <string name="set_base_currency">Base currency</string>
+    <string name="set_base_currency_hint">Used for the total balance and monthly summary</string>
+    <string name="set_export_import">Export / import (CSV, JSON)</string>
+    <string name="set_reset_all">Delete all data</string>
+    <string name="set_reset_title">Delete all data</string>
+    <string name="set_reset_text">All transactions, accounts, categories and settings will be permanently deleted and the app returns to its first-launch state. This cannot be undone.</string>
+    <string name="set_reset_next">Continue</string>
+    <string name="set_reset_word">DELETE</string>
+    <string name="set_reset_type_word">To confirm, type: %1$s</string>
+    <string name="set_reset_done">All data deleted.</string>
+    <string name="set_version">CashApp %1$s</string>
+
+    <!-- Reports -->
+    <string name="rep_week">Week</string>
+    <string name="rep_month">Month</string>
+    <string name="rep_year">Year</string>
+    <string name="rep_by_category_expense">Expenses by category</string>
+    <string name="rep_by_category_income">Income by category</string>
+    <string name="rep_by_subcategory">%1$s – subcategories</string>
+    <string name="rep_back_to_categories">Back to categories</string>
+    <string name="rep_total">Total</string>
+    <string name="rep_other">Other</string>
+    <string name="rep_no_subcategory">No subcategory</string>
+    <string name="rep_uncategorized">Uncategorized</string>
+    <string name="rep_empty">No data for this period.</string>
+    <string name="rep_tap_to_drill">Tap a category to see its subcategories</string>
+    <string name="rep_income_vs_expense">Income and expenses by month</string>
+    <string name="rep_tap_bar">Tap a month for exact amounts</string>
+    <string name="rep_missing_rates">No exchange rate: %1$s – left out</string>
+    <string name="fmt_month_short">LLL</string>
+    <string name="fmt_year">yyyy</string>
+
+    <!-- Recurring items -->
+    <string name="rec_title">Recurring items</string>
+    <string name="rec_tab_pending">Awaiting approval (%1$d)</string>
+    <string name="rec_tab_rules">Rules</string>
+    <string name="rec_new">New rule</string>
+    <string name="rec_pending_empty">Nothing awaiting approval.</string>
+    <string name="rec_rules_empty">No recurring rules yet. Create one, e.g. for salary or rent!</string>
+    <string name="rec_due_today">DUE: TODAY</string>
+    <string name="rec_overdue">OVERDUE: %1$s</string>
+    <string name="rec_postponed">POSTPONED: %1$s</string>
+    <string name="rec_approve">Approve</string>
+    <string name="rec_postpone">Postpone</string>
+    <string name="rec_skip">Skip</string>
+    <string name="rec_approve_title">Approve</string>
+    <string name="rec_approve_text">The transaction will be recorded with this amount and date (%1$s).</string>
+    <string name="rec_skip_title">Skip</string>
+    <string name="rec_skip_text">This occurrence will not be recorded. The rule will remind you again next time.</string>
+    <string name="rec_postpone_title">Postpone until</string>
+    <string name="rec_next_due">Next: %1$s</string>
+    <string name="rec_ended">Ended</string>
+    <string name="rec_inactive">Paused</string>
+    <string name="rec_hint">Amount and date can be changed before approving. Nothing is recorded automatically.</string>
+    <string name="rec_edit_title">Edit rule</string>
+    <string name="rec_new_title">New recurring rule</string>
+    <string name="rec_name">Name</string>
+    <string name="rec_name_hint">e.g. Rent, Salary, Netflix</string>
+    <string name="rec_name_error">Enter a name</string>
+    <string name="rec_amount">Amount</string>
+    <string name="rec_frequency">Frequency</string>
+    <string name="rec_freq_daily">Daily</string>
+    <string name="rec_freq_weekly">Weekly</string>
+    <string name="rec_freq_monthly">Monthly</string>
+    <string name="rec_freq_yearly">Yearly</string>
+    <string name="rec_interval">Interval</string>
+    <plurals name="rec_every_daily">
+        <item quantity="one">Every day</item>
+        <item quantity="other">Every %d days</item>
+    </plurals>
+    <plurals name="rec_every_weekly">
+        <item quantity="one">Every week</item>
+        <item quantity="other">Every %d weeks</item>
+    </plurals>
+    <plurals name="rec_every_monthly">
+        <item quantity="one">Every month</item>
+        <item quantity="other">Every %d months</item>
+    </plurals>
+    <plurals name="rec_every_yearly">
+        <item quantity="one">Every year</item>
+        <item quantity="other">Every %d years</item>
+    </plurals>
+    <string name="rec_start">First due date</string>
+    <string name="rec_end_enable">Has a last due date</string>
+    <string name="rec_end">Last due date</string>
+    <string name="rec_end_error">The last due date cannot be before the first one</string>
+    <string name="rec_active">Active</string>
+    <string name="rec_delete_title">Delete rule</string>
+    <string name="rec_delete_text">Delete “%1$s”? Its unapproved items are deleted too; already recorded transactions are kept.</string>
+    <string name="notif_channel_recurring">Recurring items</string>
+    <string name="set_section_notifications">NOTIFICATIONS</string>
+    <string name="set_notify_recurring">Recurring items</string>
+    <string name="set_notify_recurring_hint">Around 8 AM when a new item awaits approval</string>
+
+    <!-- Temporary -->
+    <string name="coming_soon">Coming soon…</string>
+    <string name="screen_exchange">Currency exchange</string>
+    <string name="screen_pending">Recurring items</string>
+    <string name="cur_converter">CONVERTER</string>
+    <string name="cur_converter_hint">Enter an amount to see it in every currency.</string>
+    <string name="cur_rates">CURRENT RATES</string>
+    <string name="cur_no_rate">no rate</string>
+    <string name="cur_fetch_failed">Could not fetch rates (no internet?). Showing the latest known rates.</string>
+    <string name="cur_list">CURRENCIES (%1$d/%2$d)</string>
+    <string name="cur_list_hint">Tap a currency to make it the base currency. Up to %1$d currencies.</string>
+    <string name="cur_decimals">decimals: %1$d</string>
+    <string name="cur_base_badge">BASE</string>
+    <string name="cur_add">Add currency</string>
+    <string name="cur_add_search">Search (code or name)</string>
+    <string name="cur_remove_title">Delete %1$s?</string>
+    <string name="cur_remove_text">The currency will be removed. Only possible if no account or transaction uses it.</string>
+    <string name="cur_msg_added">Currency added</string>
+    <string name="cur_msg_add_failed">Could not add currency</string>
+    <string name="cur_msg_removed">Currency deleted</string>
+    <string name="cur_msg_in_use">Cannot delete: used by an account, transaction or budget</string>
+    <string name="cur_msg_protected">The base currency and EUR (rate base) cannot be deleted</string>
+    <string name="bk_title">Export / import</string>
+    <string name="bk_json_title">Full backup (JSON)</string>
+    <string name="bk_json_text">Everything in one file: accounts, transactions, categories, recurring items, budgets, currencies and settings. You can restore everything from it, even on another phone.</string>
+    <string name="bk_json_button">Save to file</string>
+    <string name="bk_restore_title">Restore from backup</string>
+    <string name="bk_restore_text">Load an earlier JSON backup. It replaces the current data – make a fresh backup first.</string>
+    <string name="bk_restore_button">Choose backup…</string>
+    <string name="bk_csv_title">Transactions as a spreadsheet (CSV)</string>
+    <string name="bk_csv_text">All transactions in a format Excel / Google Sheets can open (semicolon separated). Export only – restore works from the JSON backup.</string>
+    <string name="bk_csv_button">Export CSV</string>
+    <string name="bk_working">Working…</string>
+    <string name="bk_confirm_title">Restore?</string>
+    <string name="bk_confirm_text">Backup time: %1$s\n%2$d accounts, %3$d transactions, %4$d categories, %5$d recurring rules.\n\nAll current data will be deleted and replaced with the backup. This cannot be undone.</string>
+    <string name="bk_confirm_button">Restore</string>
+    <string name="bk_error_title">Failed</string>
+    <string name="bk_error_text">The backup cannot be loaded: %1$s\n\nYour current data was not changed.</string>
+    <string name="bk_msg_json_done">Backup saved</string>
+    <string name="bk_msg_csv_done">CSV saved</string>
+    <string name="bk_msg_restored">Data restored</string>
+    <string name="bk_msg_export_failed">Could not write the file</string>
+    <string name="bk_err_not_json">the file is not JSON</string>
+    <string name="bk_err_not_cashapp">this is not a cashApp backup</string>
+    <string name="bk_err_unknown_format">unknown backup format</string>
+    <string name="bk_err_newer_version">the backup was made with a newer app version – update the app</string>
+    <string name="bk_err_corrupt">the backup is corrupted</string>
+    <string name="bk_err_unreadable">the file cannot be read</string>
+    <string name="bk_err_empty">the backup is empty</string>
+    <string name="bk_err_broken_reference">the backup is corrupted (broken reference)</string>
+    <string name="bk_err_unknown">unknown error</string>
+</resources>

@@ -1,0 +1,348 @@
+<resources>
+    <string name="app_name">CashApp</string>
+
+    <!-- Dátumformátumok (java.time minták) – nyelvenként más sorrend -->
+    <string name="fmt_month_year">yyyy. LLLL</string>
+    <string name="fmt_date">yyyy.MM.dd.</string>
+    <string name="fmt_short_date">MMM d.</string>
+    <string name="fmt_date_time">yyyy.MM.dd. HH:mm</string>
+    <string name="fmt_day_header">MMM d., EEEE</string>
+
+    <!-- Tranzakciók lap -->
+    <string name="txl_prev_month">Előző hónap</string>
+    <string name="txl_next_month">Következő hónap</string>
+    <string name="txl_net">Egyenleg</string>
+    <string name="txl_search">Keresés (megjegyzés, kategória, számla)</string>
+    <string name="txl_clear_search">Keresés törlése</string>
+    <string name="txl_all_types">Minden típus</string>
+    <string name="txl_all_accounts">Minden számla</string>
+    <string name="txl_all_categories">Minden kategória</string>
+    <string name="txl_clear_filters">Szűrők törlése</string>
+    <string name="txl_empty">Ebben a hónapban még nincs tétel.</string>
+    <string name="txl_empty_filtered">Nincs a szűrésnek megfelelő tétel.</string>
+
+    <!-- Navigáció -->
+    <string name="nav_home">Főoldal</string>
+    <string name="nav_transactions">Tranzakciók</string>
+    <string name="nav_reports">Kimutatások</string>
+    <string name="nav_more">Továbbiak</string>
+
+    <!-- Fő műveletek -->
+    <string name="action_income">Bevétel</string>
+    <string name="action_expense">Kiadás</string>
+    <string name="action_exchange">Váltás</string>
+    <string name="back">Vissza</string>
+
+    <!-- Főoldal -->
+    <string name="home_title">Főoldal</string>
+    <string name="home_total_balance">Teljes egyenleg (%1$s)</string>
+    <string name="home_missing_rates">Nincs árfolyam: %1$s – kimaradt az összesből</string>
+    <string name="home_hide_amounts">Összegek elrejtése</string>
+    <string name="home_show_amounts">Összegek megjelenítése</string>
+    <string name="home_month_income">Bevétel</string>
+    <string name="home_month_expense">Kiadás</string>
+    <string name="home_month_net">Havi egyenleg</string>
+    <string name="home_accounts">Számlák</string>
+    <string name="home_recent">Legutóbbi tételek</string>
+    <string name="home_recent_empty">Még nincs rögzített tétel.\nKezdd a fenti gombokkal!</string>
+    <plurals name="home_pending">
+        <item quantity="one">%d tétel jóváhagyásra vár</item>
+        <item quantity="other">%d tétel jóváhagyásra vár</item>
+    </plurals>
+
+    <!-- Tranzakció sor -->
+    <string name="tx_today">Ma</string>
+    <string name="tx_yesterday">Tegnap</string>
+    <string name="tx_exchange_title">Váltás %1$s → %2$s</string>
+    <string name="tx_uncategorized">Kategória nélkül</string>
+
+    <!-- Bevétel / kiadás űrlap -->
+    <string name="form_title_income">Új bevétel</string>
+    <string name="form_title_expense">Új kiadás</string>
+    <string name="form_title_income_edit">Bevétel szerkesztése</string>
+    <string name="form_title_expense_edit">Kiadás szerkesztése</string>
+    <string name="tx_delete_title">Tétel törlése</string>
+    <string name="tx_delete_text">Biztosan törlöd ezt a tételt? A számla egyenlege ennek megfelelően változik. Ez nem vonható vissza.</string>
+    <string name="form_amount_hint">0</string>
+    <string name="form_amount_error">Adj meg egy érvényes, pozitív összeget</string>
+    <string name="form_account">Számla</string>
+    <string name="form_date">Dátum</string>
+    <string name="form_today_suffix">%1$s (ma)</string>
+    <string name="form_category">Kategória</string>
+    <string name="form_category_error">Válassz kategóriát</string>
+    <string name="form_subcategory">Alkategória</string>
+    <string name="form_note">Megjegyzés</string>
+    <string name="form_note_hint">pl. heti bevásárlás</string>
+    <string name="form_rate">Árfolyam</string>
+    <string name="form_rate_manual">KÉZI</string>
+    <string name="form_rate_reset">Vissza a tárolt árfolyamra</string>
+    <string name="form_rate_missing">Nincs tárolt árfolyam – add meg kézzel</string>
+    <string name="form_rate_error">Adj meg érvényes árfolyamot</string>
+    <string name="form_save">Mentés</string>
+    <string name="form_currency">Pénznem</string>
+    <string name="save_failed_title">Nem sikerült menteni</string>
+    <string name="save_failed_text">A változás nem lett elmentve. Lehet, hogy közben törölték vagy módosították a hozzá tartozó adatot. Ellenőrizd az adatokat, és próbáld újra.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Mégse</string>
+
+    <!-- Pénzváltás -->
+    <string name="ex_title">Pénzváltás</string>
+    <string name="ex_title_edit">Váltás szerkesztése</string>
+    <string name="ex_from">Honnan</string>
+    <string name="ex_to">Hová</string>
+    <string name="ex_swap">Számlák felcserélése</string>
+    <string name="ex_rate">Árfolyam</string>
+    <string name="ex_rate_manual">KÉZI</string>
+    <string name="ex_rate_stored">Lekért: %1$s</string>
+    <string name="ex_rate_none">Még nincs lekért árfolyam</string>
+    <string name="ex_rate_fetched_at">lekérve %1$s</string>
+    <string name="ex_rate_fetch">Aktuális lekérése</string>
+    <string name="ex_rate_fetch_failed">Nem sikerült lekérni (nincs internet?). Add meg kézzel.</string>
+    <string name="ex_rate_reset">Vissza a lekért árfolyamra</string>
+    <string name="ex_rate_error">Adj meg érvényes árfolyamot</string>
+    <string name="ex_same_currency">Azonos pénznem – átvezetés 1:1 árfolyamon</string>
+    <string name="ex_same_account">A két számla nem lehet ugyanaz</string>
+    <string name="ex_need_account">Váltáshoz legalább két számla kell.</string>
+    <string name="ex_amount_error">Adj meg érvényes összeget</string>
+    <string name="ex_fee">Díj / jutalék (opcionális)</string>
+    <string name="ex_fee_hint">A váltott összeghez adódik, ennyivel több megy le a forrás számláról</string>
+    <string name="ex_total_debit">A forrás számláról levonva összesen: %1$s</string>
+    <string name="ex_fee_error">Érvénytelen díj</string>
+    <string name="ex_save">Váltás mentése</string>
+
+    <!-- Számlák -->
+    <string name="acc_title">Számlák</string>
+    <string name="acc_new">Új számla</string>
+    <string name="acc_archived_section">ARCHIVÁLT SZÁMLÁK</string>
+    <string name="acc_restore">Visszaállítás</string>
+    <string name="acc_empty">Még nincs számla. Hozz létre egyet!</string>
+    <string name="acc_balance">Egyenleg</string>
+    <string name="acc_initial_balance_info">Kezdő egyenleg: %1$s</string>
+    <string name="acc_transactions">Tételek</string>
+    <string name="acc_no_transactions">Ezen a számlán még nincs tétel.</string>
+    <string name="acc_archived_badge">ARCHIVÁLT</string>
+    <string name="acc_edit_title">Számla szerkesztése</string>
+    <string name="acc_new_title">Új számla</string>
+    <string name="acc_name_hint">pl. Készpénz, OTP, Revolut EUR</string>
+    <string name="acc_currency">Pénznem</string>
+    <string name="acc_currency_locked">A pénznem nem módosítható, mert már van tétel ezen a számlán.</string>
+    <string name="acc_initial_balance">Kezdő egyenleg</string>
+    <string name="acc_initial_balance_hint">Mennyi volt rajta, amikor elkezdted vezetni (lehet negatív is)</string>
+    <string name="acc_initial_balance_error">Érvénytelen összeg</string>
+    <string name="acc_delete_title">Számla törlése</string>
+    <string name="acc_delete_text">Törlöd: „%1$s”? Ha már van rajta tétel, csak archiválódik: eltűnik a választókból és a főoldalról, de a Számlák oldalon visszaállítható.</string>
+
+    <!-- Továbbiak -->
+    <string name="more_accounts">Számlák</string>
+    <string name="more_categories">Kategóriák és költségkeretek</string>
+    <string name="more_recurring">Ismétlődő tételek</string>
+    <string name="more_currencies">Pénznemek és árfolyamok</string>
+    <string name="more_settings">Beállítások</string>
+
+    <!-- Kategóriák -->
+    <string name="cat_title">Kategóriák</string>
+    <string name="cat_tab_income">Bevétel</string>
+    <string name="cat_tab_expense">Kiadás</string>
+    <string name="cat_new">Új kategória</string>
+    <string name="cat_new_subcategory">Új alkategória</string>
+    <string name="cat_no_budget">nincs keret</string>
+    <plurals name="cat_subcategory_count">
+        <item quantity="one">%d alkategória</item>
+        <item quantity="other">%d alkategória</item>
+    </plurals>
+    <string name="cat_budget_prefix">Keret: %1$s</string>
+    <string name="cat_move_up">Feljebb</string>
+    <string name="cat_move_down">Lejjebb</string>
+    <string name="cat_edit">Szerkesztés</string>
+    <string name="cat_expand">Kibontás</string>
+    <string name="cat_empty">Nincs kategória. Hozz létre egyet!</string>
+    <string name="cat_archived_subcategory">Az alkategória használatban volt, ezért archiváltuk (a régi tételeknél megmarad).</string>
+    <string name="cat_rename_subcategory">Alkategória átnevezése</string>
+    <string name="cat_delete_subcategory_title">Alkategória törlése</string>
+    <string name="cat_delete_subcategory_text">Törlöd: „%1$s”? Ha már használtad, csak archiválódik, a régi tételeknél megmarad.</string>
+    <string name="name">Név</string>
+    <string name="save">Mentés</string>
+    <string name="delete">Törlés</string>
+
+    <!-- Kategória szerkesztése -->
+    <string name="cat_edit_title">Kategória szerkesztése</string>
+    <string name="cat_new_title">Új kategória</string>
+    <string name="cat_name_error">Adj meg nevet</string>
+    <string name="cat_type">Típus</string>
+    <string name="cat_color">Szín</string>
+    <string name="cat_icon">Ikon</string>
+    <string name="cat_icon_mode_icon">Ikon</string>
+    <string name="cat_icon_mode_letter">Betű</string>
+    <string name="cat_icon_letter_label">Betű vagy emoji</string>
+    <string name="cat_icon_letter_hint">Legfeljebb 2 karakter, pl. É, ÉL vagy 🍕</string>
+    <string name="cat_budget_section">HAVI KÖLTSÉGKERET</string>
+    <string name="cat_budget_enable">Keret ennél a kategóriánál</string>
+    <string name="cat_budget_amount">Havi keret</string>
+    <string name="cat_budget_amount_error">Adj meg érvényes összeget</string>
+    <string name="cat_budget_threshold">Figyelmeztetés ennél: %1$d%%</string>
+    <string name="cat_budget_notify">Értesítés küszöbnél és túllépéskor</string>
+    <string name="cat_subcategories_section">ALKATEGÓRIÁK</string>
+    <string name="cat_subcategories_empty">Nincs alkategória.</string>
+    <string name="cat_delete_title">Kategória törlése</string>
+    <string name="cat_delete_text">Törlöd: „%1$s”? Ha már van hozzá tétel, csak archiválódik: eltűnik a listákból, de a régi tételeknél megmarad.</string>
+
+    <!-- Beállítások -->
+    <string name="set_title">Beállítások</string>
+    <string name="set_section_appearance">MEGJELENÉS</string>
+    <string name="set_section_currency">PÉNZNEM</string>
+    <string name="set_section_features">FUNKCIÓK</string>
+    <string name="set_section_data">ADATOK</string>
+    <string name="set_language">Nyelv</string>
+    <string name="set_language_system">Rendszer szerint</string>
+    <string name="set_theme">Téma</string>
+    <string name="set_theme_light">Világos</string>
+    <string name="set_theme_dark">Sötét</string>
+    <string name="set_theme_system">Rendszer</string>
+    <string name="set_hide_amounts">Összegek elrejtése</string>
+    <string name="set_hide_amounts_hint">Csillagok a főoldalon és a számláknál (a főoldali szem ikonnal is váltható)</string>
+    <string name="set_base_currency">Alap pénznem</string>
+    <string name="set_base_currency_hint">Ebben látszik a teljes egyenleg és a havi összesítő</string>
+    <string name="set_export_import">Export / import (CSV, JSON)</string>
+    <string name="set_reset_all">Összes adat törlése</string>
+    <string name="set_reset_title">Összes adat törlése</string>
+    <string name="set_reset_text">Minden tétel, számla, kategória és beállítás véglegesen törlődik, és az app az első indításkori állapotba kerül. Ez nem vonható vissza.</string>
+    <string name="set_reset_next">Tovább</string>
+    <string name="set_reset_word">TÖRLÉS</string>
+    <string name="set_reset_type_word">A megerősítéshez írd be: %1$s</string>
+    <string name="set_reset_done">Minden adat törölve.</string>
+    <string name="set_version">CashApp %1$s</string>
+
+    <!-- Kimutatások -->
+    <string name="rep_week">Hét</string>
+    <string name="rep_month">Hónap</string>
+    <string name="rep_year">Év</string>
+    <string name="rep_by_category_expense">Kiadás kategóriánként</string>
+    <string name="rep_by_category_income">Bevétel kategóriánként</string>
+    <string name="rep_by_subcategory">%1$s – alkategóriák</string>
+    <string name="rep_back_to_categories">Vissza a kategóriákhoz</string>
+    <string name="rep_total">Összesen</string>
+    <string name="rep_other">Egyéb</string>
+    <string name="rep_no_subcategory">Alkategória nélkül</string>
+    <string name="rep_uncategorized">Kategória nélkül</string>
+    <string name="rep_empty">Ebben az időszakban nincs adat.</string>
+    <string name="rep_tap_to_drill">Koppints egy kategóriára az alkategóriákhoz</string>
+    <string name="rep_income_vs_expense">Bevétel és kiadás havonta</string>
+    <string name="rep_tap_bar">Koppints egy hónapra a pontos összegekhez</string>
+    <string name="rep_missing_rates">Nincs árfolyam: %1$s – kimaradt</string>
+    <string name="fmt_month_short">LLL</string>
+    <string name="fmt_year">yyyy</string>
+
+    <!-- Ismétlődő tételek -->
+    <string name="rec_title">Ismétlődő tételek</string>
+    <string name="rec_tab_pending">Jóváhagyásra vár (%1$d)</string>
+    <string name="rec_tab_rules">Szabályok</string>
+    <string name="rec_new">Új szabály</string>
+    <string name="rec_pending_empty">Nincs jóváhagyásra váró tétel.</string>
+    <string name="rec_rules_empty">Még nincs ismétlődő szabály. Hozz létre egyet, pl. fizetéshez vagy lakbérhez!</string>
+    <string name="rec_due_today">ESEDÉKES: MA</string>
+    <string name="rec_overdue">LEJÁRT: %1$s</string>
+    <string name="rec_postponed">ELHALASZTVA: %1$s</string>
+    <string name="rec_approve">Jóváhagy</string>
+    <string name="rec_postpone">Elhalaszt</string>
+    <string name="rec_skip">Kihagy</string>
+    <string name="rec_approve_title">Jóváhagyás</string>
+    <string name="rec_approve_text">A tétel ezzel az összeggel és dátummal kerül könyvelésre (%1$s).</string>
+    <string name="rec_skip_title">Kihagyás</string>
+    <string name="rec_skip_text">Ez az esedékesség nem kerül könyvelésre. A szabály a következő alkalommal újra jelez.</string>
+    <string name="rec_postpone_title">Elhalasztás eddig</string>
+    <string name="rec_next_due">Következő: %1$s</string>
+    <string name="rec_ended">Befejeződött</string>
+    <string name="rec_inactive">Szünetel</string>
+    <string name="rec_hint">Jóváhagyás előtt az összeg és a dátum módosítható. Automatikusan semmi nem könyvelődik.</string>
+    <string name="rec_edit_title">Szabály szerkesztése</string>
+    <string name="rec_new_title">Új ismétlődő szabály</string>
+    <string name="rec_name">Megnevezés</string>
+    <string name="rec_name_hint">pl. Lakbér, Fizetés, Netflix</string>
+    <string name="rec_name_error">Adj meg megnevezést</string>
+    <string name="rec_amount">Összeg</string>
+    <string name="rec_frequency">Gyakoriság</string>
+    <string name="rec_freq_daily">Napi</string>
+    <string name="rec_freq_weekly">Heti</string>
+    <string name="rec_freq_monthly">Havi</string>
+    <string name="rec_freq_yearly">Éves</string>
+    <string name="rec_interval">Időköz</string>
+    <plurals name="rec_every_daily">
+        <item quantity="one">Naponta</item>
+        <item quantity="other">%d naponta</item>
+    </plurals>
+    <plurals name="rec_every_weekly">
+        <item quantity="one">Hetente</item>
+        <item quantity="other">%d hetente</item>
+    </plurals>
+    <plurals name="rec_every_monthly">
+        <item quantity="one">Havonta</item>
+        <item quantity="other">%d havonta</item>
+    </plurals>
+    <plurals name="rec_every_yearly">
+        <item quantity="one">Évente</item>
+        <item quantity="other">%d évente</item>
+    </plurals>
+    <string name="rec_start">Első esedékesség</string>
+    <string name="rec_end_enable">Van utolsó esedékesség</string>
+    <string name="rec_end">Utolsó esedékesség</string>
+    <string name="rec_end_error">Az utolsó esedékesség nem lehet az első előtt</string>
+    <string name="rec_active">Aktív</string>
+    <string name="rec_delete_title">Szabály törlése</string>
+    <string name="rec_delete_text">Törlöd: „%1$s”? A még jóvá nem hagyott tételei is törlődnek; a már könyvelt tételek megmaradnak.</string>
+    <string name="notif_channel_recurring">Ismétlődő tételek</string>
+    <string name="set_section_notifications">ÉRTESÍTÉSEK</string>
+    <string name="set_notify_recurring">Ismétlődő tételek</string>
+    <string name="set_notify_recurring_hint">Reggel 8 körül szól, ha új tétel vár jóváhagyásra</string>
+
+    <!-- Ideiglenes -->
+    <string name="coming_soon">Hamarosan…</string>
+    <string name="screen_exchange">Pénzváltás</string>
+    <string name="screen_pending">Ismétlődő tételek</string>
+    <string name="cur_converter">ÁTVÁLTÓ</string>
+    <string name="cur_converter_hint">Írj be egy összeget, és megmutatjuk az összes pénznemben.</string>
+    <string name="cur_rates">AKTUÁLIS ÁRFOLYAMOK</string>
+    <string name="cur_no_rate">nincs árfolyam</string>
+    <string name="cur_fetch_failed">Nem sikerült lekérni (nincs internet?). A legutóbbi árfolyamok látszanak.</string>
+    <string name="cur_list">PÉNZNEMEK (%1$d/%2$d)</string>
+    <string name="cur_list_hint">Koppints egy pénznemre, hogy az legyen az alap pénznem. Legfeljebb %1$d pénznem lehet.</string>
+    <string name="cur_decimals">%1$d tizedes</string>
+    <string name="cur_base_badge">ALAP</string>
+    <string name="cur_add">Pénznem hozzáadása</string>
+    <string name="cur_add_search">Keresés (kód vagy név)</string>
+    <string name="cur_remove_title">%1$s törlése?</string>
+    <string name="cur_remove_text">A pénznem eltűnik a listából. Csak akkor törölhető, ha egyetlen számla vagy tétel sem használja.</string>
+    <string name="cur_msg_added">Pénznem hozzáadva</string>
+    <string name="cur_msg_add_failed">Nem sikerült hozzáadni</string>
+    <string name="cur_msg_removed">Pénznem törölve</string>
+    <string name="cur_msg_in_use">Nem törölhető: számla, tétel vagy keret használja</string>
+    <string name="cur_msg_protected">Az alap pénznem és az EUR (árfolyam-alap) nem törölhető</string>
+    <string name="bk_title">Export / import</string>
+    <string name="bk_json_title">Teljes mentés (JSON)</string>
+    <string name="bk_json_text">Minden adat egy fájlba: számlák, tételek, kategóriák, ismétlődő tételek, költségkeretek, pénznemek és beállítások. Ebből bármikor visszaállítható minden, akár másik telefonon is.</string>
+    <string name="bk_json_button">Mentés fájlba</string>
+    <string name="bk_restore_title">Visszaállítás mentésből</string>
+    <string name="bk_restore_text">Egy korábbi JSON mentés betöltése. A jelenlegi adatok helyére kerül – előtte érdemes friss mentést készíteni.</string>
+    <string name="bk_restore_button">Mentés kiválasztása…</string>
+    <string name="bk_csv_title">Tételek táblázatként (CSV)</string>
+    <string name="bk_csv_text">Az összes tétel Excelben / Google Táblázatokban megnyitható formában (pontosvesszővel elválasztva). Csak export, visszatölteni a JSON mentést lehet.</string>
+    <string name="bk_csv_button">CSV export</string>
+    <string name="bk_working">Folyamatban…</string>
+    <string name="bk_confirm_title">Visszaállítás?</string>
+    <string name="bk_confirm_text">Mentés ideje: %1$s\n%2$d számla, %3$d tétel, %4$d kategória, %5$d ismétlődő szabály.\n\nA jelenlegi összes adat törlődik, és a mentés tartalma kerül a helyére. Ez nem vonható vissza.</string>
+    <string name="bk_confirm_button">Visszaállítás</string>
+    <string name="bk_error_title">Nem sikerült</string>
+    <string name="bk_error_text">A mentés nem tölthető be: %1$s\n\nA jelenlegi adatok nem változtak.</string>
+    <string name="bk_msg_json_done">Mentés elkészült</string>
+    <string name="bk_msg_csv_done">CSV elkészült</string>
+    <string name="bk_msg_restored">Adatok visszaállítva</string>
+    <string name="bk_msg_export_failed">Nem sikerült a fájl írása</string>
+    <string name="bk_err_not_json">a fájl nem JSON</string>
+    <string name="bk_err_not_cashapp">ez nem cashApp mentés</string>
+    <string name="bk_err_unknown_format">ismeretlen mentésformátum</string>
+    <string name="bk_err_newer_version">a mentés újabb app-verzióval készült – frissítsd az appot</string>
+    <string name="bk_err_corrupt">a mentés sérült</string>
+    <string name="bk_err_unreadable">a fájl nem olvasható</string>
+    <string name="bk_err_empty">a mentés üres</string>
+    <string name="bk_err_broken_reference">a mentés sérült (hibás hivatkozás)</string>
+    <string name="bk_err_unknown">ismeretlen hiba</string>
+</resources>
