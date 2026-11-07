@@ -5,6 +5,12 @@
     alias(libs.plugins.room)
 }
 
+/** Az aktuális git commit rövid hash-e (ha nincs git, „dev”) – a verziószám mellé kerül. */
+val gitHash: String = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { it.trim() }.getOrElse("").ifBlank { "dev" }
+
 android {
     namespace = "com.example.cashapp"
     compileSdk {
@@ -16,7 +22,7 @@ android {
         minSdk = 26
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0.0"
+        versionName = "1.0.0+$gitHash"
     }
 
     androidResources {
