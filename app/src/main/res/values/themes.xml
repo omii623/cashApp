@@ -1,0 +1,4 @@
+<resources>
+    <!-- Csak az indulóképernyőhöz és az AppCompat-hoz; a tényleges téma Compose-ban van (ui/theme). -->
+    <style name="Theme.CashApp" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="780" viewBox="0 0 400 780" font-family="Arial, sans-serif"><rect width="400" height="780" fill="#E9ECF2"/><g transform="translate(20,20)">
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <text x="20" y="44" font-size="20" font-weight="bold" fill="#222">←  Beállítások</text>
+
+    <text x="20" y="84" font-size="12" font-weight="bold" fill="#888">MEGJELENÉS</text>
+    <rect x="16" y="94" width="328" height="112" rx="12" fill="#FFF"/>
+    <text x="32" y="126" font-size="14" fill="#222">Nyelv</text><text x="328" y="126" font-size="14" fill="#1565C0" text-anchor="end">Magyar ▾</text>
+    <line x1="24" y1="150" x2="336" y2="150" stroke="#EEE"/>
+    <text x="32" y="184" font-size="14" fill="#222">Téma</text>
+    <rect x="150" y="164" width="180" height="30" rx="15" fill="#F5F6FA" stroke="#DDD"/>
+    <text x="180" y="184" font-size="11" fill="#555" text-anchor="middle">Világos</text>
+    <rect x="210" y="166" width="60" height="26" rx="13" fill="#1E3A5F"/><text x="240" y="184" font-size="11" fill="#FFF" text-anchor="middle">Sötét</text>
+    <text x="300" y="184" font-size="11" fill="#555" text-anchor="middle">Rendszer</text>
+
+    <text x="20" y="236" font-size="12" font-weight="bold" fill="#888">PÉNZNEM</text>
+    <rect x="16" y="246" width="328" height="112" rx="12" fill="#FFF"/>
+    <text x="32" y="278" font-size="14" fill="#222">Alap pénznem</text><text x="328" y="278" font-size="14" fill="#1565C0" text-anchor="end">HUF ▾</text>
+    <line x1="24" y1="302" x2="336" y2="302" stroke="#EEE"/>
+    <text x="32" y="334" font-size="14" fill="#222">Pénznemek és árfolyamok</text><text x="328" y="334" font-size="18" fill="#888" text-anchor="end">›</text>
+
+    <text x="20" y="388" font-size="12" font-weight="bold" fill="#888">FUNKCIÓK</text>
+    <rect x="16" y="398" width="328" height="168" rx="12" fill="#FFF"/>
+    <text x="32" y="430" font-size="14" fill="#222">Kategóriák és költségkeretek</text><text x="328" y="430" font-size="18" fill="#888" text-anchor="end">›</text>
+    <line x1="24" y1="454" x2="336" y2="454" stroke="#EEE"/>
+    <text x="32" y="486" font-size="14" fill="#222">Értesítés: ismétlődő tételek</text>
+    <rect x="290" y="472" width="40" height="22" rx="11" fill="#2E7D32"/><circle cx="319" cy="483" r="9" fill="#FFF"/>
+    <text x="32" y="504" font-size="11" fill="#888">Időpont: 08:00</text>
+    <line x1="24" y1="514" x2="336" y2="514" stroke="#EEE"/>
+    <text x="32" y="546" font-size="14" fill="#222">Értesítés: keret figyelmeztetés</text>
+    <rect x="290" y="532" width="40" height="22" rx="11" fill="#CCC"/><circle cx="301" cy="543" r="9" fill="#FFF"/>
+
+    <text x="20" y="596" font-size="12" font-weight="bold" fill="#888">ADATOK</text>
+    <rect x="16" y="606" width="328" height="112" rx="12" fill="#FFF"/>
+    <text x="32" y="638" font-size="14" fill="#222">Export / import (CSV, JSON)</text><text x="328" y="638" font-size="18" fill="#888" text-anchor="end">›</text>
+    <line x1="24" y1="662" x2="336" y2="662" stroke="#EEE"/>
+    <text x="32" y="694" font-size="14" fill="#C62828">Összes adat törlése</text></g></svg>

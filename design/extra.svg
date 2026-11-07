@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- ================= 7. BEVÉTEL ================= -->
+  <g transform="translate(0,0)">
+    <text x="0" y="-8" font-size="14" fill="#555">Új bevétel</text>
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <rect x="0" y="0" width="360" height="64" rx="24" fill="#2E7D32"/><rect x="0" y="30" width="360" height="34" fill="#2E7D32"/>
+    <text x="20" y="42" font-size="20" font-weight="bold" fill="#FFF">←  Új bevétel</text>
+
+    <text x="180" y="122" font-size="40" font-weight="bold" fill="#222" text-anchor="middle">620 000 Ft</text>
+    <rect x="130" y="138" width="100" height="26" rx="13" fill="#FFF" stroke="#CCC"/>
+    <text x="180" y="156" font-size="12" fill="#444" text-anchor="middle">HUF ▾</text>
+
+    <rect x="16" y="180" width="160" height="50" rx="10" fill="#FFF"/>
+    <text x="28" y="198" font-size="11" fill="#888">Számla</text><text x="28" y="218" font-size="14" fill="#222">Bankszámla (HUF)</text>
+    <rect x="184" y="180" width="160" height="50" rx="10" fill="#FFF"/>
+    <text x="196" y="198" font-size="11" fill="#888">Dátum</text><text x="196" y="218" font-size="14" fill="#222">2026.11.01.</text>
+
+    <text x="20" y="258" font-size="14" font-weight="bold" fill="#222">Kategória</text>
+    <rect x="16" y="268" width="104" height="56" rx="10" fill="#2E7D32"/><text x="68" y="301" font-size="12" fill="#FFF" text-anchor="middle">Fizetés</text>
+    <rect x="128" y="268" width="104" height="56" rx="10" fill="#FFF"/><text x="180" y="301" font-size="12" fill="#333" text-anchor="middle">Mellékjövedelem</text>
+    <rect x="240" y="268" width="104" height="56" rx="10" fill="#FFF"/><text x="292" y="301" font-size="12" fill="#333" text-anchor="middle">Egyéb bevétel</text>
+
+    <text x="20" y="352" font-size="14" font-weight="bold" fill="#222">Alkategória</text>
+    <rect x="16" y="362" width="80" height="32" rx="16" fill="#C8E6C9" stroke="#2E7D32"/><text x="56" y="383" font-size="12" fill="#2E7D32" text-anchor="middle">Alapbér</text>
+    <rect x="102" y="362" width="72" height="32" rx="16" fill="#FFF" stroke="#CCC"/><text x="138" y="383" font-size="12" fill="#333" text-anchor="middle">Bónusz</text>
+    <rect x="180" y="362" width="96" height="32" rx="16" fill="#FFF" stroke="#CCC"/><text x="228" y="383" font-size="12" fill="#333" text-anchor="middle">13. havi</text>
+    <rect x="282" y="362" width="62" height="32" rx="16" fill="#FFF" stroke="#CCC"/><text x="313" y="383" font-size="12" fill="#333" text-anchor="middle">Túlóra</text>
+
+    <rect x="16" y="410" width="328" height="50" rx="10" fill="#FFF"/>
+    <text x="28" y="428" font-size="11" fill="#888">Megjegyzés</text><text x="28" y="448" font-size="14" fill="#AAA">pl. októberi fizetés</text>
+
+    <rect x="16" y="472" width="328" height="56" rx="10" fill="#FFF"/>
+    <text x="28" y="505" font-size="14" fill="#222">Ismétlődő tételként mentés</text>
+    <rect x="290" y="488" width="40" height="22" rx="11" fill="#2E7D32"/><circle cx="319" cy="499" r="9" fill="#FFF"/>
+    <text x="28" y="548" font-size="11" fill="#888">Havonta 1-jén · esedékességkor jóváhagyást kér</text>
+
+    <rect x="16" y="660" width="328" height="56" rx="14" fill="#2E7D32"/>
+    <text x="180" y="694" font-size="17" font-weight="bold" fill="#FFF" text-anchor="middle">Mentés</text>
+  </g>
+
+  <!-- ================= 8. BEÁLLÍTÁSOK ================= -->
+  <g transform="translate(0,0)">
+    <text x="0" y="-8" font-size="14" fill="#555">Beállítások</text>
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <text x="20" y="44" font-size="20" font-weight="bold" fill="#222">←  Beállítások</text>
+
+    <text x="20" y="84" font-size="12" font-weight="bold" fill="#888">MEGJELENÉS</text>
+    <rect x="16" y="94" width="328" height="112" rx="12" fill="#FFF"/>
+    <text x="32" y="126" font-size="14" fill="#222">Nyelv</text><text x="328" y="126" font-size="14" fill="#1565C0" text-anchor="end">Magyar ▾</text>
+    <line x1="24" y1="150" x2="336" y2="150" stroke="#EEE"/>
+    <text x="32" y="184" font-size="14" fill="#222">Téma</text>
+    <rect x="150" y="164" width="180" height="30" rx="15" fill="#F5F6FA" stroke="#DDD"/>
+    <text x="180" y="184" font-size="11" fill="#555" text-anchor="middle">Világos</text>
+    <rect x="210" y="166" width="60" height="26" rx="13" fill="#1E3A5F"/><text x="240" y="184" font-size="11" fill="#FFF" text-anchor="middle">Sötét</text>
+    <text x="300" y="184" font-size="11" fill="#555" text-anchor="middle">Rendszer</text>
+
+    <text x="20" y="236" font-size="12" font-weight="bold" fill="#888">PÉNZNEM</text>
+    <rect x="16" y="246" width="328" height="112" rx="12" fill="#FFF"/>
+    <text x="32" y="278" font-size="14" fill="#222">Alap pénznem</text><text x="328" y="278" font-size="14" fill="#1565C0" text-anchor="end">HUF ▾</text>
+    <line x1="24" y1="302" x2="336" y2="302" stroke="#EEE"/>
+    <text x="32" y="334" font-size="14" fill="#222">Pénznemek és árfolyamok</text><text x="328" y="334" font-size="18" fill="#888" text-anchor="end">›</text>
+
+    <text x="20" y="388" font-size="12" font-weight="bold" fill="#888">FUNKCIÓK</text>
+    <rect x="16" y="398" width="328" height="168" rx="12" fill="#FFF"/>
+    <text x="32" y="430" font-size="14" fill="#222">Kategóriák és költségkeretek</text><text x="328" y="430" font-size="18" fill="#888" text-anchor="end">›</text>
+    <line x1="24" y1="454" x2="336" y2="454" stroke="#EEE"/>
+    <text x="32" y="486" font-size="14" fill="#222">Értesítés: ismétlődő tételek</text>
+    <rect x="290" y="472" width="40" height="22" rx="11" fill="#2E7D32"/><circle cx="319" cy="483" r="9" fill="#FFF"/>
+    <text x="32" y="504" font-size="11" fill="#888">Időpont: 08:00</text>
+    <line x1="24" y1="514" x2="336" y2="514" stroke="#EEE"/>
+    <text x="32" y="546" font-size="14" fill="#222">Értesítés: keret figyelmeztetés</text>
+    <rect x="290" y="532" width="40" height="22" rx="11" fill="#CCC"/><circle cx="301" cy="543" r="9" fill="#FFF"/>
+
+    <text x="20" y="596" font-size="12" font-weight="bold" fill="#888">ADATOK</text>
+    <rect x="16" y="606" width="328" height="112" rx="12" fill="#FFF"/>
+    <text x="32" y="638" font-size="14" fill="#222">Export / import (CSV, JSON)</text><text x="328" y="638" font-size="18" fill="#888" text-anchor="end">›</text>
+    <line x1="24" y1="662" x2="336" y2="662" stroke="#EEE"/>
+    <text x="32" y="694" font-size="14" fill="#C62828">Összes adat törlése</text>
+  </g>
+
+  <!-- ================= 9. KATEGÓRIÁK ================= -->
+  <g transform="translate(0,0)">
+    <text x="0" y="-8" font-size="14" fill="#555">Kategóriák</text>
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <text x="20" y="44" font-size="20" font-weight="bold" fill="#222">←  Kategóriák</text>
+    <rect x="16" y="62" width="328" height="34" rx="17" fill="#FFF" stroke="#DDD"/>
+    <text x="99" y="84" font-size="12" fill="#555" text-anchor="middle">Bevétel</text>
+    <rect x="180" y="64" width="162" height="30" rx="15" fill="#C62828"/>
+    <text x="261" y="84" font-size="12" font-weight="bold" fill="#FFF" text-anchor="middle">Kiadás</text>
+
+    <rect x="16" y="110" width="328" height="250" rx="12" fill="#FFF"/>
+    <text x="32" y="138" font-size="14" fill="#AAA">≡</text>
+    <circle cx="62" cy="133" r="12" fill="#FFEBEE"/><text x="62" y="138" font-size="11" fill="#C62828" text-anchor="middle">É</text>
+    <text x="84" y="132" font-size="15" font-weight="bold" fill="#222">Élelmiszer</text>
+    <text x="84" y="148" font-size="11" fill="#2E7D32">Keret: 62 000 / 120 000 Ft</text>
+    <text x="298" y="138" font-size="14" fill="#888" text-anchor="middle">✎</text>
+    <text x="326" y="138" font-size="14" fill="#888" text-anchor="middle">▴</text>
+    <rect x="84" y="156" width="230" height="6" rx="3" fill="#EEE"/><rect x="84" y="156" width="119" height="6" rx="3" fill="#43A047"/>
+    <line x1="24" y1="174" x2="336" y2="174" stroke="#EEE"/>
+    <text x="60" y="200" font-size="12" fill="#AAA">≡</text><text x="84" y="200" font-size="13" fill="#333">Bevásárlás</text><text x="326" y="200" font-size="13" fill="#888" text-anchor="middle">✎</text>
+    <text x="60" y="232" font-size="12" fill="#AAA">≡</text><text x="84" y="232" font-size="13" fill="#333">Étterem</text><text x="326" y="232" font-size="13" fill="#888" text-anchor="middle">✎</text>
+    <text x="60" y="264" font-size="12" fill="#AAA">≡</text><text x="84" y="264" font-size="13" fill="#333">Rendelés</text><text x="326" y="264" font-size="13" fill="#888" text-anchor="middle">✎</text>
+    <text x="60" y="296" font-size="12" fill="#AAA">≡</text><text x="84" y="296" font-size="13" fill="#333">Reggeli</text><text x="326" y="296" font-size="13" fill="#888" text-anchor="middle">✎</text>
+    <rect x="80" y="316" width="150" height="30" rx="15" fill="#FFF" stroke="#C62828" stroke-dasharray="4 3"/>
+    <text x="155" y="336" font-size="12" fill="#C62828" text-anchor="middle">+ Új alkategória</text>
+
+    <rect x="16" y="370" width="328" height="56" rx="12" fill="#FFF"/>
+    <text x="32" y="402" font-size="14" fill="#AAA">≡</text>
+    <circle cx="62" cy="397" r="12" fill="#FFEBEE"/><text x="62" y="402" font-size="11" fill="#C62828" text-anchor="middle">L</text>
+    <text x="84" y="396" font-size="15" font-weight="bold" fill="#222">Lakhatás</text>
+    <text x="84" y="412" font-size="11" fill="#888">4 alkategória · nincs keret</text>
+    <text x="298" y="402" font-size="14" fill="#888" text-anchor="middle">✎</text><text x="326" y="402" font-size="14" fill="#888" text-anchor="middle">▾</text>
+
+    <rect x="16" y="434" width="328" height="56" rx="12" fill="#FFF"/>
+    <text x="32" y="466" font-size="14" fill="#AAA">≡</text>
+    <circle cx="62" cy="461" r="12" fill="#FFEBEE"/><text x="62" y="466" font-size="11" fill="#C62828" text-anchor="middle">S</text>
+    <text x="84" y="460" font-size="15" font-weight="bold" fill="#222">Szórakozás</text>
+    <text x="84" y="476" font-size="11" fill="#E65100">Keret: 38 000 / 40 000 Ft (95%)</text>
+    <text x="298" y="466" font-size="14" fill="#888" text-anchor="middle">✎</text><text x="326" y="466" font-size="14" fill="#888" text-anchor="middle">▾</text>
+
+    <rect x="16" y="498" width="328" height="56" rx="12" fill="#FFF"/>
+    <text x="32" y="530" font-size="14" fill="#AAA">≡</text>
+    <circle cx="62" cy="525" r="12" fill="#FFEBEE"/><text x="62" y="530" font-size="11" fill="#C62828" text-anchor="middle">K</text>
+    <text x="84" y="524" font-size="15" font-weight="bold" fill="#222">Közlekedés</text>
+    <text x="84" y="540" font-size="11" fill="#888">5 alkategória · nincs keret</text>
+    <text x="298" y="530" font-size="14" fill="#888" text-anchor="middle">✎</text><text x="326" y="530" font-size="14" fill="#888" text-anchor="middle">▾</text>
+
+    <text x="20" y="580" font-size="11" fill="#888">≡ húzással sorrend · balra húzás: archiválás/törlés</text>
+
+    <rect x="16" y="660" width="328" height="56" rx="14" fill="#C62828"/>
+    <text x="180" y="694" font-size="16" font-weight="bold" fill="#FFF" text-anchor="middle">+ Új kategória</text>
+  </g>
+
+  <!-- ================= 10. KATEGÓRIA SZERKESZTÉS ================= -->
+  <g transform="translate(0,0)">
+    <text x="0" y="-8" font-size="14" fill="#555">Kategória szerkesztése</text>
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <text x="20" y="44" font-size="20" font-weight="bold" fill="#222">←  Kategória szerkesztése</text>
+
+    <rect x="16" y="66" width="328" height="56" rx="10" fill="#FFF"/>
+    <text x="28" y="86" font-size="11" fill="#888">Név</text><text x="28" y="108" font-size="15" fill="#222">Élelmiszer</text>
+    <rect x="16" y="130" width="160" height="50" rx="10" fill="#FFF"/>
+    <text x="28" y="148" font-size="11" fill="#888">Típus</text><text x="28" y="168" font-size="14" fill="#C62828">Kiadás</text>
+    <rect x="184" y="130" width="160" height="50" rx="10" fill="#FFF"/>
+    <text x="196" y="148" font-size="11" fill="#888">Ikon / szín</text>
+    <circle cx="208" cy="166" r="9" fill="#EF5350"/><circle cx="232" cy="166" r="9" fill="#5C6BC0"/><circle cx="256" cy="166" r="9" fill="#26A69A"/><circle cx="280" cy="166" r="9" fill="#FFA726"/>
+    <circle cx="208" cy="166" r="12" fill="none" stroke="#222" stroke-width="2"/>
+
+    <text x="20" y="212" font-size="12" font-weight="bold" fill="#888">HAVI KÖLTSÉGKERET</text>
+    <rect x="16" y="222" width="328" height="230" rx="12" fill="#FFF" stroke="#2E7D32"/>
+    <text x="32" y="254" font-size="14" fill="#222">Keret ennél a kategóriánál</text>
+    <rect x="290" y="240" width="40" height="22" rx="11" fill="#2E7D32"/><circle cx="319" cy="251" r="9" fill="#FFF"/>
+    <line x1="24" y1="276" x2="336" y2="276" stroke="#EEE"/>
+    <rect x="32" y="288" width="190" height="50" rx="8" fill="#F5F6FA"/>
+    <text x="44" y="306" font-size="11" fill="#888">Havi keret</text><text x="44" y="326" font-size="15" fill="#222">120 000</text>
+    <rect x="230" y="288" width="98" height="50" rx="8" fill="#F5F6FA"/>
+    <text x="242" y="306" font-size="11" fill="#888">Pénznem</text><text x="242" y="326" font-size="15" fill="#222">HUF ▾</text>
+    <text x="32" y="366" font-size="13" fill="#222">Figyelmeztetés ennél: 80%</text>
+    <rect x="32" y="378" width="296" height="6" rx="3" fill="#EEE"/><rect x="32" y="378" width="237" height="6" rx="3" fill="#2E7D32"/>
+    <circle cx="269" cy="381" r="9" fill="#2E7D32"/>
+    <text x="32" y="420" font-size="13" fill="#222">Értesítés küszöbnél és túllépéskor</text>
+    <rect x="290" y="406" width="40" height="22" rx="11" fill="#2E7D32"/><circle cx="319" cy="417" r="9" fill="#FFF"/>
+
+    <text x="20" y="484" font-size="12" font-weight="bold" fill="#888">ALKATEGÓRIÁK</text>
+    <rect x="16" y="494" width="328" height="130" rx="12" fill="#FFF"/>
+    <rect x="28" y="506" width="96" height="30" rx="15" fill="#F5F6FA" stroke="#CCC"/><text x="76" y="526" font-size="12" fill="#333" text-anchor="middle">Bevásárlás ×</text>
+    <rect x="130" y="506" width="80" height="30" rx="15" fill="#F5F6FA" stroke="#CCC"/><text x="170" y="526" font-size="12" fill="#333" text-anchor="middle">Étterem ×</text>
+    <rect x="216" y="506" width="88" height="30" rx="15" fill="#F5F6FA" stroke="#CCC"/><text x="260" y="526" font-size="12" fill="#333" text-anchor="middle">Rendelés ×</text>
+    <rect x="28" y="544" width="80" height="30" rx="15" fill="#F5F6FA" stroke="#CCC"/><text x="68" y="564" font-size="12" fill="#333" text-anchor="middle">Reggeli ×</text>
+    <rect x="114" y="544" width="80" height="30" rx="15" fill="#FFF" stroke="#C62828" stroke-dasharray="4 3"/><text x="154" y="564" font-size="12" fill="#C62828" text-anchor="middle">+ Új</text>
+    <text x="28" y="606" font-size="11" fill="#888">Koppintás: átnevezés / áthelyezés másik kategóriába</text>
+
+    <rect x="16" y="660" width="160" height="56" rx="14" fill="#FFF" stroke="#C62828"/>
+    <text x="96" y="694" font-size="15" fill="#C62828" text-anchor="middle">Törlés</text>
+    <rect x="184" y="660" width="160" height="56" rx="14" fill="#1E3A5F"/>
+    <text x="264" y="694" font-size="15" font-weight="bold" fill="#FFF" text-anchor="middle">Mentés</text>
+  </g>
+</svg>

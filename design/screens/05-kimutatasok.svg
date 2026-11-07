@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="780" viewBox="0 0 400 780" font-family="Arial, sans-serif"><rect width="400" height="780" fill="#E9ECF2"/><g transform="translate(20,20)">
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <text x="20" y="44" font-size="22" font-weight="bold" fill="#222">Kimutatások</text>
+    <rect x="16" y="62" width="328" height="34" rx="17" fill="#FFF" stroke="#DDD"/>
+    <rect x="18" y="64" width="80" height="30" rx="15" fill="#1E3A5F"/>
+    <text x="58" y="84" font-size="12" fill="#FFF" text-anchor="middle">Hónap</text>
+    <text x="140" y="84" font-size="12" fill="#555" text-anchor="middle">Hét</text>
+    <text x="215" y="84" font-size="12" fill="#555" text-anchor="middle">Év</text>
+    <text x="295" y="84" font-size="12" fill="#555" text-anchor="middle">Egyedi</text>
+
+    <rect x="16" y="108" width="328" height="270" rx="14" fill="#FFF"/>
+    <text x="32" y="134" font-size="14" font-weight="bold" fill="#222">Kiadás kategóriánként</text>
+    <g transform="translate(110,250) rotate(-90)">
+      <circle r="70" fill="none" stroke="#EEE" stroke-width="26"/>
+      <circle r="70" fill="none" stroke="#5C6BC0" stroke-width="26" stroke-dasharray="154 286"/>
+      <circle r="70" fill="none" stroke="#EF5350" stroke-width="26" stroke-dasharray="110 330" transform="rotate(126)"/>
+      <circle r="70" fill="none" stroke="#FFA726" stroke-width="26" stroke-dasharray="66 374" transform="rotate(216)"/>
+      <circle r="70" fill="none" stroke="#26A69A" stroke-width="26" stroke-dasharray="110 330" transform="rotate(270)"/>
+    </g>
+    <text x="110" y="248" font-size="15" font-weight="bold" fill="#222" text-anchor="middle">410 500</text>
+    <text x="110" y="266" font-size="11" fill="#888" text-anchor="middle">Ft</text>
+    <rect x="210" y="190" width="12" height="12" rx="3" fill="#5C6BC0"/><text x="228" y="201" font-size="12" fill="#333">Lakhatás 35%</text>
+    <rect x="210" y="216" width="12" height="12" rx="3" fill="#EF5350"/><text x="228" y="227" font-size="12" fill="#333">Élelmiszer 25%</text>
+    <rect x="210" y="242" width="12" height="12" rx="3" fill="#FFA726"/><text x="228" y="253" font-size="12" fill="#333">Számlák 15%</text>
+    <rect x="210" y="268" width="12" height="12" rx="3" fill="#26A69A"/><text x="228" y="279" font-size="12" fill="#333">Egyéb 25%</text>
+    <text x="32" y="362" font-size="11" fill="#888">Koppints egy szeletre → alkategóriák</text>
+
+    <rect x="16" y="390" width="328" height="250" rx="14" fill="#FFF"/>
+    <text x="32" y="416" font-size="14" font-weight="bold" fill="#222">Bevétel vs. kiadás</text>
+    <line x1="32" y1="600" x2="328" y2="600" stroke="#DDD"/>
+    <rect x="44" y="480" width="16" height="120" fill="#43A047"/><rect x="62" y="510" width="16" height="90" fill="#E53935"/><text x="61" y="618" font-size="11" fill="#888" text-anchor="middle">Aug</text>
+    <rect x="116" y="480" width="16" height="120" fill="#43A047"/><rect x="134" y="470" width="16" height="130" fill="#E53935"/><text x="133" y="618" font-size="11" fill="#888" text-anchor="middle">Szep</text>
+    <rect x="188" y="460" width="16" height="140" fill="#43A047"/><rect x="206" y="500" width="16" height="100" fill="#E53935"/><text x="205" y="618" font-size="11" fill="#888" text-anchor="middle">Okt</text>
+    <rect x="260" y="480" width="16" height="120" fill="#43A047"/><rect x="278" y="520" width="16" height="80" fill="#E53935"/><text x="277" y="618" font-size="11" fill="#888" text-anchor="middle">Nov</text>
+    <rect x="200" y="404" width="10" height="10" fill="#43A047"/><text x="214" y="413" font-size="11" fill="#555">Bevétel</text>
+    <rect x="266" y="404" width="10" height="10" fill="#E53935"/><text x="280" y="413" font-size="11" fill="#555">Kiadás</text>
+
+    <rect x="0" y="680" width="360" height="60" fill="#FFF" stroke="#DDD"/>
+    <text x="45" y="716" font-size="12" fill="#666" text-anchor="middle">Főoldal</text>
+    <text x="135" y="716" font-size="12" fill="#666" text-anchor="middle">Tranzakciók</text>
+    <text x="225" y="716" font-size="12" font-weight="bold" fill="#1565C0" text-anchor="middle">Kimutatások</text>
+    <text x="315" y="716" font-size="12" fill="#666" text-anchor="middle">Továbbiak</text></g></svg>

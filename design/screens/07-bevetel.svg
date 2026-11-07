@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="780" viewBox="0 0 400 780" font-family="Arial, sans-serif"><rect width="400" height="780" fill="#E9ECF2"/><g transform="translate(20,20)">
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <rect x="0" y="0" width="360" height="64" rx="24" fill="#2E7D32"/><rect x="0" y="30" width="360" height="34" fill="#2E7D32"/>
+    <text x="20" y="42" font-size="20" font-weight="bold" fill="#FFF">←  Új bevétel</text>
+
+    <text x="180" y="122" font-size="40" font-weight="bold" fill="#222" text-anchor="middle">620 000 Ft</text>
+    <rect x="130" y="138" width="100" height="26" rx="13" fill="#FFF" stroke="#CCC"/>
+    <text x="180" y="156" font-size="12" fill="#444" text-anchor="middle">HUF ▾</text>
+
+    <rect x="16" y="180" width="160" height="50" rx="10" fill="#FFF"/>
+    <text x="28" y="198" font-size="11" fill="#888">Számla</text><text x="28" y="218" font-size="14" fill="#222">Bankszámla (HUF)</text>
+    <rect x="184" y="180" width="160" height="50" rx="10" fill="#FFF"/>
+    <text x="196" y="198" font-size="11" fill="#888">Dátum</text><text x="196" y="218" font-size="14" fill="#222">2026.11.01.</text>
+
+    <text x="20" y="258" font-size="14" font-weight="bold" fill="#222">Kategória</text>
+    <rect x="16" y="268" width="104" height="56" rx="10" fill="#2E7D32"/><text x="68" y="301" font-size="12" fill="#FFF" text-anchor="middle">Fizetés</text>
+    <rect x="128" y="268" width="104" height="56" rx="10" fill="#FFF"/><text x="180" y="301" font-size="12" fill="#333" text-anchor="middle">Mellékjövedelem</text>
+    <rect x="240" y="268" width="104" height="56" rx="10" fill="#FFF"/><text x="292" y="301" font-size="12" fill="#333" text-anchor="middle">Egyéb bevétel</text>
+
+    <text x="20" y="352" font-size="14" font-weight="bold" fill="#222">Alkategória</text>
+    <rect x="16" y="362" width="80" height="32" rx="16" fill="#C8E6C9" stroke="#2E7D32"/><text x="56" y="383" font-size="12" fill="#2E7D32" text-anchor="middle">Alapbér</text>
+    <rect x="102" y="362" width="72" height="32" rx="16" fill="#FFF" stroke="#CCC"/><text x="138" y="383" font-size="12" fill="#333" text-anchor="middle">Bónusz</text>
+    <rect x="180" y="362" width="96" height="32" rx="16" fill="#FFF" stroke="#CCC"/><text x="228" y="383" font-size="12" fill="#333" text-anchor="middle">13. havi</text>
+    <rect x="282" y="362" width="62" height="32" rx="16" fill="#FFF" stroke="#CCC"/><text x="313" y="383" font-size="12" fill="#333" text-anchor="middle">Túlóra</text>
+
+    <rect x="16" y="410" width="328" height="50" rx="10" fill="#FFF"/>
+    <text x="28" y="428" font-size="11" fill="#888">Megjegyzés</text><text x="28" y="448" font-size="14" fill="#AAA">pl. októberi fizetés</text>
+
+    <rect x="16" y="472" width="328" height="56" rx="10" fill="#FFF"/>
+    <text x="28" y="505" font-size="14" fill="#222">Ismétlődő tételként mentés</text>
+    <rect x="290" y="488" width="40" height="22" rx="11" fill="#2E7D32"/><circle cx="319" cy="499" r="9" fill="#FFF"/>
+    <text x="28" y="548" font-size="11" fill="#888">Havonta 1-jén · esedékességkor jóváhagyást kér</text>
+
+    <rect x="16" y="660" width="328" height="56" rx="14" fill="#2E7D32"/>
+    <text x="180" y="694" font-size="17" font-weight="bold" fill="#FFF" text-anchor="middle">Mentés</text></g></svg>

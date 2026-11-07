@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="780" viewBox="0 0 400 780" font-family="Arial, sans-serif"><rect width="400" height="780" fill="#E9ECF2"/><g transform="translate(20,20)">
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <text x="20" y="44" font-size="22" font-weight="bold" fill="#222">Tranzakciók</text>
+    <rect x="16" y="62" width="328" height="40" rx="20" fill="#FFF" stroke="#DDD"/>
+    <text x="36" y="87" font-size="13" fill="#AAA">🔍  Keresés megjegyzésben</text>
+    <rect x="16" y="112" width="84" height="28" rx="14" fill="#1E3A5F"/><text x="58" y="131" font-size="11" fill="#FFF" text-anchor="middle">November ▾</text>
+    <rect x="106" y="112" width="64" height="28" rx="14" fill="#FFF" stroke="#CCC"/><text x="138" y="131" font-size="11" fill="#333" text-anchor="middle">Típus ▾</text>
+    <rect x="176" y="112" width="70" height="28" rx="14" fill="#FFF" stroke="#CCC"/><text x="211" y="131" font-size="11" fill="#333" text-anchor="middle">Számla ▾</text>
+    <rect x="252" y="112" width="92" height="28" rx="14" fill="#FFF" stroke="#CCC"/><text x="298" y="131" font-size="11" fill="#333" text-anchor="middle">Kategória ▾</text>
+
+    <text x="20" y="170" font-size="12" font-weight="bold" fill="#888">MA · NOV. 6.</text><text x="340" y="170" font-size="12" fill="#888" text-anchor="end">−15 700 Ft</text>
+    <rect x="16" y="178" width="328" height="100" rx="12" fill="#FFF"/>
+    <text x="32" y="204" font-size="13" fill="#222">Élelmiszer · Bevásárlás</text><text x="32" y="220" font-size="11" fill="#888">Bankkártya · Lidl</text>
+    <text x="330" y="212" font-size="13" font-weight="bold" fill="#C62828" text-anchor="end">−12 500 Ft</text>
+    <line x1="24" y1="230" x2="336" y2="230" stroke="#EEE"/>
+    <text x="32" y="254" font-size="13" fill="#222">Vásárlás · nasi+üdcsi</text><text x="32" y="270" font-size="11" fill="#888">Készpénz HUF</text>
+    <text x="330" y="262" font-size="13" font-weight="bold" fill="#C62828" text-anchor="end">−3 200 Ft</text>
+
+    <text x="20" y="308" font-size="12" font-weight="bold" fill="#888">TEGNAP · NOV. 5.</text>
+    <rect x="16" y="316" width="328" height="52" rx="12" fill="#FFF"/>
+    <text x="32" y="340" font-size="13" fill="#222">Váltás HUF → EUR</text><text x="32" y="356" font-size="11" fill="#888">100 000 Ft · 1 € = 399 Ft (kézi)</text>
+    <text x="330" y="348" font-size="13" font-weight="bold" fill="#1565C0" text-anchor="end">250,63 €</text>
+
+    <text x="20" y="398" font-size="12" font-weight="bold" fill="#888">NOV. 1.</text>
+    <rect x="16" y="406" width="328" height="100" rx="12" fill="#FFF"/>
+    <text x="32" y="432" font-size="13" fill="#222">Fizetés · Alapbér</text><text x="32" y="448" font-size="11" fill="#888">Bankszámla · ismétlődő ✓</text>
+    <text x="330" y="440" font-size="13" font-weight="bold" fill="#2E7D32" text-anchor="end">+620 000 Ft</text>
+    <line x1="24" y1="458" x2="336" y2="458" stroke="#EEE"/>
+    <text x="32" y="482" font-size="13" fill="#222">Lakhatás · Lakbér/albérlet</text><text x="32" y="498" font-size="11" fill="#888">Bankszámla · ismétlődő ✓</text>
+    <text x="330" y="490" font-size="13" font-weight="bold" fill="#C62828" text-anchor="end">−180 000 Ft</text>
+
+    <rect x="16" y="520" width="328" height="44" rx="12" fill="#FFEBEE"/>
+    <text x="32" y="547" font-size="12" fill="#C62828">← húzással törlés · koppintás: szerkesztés</text>
+
+    <rect x="0" y="680" width="360" height="60" fill="#FFF" stroke="#DDD"/>
+    <text x="45" y="716" font-size="12" fill="#666" text-anchor="middle">Főoldal</text>
+    <text x="135" y="716" font-size="12" font-weight="bold" fill="#1565C0" text-anchor="middle">Tranzakciók</text>
+    <text x="225" y="716" font-size="12" fill="#666" text-anchor="middle">Kimutatások</text>
+    <text x="315" y="716" font-size="12" fill="#666" text-anchor="middle">Továbbiak</text></g></svg>

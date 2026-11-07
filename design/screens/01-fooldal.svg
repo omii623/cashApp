@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="780" viewBox="0 0 400 780" font-family="Arial, sans-serif"><rect width="400" height="780" fill="#E9ECF2"/><g transform="translate(20,20)">
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <text x="20" y="44" font-size="22" font-weight="bold" fill="#222">Főoldal</text>
+    <text x="340" y="44" font-size="14" fill="#888" text-anchor="end">2026. november</text>
+
+    <rect x="16" y="64" width="328" height="110" rx="16" fill="#1E3A5F"/>
+    <text x="32" y="92" font-size="13" fill="#B8C7DD">Teljes egyenleg (HUF)</text>
+    <text x="32" y="128" font-size="30" font-weight="bold" fill="#FFF">1 245 300 Ft</text>
+    <text x="32" y="158" font-size="12" fill="#B8C7DD">820 000 Ft · 650 € · 45 000 din. · 300 $</text>
+
+    <rect x="16" y="186" width="104" height="60" rx="12" fill="#FFF"/>
+    <text x="28" y="208" font-size="11" fill="#888">Bevétel</text>
+    <text x="28" y="232" font-size="15" font-weight="bold" fill="#2E7D32">+620 000</text>
+    <rect x="128" y="186" width="104" height="60" rx="12" fill="#FFF"/>
+    <text x="140" y="208" font-size="11" fill="#888">Kiadás</text>
+    <text x="140" y="232" font-size="15" font-weight="bold" fill="#C62828">−410 500</text>
+    <rect x="240" y="186" width="104" height="60" rx="12" fill="#FFF"/>
+    <text x="252" y="208" font-size="11" fill="#888">Havi egyenleg</text>
+    <text x="252" y="232" font-size="15" font-weight="bold" fill="#222">+209 500</text>
+
+    <rect x="16" y="260" width="104" height="80" rx="16" fill="#2E7D32"/>
+    <text x="68" y="296" font-size="26" fill="#FFF" text-anchor="middle">+</text>
+    <text x="68" y="322" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">Bevétel</text>
+    <rect x="128" y="260" width="104" height="80" rx="16" fill="#C62828"/>
+    <text x="180" y="296" font-size="26" fill="#FFF" text-anchor="middle">−</text>
+    <text x="180" y="322" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">Kiadás</text>
+    <rect x="240" y="260" width="104" height="80" rx="16" fill="#1565C0"/>
+    <text x="292" y="296" font-size="24" fill="#FFF" text-anchor="middle">⇄</text>
+    <text x="292" y="322" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">Váltás</text>
+
+    <rect x="16" y="354" width="328" height="52" rx="12" fill="#FFF3E0" stroke="#FB8C00"/>
+    <text x="32" y="386" font-size="14" font-weight="bold" fill="#E65100">2 tétel jóváhagyásra vár</text>
+    <text x="328" y="386" font-size="18" fill="#E65100" text-anchor="end">›</text>
+
+    <text x="20" y="438" font-size="15" font-weight="bold" fill="#222">Legutóbbi tételek</text>
+    <rect x="16" y="450" width="328" height="210" rx="12" fill="#FFF"/>
+    <circle cx="40" cy="478" r="14" fill="#FFEBEE"/><text x="40" y="483" font-size="12" text-anchor="middle" fill="#C62828">É</text>
+    <text x="64" y="474" font-size="13" fill="#222">Élelmiszer · Bevásárlás</text><text x="64" y="490" font-size="11" fill="#888">Ma · Bankkártya</text>
+    <text x="330" y="482" font-size="13" font-weight="bold" fill="#C62828" text-anchor="end">−12 500 Ft</text>
+    <line x1="24" y1="502" x2="336" y2="502" stroke="#EEE"/>
+    <circle cx="40" cy="528" r="14" fill="#E3F2FD"/><text x="40" y="533" font-size="12" text-anchor="middle" fill="#1565C0">⇄</text>
+    <text x="64" y="524" font-size="13" fill="#222">Váltás HUF → EUR</text><text x="64" y="540" font-size="11" fill="#888">Tegnap · 1 € = 399 Ft</text>
+    <text x="330" y="532" font-size="13" font-weight="bold" fill="#1565C0" text-anchor="end">250,63 €</text>
+    <line x1="24" y1="552" x2="336" y2="552" stroke="#EEE"/>
+    <circle cx="40" cy="578" r="14" fill="#E8F5E9"/><text x="40" y="583" font-size="12" text-anchor="middle" fill="#2E7D32">F</text>
+    <text x="64" y="574" font-size="13" fill="#222">Fizetés · Alapbér</text><text x="64" y="590" font-size="11" fill="#888">Nov. 1. · Bankszámla</text>
+    <text x="330" y="582" font-size="13" font-weight="bold" fill="#2E7D32" text-anchor="end">+620 000 Ft</text>
+    <line x1="24" y1="602" x2="336" y2="602" stroke="#EEE"/>
+    <circle cx="40" cy="628" r="14" fill="#FFEBEE"/><text x="40" y="633" font-size="12" text-anchor="middle" fill="#C62828">K</text>
+    <text x="64" y="624" font-size="13" fill="#222">Közlekedés · Üzemanyag</text><text x="64" y="640" font-size="11" fill="#888">Okt. 30. · Készpénz RSD</text>
+    <text x="330" y="632" font-size="13" font-weight="bold" fill="#C62828" text-anchor="end">−6 000 din.</text>
+
+    <rect x="0" y="680" width="360" height="60" fill="#FFF" stroke="#DDD"/>
+    <text x="45" y="716" font-size="12" font-weight="bold" fill="#1565C0" text-anchor="middle">Főoldal</text>
+    <text x="135" y="716" font-size="12" fill="#666" text-anchor="middle">Tranzakciók</text>
+    <text x="225" y="716" font-size="12" fill="#666" text-anchor="middle">Kimutatások</text>
+    <text x="315" y="716" font-size="12" fill="#666" text-anchor="middle">Továbbiak</text></g></svg>

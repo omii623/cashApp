@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="780" viewBox="0 0 400 780" font-family="Arial, sans-serif"><rect width="400" height="780" fill="#E9ECF2"/><g transform="translate(20,20)">
+    <rect width="360" height="740" rx="24" fill="#F5F6FA" stroke="#BBB"/>
+    <rect x="0" y="0" width="360" height="64" rx="24" fill="#1565C0"/><rect x="0" y="30" width="360" height="34" fill="#1565C0"/>
+    <text x="20" y="42" font-size="20" font-weight="bold" fill="#FFF">←  Pénzváltás</text>
+
+    <rect x="16" y="84" width="328" height="100" rx="14" fill="#FFF"/>
+    <text x="32" y="110" font-size="12" fill="#888">Honnan</text>
+    <text x="32" y="134" font-size="15" fill="#222">Bankszámla · HUF ▾</text>
+    <text x="328" y="168" font-size="26" font-weight="bold" fill="#222" text-anchor="end">100 000 Ft</text>
+
+    <circle cx="180" cy="204" r="20" fill="#1565C0"/><text x="180" y="211" font-size="18" fill="#FFF" text-anchor="middle">⇅</text>
+
+    <rect x="16" y="224" width="328" height="100" rx="14" fill="#FFF"/>
+    <text x="32" y="250" font-size="12" fill="#888">Hová</text>
+    <text x="32" y="274" font-size="15" fill="#222">Készpénz · EUR ▾</text>
+    <text x="328" y="308" font-size="26" font-weight="bold" fill="#1565C0" text-anchor="end">250,63 €</text>
+
+    <rect x="16" y="340" width="328" height="150" rx="14" fill="#FFF" stroke="#1565C0"/>
+    <text x="32" y="366" font-size="12" fill="#888">Árfolyam</text>
+    <rect x="270" y="352" width="58" height="22" rx="11" fill="#FFF3E0"/><text x="299" y="367" font-size="11" fill="#E65100" text-anchor="middle">KÉZI</text>
+    <rect x="32" y="380" width="296" height="44" rx="8" fill="#F5F6FA" stroke="#CCC"/>
+    <text x="44" y="408" font-size="17" fill="#222">1 EUR = 399,00 HUF</text>
+    <text x="316" y="408" font-size="14" fill="#888" text-anchor="end">✎</text>
+    <text x="32" y="446" font-size="11" fill="#888">API: 401,20 · lekérve 2026.11.06. 09:12</text>
+    <rect x="32" y="456" width="150" height="26" rx="13" fill="#E3F2FD"/><text x="107" y="474" font-size="12" fill="#1565C0" text-anchor="middle">↻ Aktuális lekérése</text>
+
+    <rect x="16" y="504" width="328" height="50" rx="10" fill="#FFF"/>
+    <text x="28" y="522" font-size="11" fill="#888">Díj / jutalék (opcionális)</text><text x="28" y="542" font-size="14" fill="#222">0 Ft</text>
+
+    <rect x="16" y="660" width="328" height="56" rx="14" fill="#1565C0"/>
+    <text x="180" y="694" font-size="17" font-weight="bold" fill="#FFF" text-anchor="middle">Váltás mentése</text></g></svg>
