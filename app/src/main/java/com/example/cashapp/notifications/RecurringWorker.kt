@@ -33,10 +33,19 @@ class RecurringWorker(context: Context, params: WorkerParameters) : CoroutineWor
     companion object {
         private const val WORK_NAME = "recurring_daily"
 
-        /** Az értesítés kb. ebben az időpontban érkezik (a rendszer pár percet csúsztathat). */
+        /**
+         * A feladat első futását erre az időpontra igazítjuk. Ez csak a kezdeti késleltetést
+         * határozza meg: a periodikus WorkManager-feladat a további futásokat az előzőhöz képest
+         * ütemezi (rugalmas időablakkal, Doze/akkumulátorkímélés mellett késhet is), így az
+         * időpont idővel elcsúszhat. Pontos 08:00-s értesítés tehát nem garantált.
+         */
         private val NOTIFY_AT: LocalTime = LocalTime.of(8, 0)
 
-        /** Naponta egyszer fut; többszöri hívás nem hoz létre újabb feladatot. */
+        /**
+         * Naponta kb. egyszer fut; többszöri hívás nem hoz létre újabb feladatot.
+         * A [ExistingPeriodicWorkPolicy.KEEP] miatt a már meglévő feladat megmarad, ezért
+         * az ismételt hívás az elcsúszott időpontot sem igazítja vissza [NOTIFY_AT]-hoz.
+         */
         fun schedule(context: Context) {
             val now = LocalDateTime.now()
             var nextRun = now.toLocalDate().atTime(NOTIFY_AT)

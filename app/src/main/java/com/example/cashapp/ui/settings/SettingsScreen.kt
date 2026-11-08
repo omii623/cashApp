@@ -1,7 +1,6 @@
 package com.example.cashapp.ui.settings
 
 import com.example.cashapp.ui.components.currencyLabel
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,31 +14,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -231,141 +217,6 @@ fun SettingsScreen(state: SettingsUiState, actions: SettingsActions) {
         ResetStep.NONE -> Unit
     }
 }
-
-@Composable
-private fun languageLabel(lang: AppLanguage): String = when (lang) {
-    AppLanguage.SYSTEM -> stringResource(R.string.set_language_system)
-    // A nyelvek a saját nevükön szerepelnek, hogy idegen nyelvű felületen is megtalálhatók legyenek.
-    AppLanguage.HUNGARIAN -> "Magyar"
-    AppLanguage.ENGLISH -> "English"
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ThemeSelector(selected: ThemeMode, onSelect: (ThemeMode) -> Unit) {
-    val options = listOf(
-        ThemeMode.LIGHT to R.string.set_theme_light,
-        ThemeMode.DARK to R.string.set_theme_dark,
-        ThemeMode.SYSTEM to R.string.set_theme_system,
-    )
-    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-        options.forEachIndexed { i, (mode, label) ->
-            SegmentedButton(
-                selected = selected == mode,
-                onClick = { onSelect(mode) },
-                shape = SegmentedButtonDefaults.itemShape(i, options.size),
-            ) { Text(stringResource(label), maxLines = 1) }
-        }
-    }
-}
-
-@Composable
-private fun Section(@StringRes title: Int, content: @Composable () -> Unit) {
-    Text(
-        stringResource(title),
-        style = MaterialTheme.typography.labelLarge,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-    )
-    Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainer, modifier = Modifier.fillMaxWidth()) {
-        Column { content() }
-    }
-}
-
-@Composable
-private fun Divider() = HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-
-@Composable
-private fun <T> DropdownRow(
-    label: String,
-    value: String,
-    options: List<T>,
-    optionLabel: @Composable (T) -> String,
-    onSelect: (T) -> Unit,
-    hint: String? = null,
-) {
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        Row(
-            Modifier.fillMaxWidth().clickable { expanded = true }.padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(Modifier.weight(1f)) {
-                Text(label, style = MaterialTheme.typography.bodyLarge)
-                hint?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-            }
-            Text("$value ▾", color = MaterialTheme.colorScheme.secondary, style = MaterialTheme.typography.bodyLarge)
-        }
-        // A menü a jobb oldali érték alá nyíljon (ott van, amire a felhasználó koppint).
-        Box(Modifier.align(Alignment.BottomEnd).padding(end = 16.dp)) {
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                options.forEach { option ->
-                    DropdownMenuItem(text = { Text(optionLabel(option)) }, onClick = { expanded = false; onSelect(option) })
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SwitchRow(label: String, hint: String?, checked: Boolean, onChange: (Boolean) -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().clickable { onChange(!checked) }.padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(Modifier.weight(1f)) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
-            hint?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-        }
-        Switch(checked = checked, onCheckedChange = onChange)
-    }
-}
-
-/** [onClick] = null → még nem elérhető funkció (halványan, „Hamarosan…” felirattal). */
-@Composable
-private fun LinkRow(label: String, onClick: (() -> Unit)?) {
-    val enabled = onClick != null
-    Row(
-        Modifier.fillMaxWidth().clickable(enabled = enabled) { onClick?.invoke() }.padding(horizontal = 16.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            if (enabled) label else "$label – ${stringResource(R.string.coming_soon)}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = if (enabled) 1f else 0.4f),
-            modifier = Modifier.weight(1f),
-        )
-        if (enabled) Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null)
-    }
-}
-
-/** Második megerősítés: be kell gépelni egy szót, hogy véletlenül ne lehessen mindent törölni. */
-@Composable
-private fun TypeToConfirmDialog(word: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
-    var text by remember { mutableStateOf("") }
-    // Kis/nagybetű és ékezet nem számít („torles” = „TÖRLÉS”), hogy könnyű legyen begépelni.
-    val matches = text.trim().withoutAccents().equals(word.withoutAccents(), ignoreCase = true)
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.set_reset_title)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.set_reset_type_word, word))
-                OutlinedTextField(value = text, onValueChange = { text = it }, singleLine = true)
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm, enabled = matches) {
-                Text(stringResource(R.string.set_reset_all), color = if (matches) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f))
-            }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
-    )
-}
-
-private fun String.withoutAccents(): String =
-    java.text.Normalizer.normalize(this, java.text.Normalizer.Form.NFD).replace(Regex("\\p{Mn}+"), "")
 
 @Composable
 private fun appVersion(): String {

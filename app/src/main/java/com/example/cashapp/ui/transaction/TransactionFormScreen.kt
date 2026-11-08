@@ -2,13 +2,9 @@ package com.example.cashapp.ui.transaction
 
 import com.example.cashapp.ui.components.ConfirmDialog
 import androidx.compose.material.icons.filled.Delete
-import com.example.cashapp.ui.components.currencyLabel
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -26,30 +22,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,16 +42,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -75,16 +53,10 @@ import com.example.cashapp.R
 import com.example.cashapp.ui.components.SaveErrorDialog
 import com.example.cashapp.domain.model.TransactionType
 import com.example.cashapp.ui.AppViewModelProvider
-import com.example.cashapp.ui.components.CategoryBadge
-import com.example.cashapp.ui.components.CategorySymbol
 import com.example.cashapp.ui.components.DateField
 import com.example.cashapp.ui.components.DropdownSelector
-import com.example.cashapp.ui.components.SelectorField
 import com.example.cashapp.ui.theme.CashTheme
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun TransactionFormRoute(
@@ -237,191 +209,3 @@ fun TransactionFormScreen(
         )
     }
 }
-
-@Composable
-private fun AmountSection(
-    state: TransactionFormUiState,
-    onAmountChange: (String) -> Unit,
-    onCurrencySelect: (String) -> Unit,
-) {
-    val focus = remember { FocusRequester() }
-    LaunchedEffect(Unit) { focus.requestFocus() }
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        TextField(
-            value = state.amountText,
-            onValueChange = onAmountChange,
-            placeholder = {
-                Text(
-                    stringResource(R.string.form_amount_hint),
-                    style = MaterialTheme.typography.displaySmall,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            },
-            textStyle = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold, textAlign = TextAlign.Center),
-            suffix = { Text(state.currency?.symbol ?: "", style = MaterialTheme.typography.headlineSmall) },
-            singleLine = true,
-            isError = state.amountError,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                errorContainerColor = Color.Transparent,
-            ),
-            modifier = Modifier.fillMaxWidth().focusRequester(focus),
-        )
-        if (state.amountError) ErrorText(stringResource(R.string.form_amount_error))
-        CurrencyChip(state, onCurrencySelect)
-    }
-}
-
-@Composable
-private fun CurrencyChip(state: TransactionFormUiState, onSelect: (String) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    Box(Modifier.padding(top = 8.dp)) {
-        Surface(
-            onClick = { expanded = true },
-            shape = RoundedCornerShape(50),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            color = MaterialTheme.colorScheme.surfaceContainer,
-        ) {
-            Text("${state.currency?.code ?: ""} ▾", Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            state.currencies.forEach { c ->
-                DropdownMenuItem(
-                    text = { Text(currencyLabel(c)) },
-                    onClick = { expanded = false; onSelect(c.code) },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun RateSection(rate: RateField, onRateChange: (String) -> Unit, onRateReset: () -> Unit) {
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        border = BorderStroke(1.dp, CashTheme.colors.exchange),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    stringResource(R.string.form_rate),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
-                if (!rate.isDefault && !rate.noStoredRate) {
-                    Text(
-                        stringResource(R.string.form_rate_manual),
-                        color = CashTheme.colors.warning,
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    IconButton(onClick = onRateReset) {
-                        Icon(Icons.Filled.Restore, stringResource(R.string.form_rate_reset))
-                    }
-                }
-            }
-            OutlinedTextField(
-                value = rate.text,
-                onValueChange = onRateChange,
-                prefix = { Text("1 ${rate.leftCode} = ") },
-                suffix = { Text(rate.rightCode) },
-                singleLine = true,
-                isError = rate.error,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            when {
-                rate.error -> ErrorText(stringResource(R.string.form_rate_error))
-                rate.noStoredRate && rate.text.isEmpty() ->
-                    Text(stringResource(R.string.form_rate_missing), color = CashTheme.colors.warning, style = MaterialTheme.typography.bodySmall)
-            }
-            rate.accountAmountPreview?.let {
-                Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-    }
-}
-
-/** 3 oszlopos kategória-rács (a látványterv csempéi). */
-@Composable
-fun CategoryGrid(
-    categories: List<CategoryOption>,
-    selectedId: Long?,
-    accent: Color,
-    onSelect: (Long) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        categories.chunked(3).forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                row.forEach { cat ->
-                    val selected = cat.id == selectedId
-                    Surface(
-                        onClick = { onSelect(cat.id) },
-                        shape = RoundedCornerShape(10.dp),
-                        color = if (selected) accent else MaterialTheme.colorScheme.surfaceContainer,
-                        contentColor = if (selected) Color.White else MaterialTheme.colorScheme.onSurface,
-                        border = if (selected) null else BorderStroke(1.dp, Color(cat.color).copy(alpha = 0.5f)),
-                        modifier = Modifier.weight(1f).height(72.dp),
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                        ) {
-                            // Kijelölve fehér jel a színes csempén, különben a kategória színes köre.
-                            if (selected) CategorySymbol(cat.icon, Color.White, cat.name, size = 28.dp)
-                            else CategoryBadge(cat.icon, Color(cat.color), cat.name, size = 28.dp)
-                            Text(
-                                cat.name,
-                                style = MaterialTheme.typography.bodySmall,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(top = 4.dp),
-                            )
-                        }
-                    }
-                }
-                // Hiányos utolsó sor kitöltése, hogy a csempék egyforma szélesek maradjanak.
-                repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun SubcategoryChips(
-    items: List<SubcategoryOption>,
-    selectedId: Long?,
-    accent: Color,
-    onSelect: (Long) -> Unit,
-) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        items.forEach { sub ->
-            FilterChip(
-                selected = sub.id == selectedId,
-                onClick = { onSelect(sub.id) },
-                label = { Text(sub.name) },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = accent.copy(alpha = 0.18f),
-                    selectedLabelColor = accent,
-                ),
-            )
-        }
-    }
-}
-
-@Composable
-private fun SectionLabel(text: String) =
-    Text(text, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-
-@Composable
-private fun ErrorText(text: String) =
-    Text(text, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
