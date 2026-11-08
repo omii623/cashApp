@@ -3,6 +3,7 @@ package com.example.cashapp.data.local.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.cashapp.data.local.entity.BudgetEntity
@@ -75,7 +76,8 @@ interface RecurringDao {
     @Delete
     suspend fun deleteRule(rule: RecurringRuleEntity)
 
-    @Insert
+    /** A már létező (ruleId, dueDate) tételt kihagyja – így az ismételt generálás nem duplikál. */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPendingAll(items: List<PendingRecurringEntity>)
 
     @Update

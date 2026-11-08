@@ -44,7 +44,7 @@ import java.time.LocalDate
         PendingRecurringEntity::class,
         BudgetEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -80,7 +80,36 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2)
+    /**
+     * v2 → v3: egyedi index a pending_recurring (ruleId, dueDate) párosra.
+     * Előtte a duplikátumokat töröljük: esedékességenként a már elbírált (nem PENDING) sor marad,
+     * ha nincs ilyen, a legkisebb azonosítójú.
+     */
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                DELETE FROM pending_recurring
+                WHERE id NOT IN (
+                    SELECT (
+                        SELECT p2.id FROM pending_recurring p2
+                        WHERE p2.ruleId = p1.ruleId AND p2.dueDate = p1.dueDate
+                        ORDER BY CASE WHEN p2.status = 'PENDING' THEN 1 ELSE 0 END, p2.id
+                        LIMIT 1
+                    )
+                    FROM pending_recurring p1
+                    GROUP BY p1.ruleId, p1.dueDate
+                )
+                """.trimIndent()
+            )
+            db.execSQL(
+                "CREATE UNIQUE INDEX IF NOT EXISTS `index_pending_recurring_ruleId_dueDate` " +
+                    "ON `pending_recurring` (`ruleId`, `dueDate`)"
+            )
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
 }
 
 class Converters {

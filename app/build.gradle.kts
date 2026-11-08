@@ -23,6 +23,8 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0.0+$gitHash"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     androidResources {
@@ -45,6 +47,10 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    sourceSets {
+        // A migrációs tesztek (MigrationTestHelper) az exportált séma JSON-okból dolgoznak.
+        getByName("androidTest").assets.directories.add("$projectDir/schemas")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -85,4 +91,15 @@ dependencies {
     testImplementation(libs.junit)
     // valódi org.json a unit tesztekhez (az android.jar-ban csak üres csonk van)
     testImplementation("org.json:json:20240303")
+
+    // Műszeres tesztek (migráció, DAO, mentés)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    constraints {
+        // A room-testing (séma JSON beolvasás) legalább 1.8.1-et igényel; az app futási classpath-ja
+        // 1.7.3-at hozna, és a teszt APK-nak ahhoz kell igazodnia → AbstractMethodError.
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
+    }
 }

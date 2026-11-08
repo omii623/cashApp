@@ -183,7 +183,11 @@ data class RecurringRuleEntity(
         ForeignKey(RecurringRuleEntity::class, ["id"], ["ruleId"], onDelete = ForeignKey.CASCADE),
         ForeignKey(TransactionEntity::class, ["id"], ["transactionId"], onDelete = ForeignKey.SET_NULL),
     ],
-    indices = [Index("ruleId"), Index("transactionId"), Index("status")],
+    indices = [
+        Index("ruleId"), Index("transactionId"), Index("status"),
+        // Egy szabály egy esedékességéhez legfeljebb egy tétel (DB v3 óta) – kétszeri generálás se duplikáljon.
+        Index("ruleId", "dueDate", unique = true),
+    ],
 )
 data class PendingRecurringEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
