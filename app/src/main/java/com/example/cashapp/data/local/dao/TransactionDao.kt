@@ -13,6 +13,7 @@ import com.example.cashapp.data.local.model.CategoryCurrencyTotal
 import com.example.cashapp.data.local.model.GroupTotal
 import com.example.cashapp.data.local.model.TransactionListItem
 import com.example.cashapp.data.local.model.TypeCurrencyTotal
+import com.example.cashapp.domain.model.TransactionType
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 
@@ -169,6 +170,25 @@ interface TransactionDao {
     suspend fun updateExchange(transaction: TransactionEntity, detail: ExchangeDetailEntity) {
         update(transaction)
         updateExchangeDetail(detail.copy(transactionId = transaction.id))
+    }
+
+    /**
+     * Meglévő bevétel/kiadás módosítása egy tranzakcióban: az eredeti beolvasása és a
+     * felülírás atomi. A létrehozási idő és az ismétlődő-szabály hivatkozás megmarad.
+     */
+    @Transaction
+    suspend fun updateIncomeOrExpenseKeepingMeta(id: Long, edited: TransactionEntity) {
+        val original = checkNotNull(getById(id)) { "Nincs ilyen tétel: $id" }
+        require(original.type == edited.type) { "A tétel típusa nem változhat" }
+        update(edited.copy(id = id, createdAt = original.createdAt, recurringRuleId = original.recurringRuleId))
+    }
+
+    /** Meglévő váltás módosítása egy tranzakcióban, az eredeti létrehozási idő megtartásával. */
+    @Transaction
+    suspend fun updateExchangeKeepingMeta(id: Long, transaction: TransactionEntity, detail: ExchangeDetailEntity) {
+        val original = checkNotNull(getById(id)) { "Nincs ilyen tétel: $id" }
+        require(original.type == TransactionType.EXCHANGE)
+        updateExchange(transaction.copy(id = id, createdAt = original.createdAt), detail)
     }
 
     /** Váltás mentése egy tranzakcióban: forrás tétel (díjjal együtt) + cél oldal. */

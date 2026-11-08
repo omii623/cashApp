@@ -69,4 +69,61 @@ class CurrencyConverterTest {
         assertEquals(820_000L + 260_000L, sum.totalMinor)
         assertEquals(setOf("RSD"), sum.missingCurrencies)
     }
+
+    @Test fun `keresztárfolyam közbenső pénzneme EUR, a megadás sorrendjétől függetlenül`() {
+        // HUF→RSD USD-n és EUR-on át is számolható, eltérő eredménnyel.
+        val rates = listOf(
+            ExchangeRate("USD", "HUF", 300.0),
+            ExchangeRate("USD", "RSD", 100.0),
+            ExchangeRate("EUR", "HUF", 400.0),
+            ExchangeRate("EUR", "RSD", 117.0),
+        )
+        listOf(rates, rates.reversed()).forEach { r ->
+            val c = CurrencyConverter(r, decimalsOf = { decimals.getValue(it) })
+            assertEquals(117.0 / 400.0, c.rate("HUF", "RSD")!!, 1e-12)
+        }
+    }
+
+    @Test fun `EUR híján ábécérendben az első közbenső pénznem`() {
+        val rates = listOf(
+            ExchangeRate("USD", "HUF", 300.0),
+            ExchangeRate("USD", "RSD", 100.0),
+            ExchangeRate("CHF", "HUF", 420.0),
+            ExchangeRate("CHF", "RSD", 120.0),
+        )
+        listOf(rates, rates.reversed()).forEach { r ->
+            val c = CurrencyConverter(r, decimalsOf = { 0 }, preferredPivots = emptyList())
+            assertEquals(120.0 / 420.0, c.rate("HUF", "RSD")!!, 1e-12)
+        }
+    }
+
+    @Test fun `megadott előnyben részesített közbenső pénznem`() {
+        val c = CurrencyConverter(
+            listOf(
+                ExchangeRate("USD", "HUF", 300.0),
+                ExchangeRate("USD", "RSD", 100.0),
+                ExchangeRate("EUR", "HUF", 400.0),
+                ExchangeRate("EUR", "RSD", 117.0),
+            ),
+            decimalsOf = { 0 },
+            preferredPivots = listOf("USD"),
+        )
+        assertEquals(100.0 / 300.0, c.rate("HUF", "RSD")!!, 1e-12)
+    }
+
+    @Test fun `kerekítés fél-felfelé, bináris pontatlanság nélkül`() {
+        // 1,005 * 100 Double-ben 100,49999…, decimálisan pontosan 100,5 → 101.
+        assertEquals(101L, CurrencyConverter.convertWithRate(10_000, 2, 0, 1.005))
+        assertEquals(1L, CurrencyConverter.convertWithRate(5, 1, 0, 1.0)) // 0,5 → 1
+        assertEquals(-1L, CurrencyConverter.convertWithRate(-5, 1, 0, 1.0)) // -0,5 → -1
+        assertEquals(0L, CurrencyConverter.convertWithRate(4, 1, 0, 1.0))
+        assertEquals(3_990_000L, CurrencyConverter.convertWithRate(1_000_000, 2, 0, 399.0))
+        assertEquals(250_000L, CurrencyConverter.convertWithRate(1_000_000, 0, 2, 0.0025)) // 1 000 000 Ft → 2 500,00 €
+    }
+
+    @Test fun `túlcsordulás a Long határára vágva`() {
+        assertEquals(Long.MAX_VALUE, CurrencyConverter.convertWithRate(Long.MAX_VALUE, 0, 2, 400.0))
+        assertEquals(Long.MIN_VALUE, CurrencyConverter.convertWithRate(Long.MIN_VALUE, 0, 2, 400.0))
+        assertEquals(Long.MAX_VALUE, CurrencyConverter.convertWithRate(Long.MAX_VALUE, 0, 0, 1.0))
+    }
 }

@@ -42,21 +42,17 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
 
     /**
      * Meglévő bevétel/kiadás módosítása. Az eredeti létrehozási idő és ismétlődő-szabály
-     * hivatkozás megmarad (azokat az űrlap nem szerkeszti).
+     * hivatkozás megmarad (azokat az űrlap nem szerkeszti). A beolvasás és írás atomi.
      */
     suspend fun updateIncomeOrExpense(id: Long, edited: TransactionEntity) {
-        val original = checkNotNull(transactionDao.getById(id)) { "Nincs ilyen tétel: $id" }
-        require(original.type == edited.type) { "A tétel típusa nem változhat" }
         require(edited.amountMinor > 0 && edited.accountAmountMinor > 0) { "Az összeg legyen pozitív" }
-        transactionDao.update(edited.copy(id = id, createdAt = original.createdAt, recurringRuleId = original.recurringRuleId))
+        transactionDao.updateIncomeOrExpenseKeepingMeta(id, edited)
     }
 
-    /** Meglévő váltás módosítása (forrás tétel + cél oldal). */
+    /** Meglévő váltás módosítása (forrás tétel + cél oldal), egy adatbázis-tranzakcióban. */
     suspend fun updateExchange(id: Long, transaction: TransactionEntity, detail: ExchangeDetailEntity) {
-        val original = checkNotNull(transactionDao.getById(id)) { "Nincs ilyen tétel: $id" }
-        require(original.type == TransactionType.EXCHANGE)
         validateExchange(transaction, detail)
-        transactionDao.updateExchange(transaction.copy(id = id, createdAt = original.createdAt), detail)
+        transactionDao.updateExchangeKeepingMeta(id, transaction, detail)
     }
 
     /** Bevétel vagy kiadás mentése (a váltásnak cél oldala is van → [saveExchange]). */
