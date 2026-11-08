@@ -10,3 +10,22 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+# Room: entitások, DAO-k és az adatbázis osztály (a generált kód reflexióval példányosítja a _Impl-t).
+-keep class * extends androidx.room.RoomDatabase { <init>(); }
+-keep @androidx.room.Entity class com.example.cashapp.data.local.entity.** { *; }
+-keep class com.example.cashapp.data.local.Converters { *; }
+
+# WorkManager: a workert osztálynév alapján, reflexióval példányosítja.
+-keep class com.example.cashapp.notifications.RecurringWorker {
+    public <init>(android.content.Context, androidx.work.WorkerParameters);
+}
+
+# Név szerint tárolt enumok (Room / mentés JSON): a konstansnevek ne változzanak.
+-keepclassmembers enum com.example.cashapp.** {
+    <fields>;
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# org.json: a platform része, nem kell figyelmeztetni rá.
+-dontwarn org.json.**

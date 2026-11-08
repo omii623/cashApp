@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older than API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Automatikus mentés szabályai Android 11 (API 30) és régebbi rendszereken.
+   API 31+ esetén a data_extraction_rules.xml érvényes – a kettőt összhangban kell tartani.
+   Csak az adatbázis (cashapp.db + WAL/SHM) és a DataStore beállítások kerülnek mentésre.
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <include domain="database" path="cashapp.db" />
+    <include domain="database" path="cashapp.db-wal" />
+    <include domain="database" path="cashapp.db-shm" />
+    <include domain="file" path="datastore/settings.preferences_pb" />
 </full-backup-content>

@@ -32,10 +32,16 @@ android {
 
     buildTypes {
         release {
+            // R8: kódzsugorítás, obfuszkálás és erőforrás-zsugorítás (keepRules/rules.keep).
             optimization {
-                enable = false
+                enable = true
             }
+            isShrinkResources = true
         }
+    }
+    lint {
+        // Már meglévő lint hibák rögzítve; új hibák továbbra is elbuktatják a CI-t.
+        baseline = file("lint-baseline.xml")
     }
     buildFeatures {
         compose = true
