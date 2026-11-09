@@ -10,6 +10,9 @@ import java.time.YearMonth
 /** Kimutatások számításai (alap pénznemben). Androidtól független, unit tesztelt. */
 object ReportCalculator {
 
+    /** A kategória-bontásban a magánkölcsön-mozgások csoportjának azonosítója (valódi kategória id-ja sosem negatív). */
+    const val LOAN_GROUP_ID = -1L
+
     /** Egy kategória (vagy alkategória) összege egy pénznemben. `id` = null → nincs besorolva. */
     data class GroupAmount(val id: Long?, val currencyCode: String, val amountMinor: Long)
 

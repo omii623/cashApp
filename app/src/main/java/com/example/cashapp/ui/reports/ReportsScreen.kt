@@ -188,6 +188,7 @@ private fun BreakdownCard(state: ReportsUiState, vm: ReportsViewModel) {
                     color = colors[i],
                     name = when {
                         s.isOther -> stringResource(R.string.rep_other)
+                        s.isLoans -> stringResource(R.string.more_loans)
                         s.name.isNotBlank() -> s.name
                         state.drillName != null -> stringResource(R.string.rep_no_subcategory)
                         else -> stringResource(R.string.rep_uncategorized)

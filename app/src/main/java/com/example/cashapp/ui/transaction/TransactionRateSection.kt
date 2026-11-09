@@ -27,7 +27,12 @@ import com.example.cashapp.R
 import com.example.cashapp.ui.theme.CashTheme
 
 @Composable
-internal fun RateSection(rate: RateField, onRateChange: (String) -> Unit, onRateReset: () -> Unit) {
+internal fun RateSection(
+    rate: RateField,
+    onRateChange: (String) -> Unit,
+    onRateReset: () -> Unit,
+    title: String = stringResource(R.string.form_rate),
+) {
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceContainer,
@@ -37,7 +42,7 @@ internal fun RateSection(rate: RateField, onRateChange: (String) -> Unit, onRate
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    stringResource(R.string.form_rate),
+                    title,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f),

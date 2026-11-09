@@ -7,6 +7,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.cashapp.domain.model.CategoryType
 import com.example.cashapp.domain.model.Currency
+import com.example.cashapp.domain.model.LoanDirection
+import com.example.cashapp.domain.model.LoanOpeningPart
 import com.example.cashapp.domain.model.PendingStatus
 import com.example.cashapp.domain.model.RateSource
 import com.example.cashapp.domain.model.RecurrenceFrequency
@@ -85,10 +87,11 @@ data class SubcategoryEntity(
         ForeignKey(CategoryEntity::class, ["id"], ["categoryId"]),
         ForeignKey(SubcategoryEntity::class, ["id"], ["subcategoryId"], onDelete = ForeignKey.SET_NULL),
         ForeignKey(RecurringRuleEntity::class, ["id"], ["recurringRuleId"], onDelete = ForeignKey.SET_NULL),
+        ForeignKey(LoanEntity::class, ["id"], ["loanId"]),
     ],
     indices = [
         Index("accountId"), Index("currencyCode"), Index("categoryId"),
-        Index("subcategoryId"), Index("recurringRuleId"), Index("date"),
+        Index("subcategoryId"), Index("recurringRuleId"), Index("date"), Index("loanId"),
     ],
 )
 data class TransactionEntity(
@@ -105,6 +108,47 @@ data class TransactionEntity(
     val note: String = "",
     val recurringRuleId: Long? = null,
     val createdAt: Long = System.currentTimeMillis(),
+    /** Magánkölcsön mozgása (kölcsön / törlesztés); bevételként / kiadásként a kimutatásokban is szerepel. */
+    val loanId: Long? = null,
+    /**
+     * Ha nem null: a kölcsön nyitó adatából (összeg / már visszafizetett rész) könyvelt tétel.
+     * Ezt a kölcsön szerkesztője kezeli, és a hátralékba nem számít külön (a nyitó mezők már tartalmazzák).
+     */
+    val loanOpening: LoanOpeningPart? = null,
+    /**
+     * Kölcsön mozgásánál az összeg a **kölcsön pénznemében** (a hátralék ebből számol). Más pénznemű
+     * visszafizetésnél / számlánál eltérhet az [amountMinor]-tól és az [accountAmountMinor]-tól.
+     */
+    val loanAmountMinor: Long? = null,
+)
+
+/**
+ * Magánkölcsön (barát, családtag – kamat nélkül).
+ * - [openingAmountMinor]: a rögzítés előtt már létrejött kölcsön összege (nem mozgat számlát).
+ * - [openingRepaidMinor]: ebből a rögzítés előtt már visszafizetett rész (≤ [openingAmountMinor]).
+ * - [closedDate]: ha nem null, a kölcsön le van zárva (a maradék hátralék leírva, nem könyvel semmit).
+ * - [color] / [icon]: jelölés, mint a kategóriáknál (ikon kulcs vagy `letter:` + betű). Null → az irány
+ *   színe és a név első betűje.
+ * - A további mozgások a [TransactionEntity.loanId]-val hivatkozó tételek; a hátralék ezekből számolódik.
+ */
+@Entity(
+    tableName = "loans",
+    foreignKeys = [ForeignKey(CurrencyEntity::class, ["code"], ["currencyCode"])],
+    indices = [Index("currencyCode")],
+)
+data class LoanEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val personName: String,
+    val direction: LoanDirection,
+    val currencyCode: String,
+    val openingAmountMinor: Long = 0,
+    val openingRepaidMinor: Long = 0,
+    val startDate: LocalDate,
+    val note: String = "",
+    val createdAt: Long = System.currentTimeMillis(),
+    val closedDate: LocalDate? = null,
+    val color: Long? = null,
+    val icon: String? = null,
 )
 
 /** Váltás cél oldala (1:1 a [TransactionEntity]-vel, ahol type = EXCHANGE). */

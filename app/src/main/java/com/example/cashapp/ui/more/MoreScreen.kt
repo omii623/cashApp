@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Settings
@@ -38,6 +39,7 @@ fun MoreScreen(
     onAccounts: () -> Unit,
     onCategories: () -> Unit,
     onRecurring: () -> Unit,
+    onLoans: () -> Unit,
     onCurrencies: () -> Unit,
     onSettings: () -> Unit,
 ) {
@@ -45,6 +47,7 @@ fun MoreScreen(
         MoreEntry(R.string.more_accounts, Icons.Filled.AccountBalanceWallet, onAccounts),
         MoreEntry(R.string.more_categories, Icons.Filled.Category, onCategories),
         MoreEntry(R.string.more_recurring, Icons.Filled.Repeat, onRecurring),
+        MoreEntry(R.string.more_loans_hub, Icons.Filled.Payments, onLoans),
         MoreEntry(R.string.more_currencies, Icons.Filled.CurrencyExchange, onCurrencies),
         MoreEntry(R.string.more_settings, Icons.Filled.Settings, onSettings),
     )
@@ -55,29 +58,35 @@ fun MoreScreen(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp),
         )
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            entries.forEachIndexed { i, entry ->
-                if (i > 0) HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-                val enabled = entry.onClick != null
-                val alpha = if (enabled) 1f else 0.4f
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            stringResource(entry.label) + if (enabled) "" else " – " + stringResource(R.string.coming_soon),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
-                        )
-                    },
-                    leadingContent = { Icon(entry.icon, null, tint = MaterialTheme.colorScheme.primary.copy(alpha = alpha)) },
-                    trailingContent = if (enabled) ({ Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) }) else null,
-                    colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                    modifier = Modifier.fillMaxWidth().then(
-                        if (enabled) Modifier.clickable { entry.onClick?.invoke() } else Modifier
-                    ),
-                )
-            }
+        MenuCard(entries)
+    }
+}
+
+/** Menüpontok kártyája (Továbbiak, Kölcsönök). Az [MoreEntry.onClick] = null elem szürke és nem nyitható. */
+@Composable
+fun MenuCard(entries: List<MoreEntry>) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        entries.forEachIndexed { i, entry ->
+            if (i > 0) HorizontalDivider(Modifier.padding(horizontal = 16.dp))
+            val enabled = entry.onClick != null
+            val alpha = if (enabled) 1f else 0.4f
+            ListItem(
+                headlineContent = {
+                    Text(
+                        stringResource(entry.label) + if (enabled) "" else " – " + stringResource(R.string.coming_soon),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+                    )
+                },
+                leadingContent = { Icon(entry.icon, null, tint = MaterialTheme.colorScheme.primary.copy(alpha = alpha)) },
+                trailingContent = if (enabled) ({ Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) }) else null,
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                modifier = Modifier.fillMaxWidth().then(
+                    if (enabled) Modifier.clickable { entry.onClick?.invoke() } else Modifier
+                ),
+            )
         }
     }
 }

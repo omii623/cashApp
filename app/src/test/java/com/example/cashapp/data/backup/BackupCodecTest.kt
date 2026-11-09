@@ -73,13 +73,19 @@ class CsvExportTest {
     @Test fun `fejléc és sor`() {
         val l = lines(row(note = "Lidl"))
         assertTrue(l[0].startsWith("Dátum;Típus;Összeg"))
-        assertEquals("2026-11-07;Kiadás;12500;HUF;Bankszámla;12500;HUF;Élelmiszer;Bevásárlás;;;;;;Lidl", l[1])
+        assertEquals("2026-11-07;Kiadás;12500;HUF;Bankszámla;12500;HUF;Élelmiszer;Bevásárlás;;;;;;Lidl;", l[1])
+    }
+
+    @Test fun `kölcsön oszlop`() {
+        val l = lines(row(note = "").copy(categoryName = null, subcategoryName = null, loanName = "Pisti"))
+        assertTrue(l[0].endsWith(";Megjegyzés;Kölcsön"))
+        assertTrue(l[1].endsWith(";Pisti"))
     }
 
     @Test fun `tizedesvessző`() = assertTrue(lines(row(amount = 1299, cur = "EUR"))[1].contains(";12,99;EUR;"))
 
     @Test fun `pontosvessző és idézőjel escape`() =
-        assertTrue(lines(row(note = "a;b \"c\""))[1].endsWith(";\"a;b \"\"c\"\"\""))
+        assertTrue(lines(row(note = "a;b \"c\""))[1].endsWith(";\"a;b \"\"c\"\"\";"))
 
     @Test fun `BOM az elején`() = assertTrue(CsvExport.build(emptyList()) { 0 }.startsWith("﻿"))
 }

@@ -55,9 +55,28 @@ class MigrationTest {
     }
 
     @Test
-    fun migrate1To3_teljesLanc() {
+    fun migrate3To4_loansTablaEsLoanIdOszlop() {
+        helper.createDatabase(dbName, 3).use { db ->
+            db.execSQL("INSERT INTO currencies (code, name, symbol, decimals, isActive, sortOrder) VALUES ('HUF', 'Forint', 'Ft', 0, 1, 0)")
+            db.execSQL("INSERT INTO accounts (id, name, currencyCode, initialBalanceMinor, color, icon, sortOrder, isArchived) VALUES (1, 'K', 'HUF', 0, 0, 'cash', 0, 0)")
+            db.execSQL(
+                "INSERT INTO transactions (id, type, date, amountMinor, currencyCode, accountId, accountAmountMinor, note, createdAt) " +
+                    "VALUES (1, 'EXPENSE', 100, 500, 'HUF', 1, 500, '', 0)"
+            )
+        }
+        helper.runMigrationsAndValidate(dbName, 4, true, Migrations.MIGRATION_3_4).use { db ->
+            db.query("SELECT loanId FROM transactions WHERE id = 1").use { c ->
+                c.moveToFirst()
+                assertEquals(true, c.isNull(0))
+            }
+            db.query("SELECT COUNT(*) FROM loans").use { c -> c.moveToFirst(); assertEquals(0, c.getInt(0)) }
+        }
+    }
+
+    @Test
+    fun migrate1To4_teljesLanc() {
         helper.createDatabase(dbName, 1).close()
-        helper.runMigrationsAndValidate(dbName, 3, true, *Migrations.ALL).close()
+        helper.runMigrationsAndValidate(dbName, 4, true, *Migrations.ALL).close()
         // A Room is meg tudja nyitni a migrált adatbázist (séma-ellenőrzéssel).
         Room.databaseBuilder(InstrumentationRegistry.getInstrumentation().targetContext, CashDatabase::class.java, dbName)
             .addMigrations(*Migrations.ALL)

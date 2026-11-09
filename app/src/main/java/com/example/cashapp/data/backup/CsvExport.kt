@@ -20,6 +20,8 @@ data class CsvRow(
     val rate: Double?,
     val feeMinor: Long?,
     val note: String,
+    /** Magánkölcsön mozgásánál a másik fél neve. */
+    val loanName: String? = null,
 )
 
 /**
@@ -32,7 +34,7 @@ object CsvExport {
 
     private val HEADER = listOf(
         "Dátum", "Típus", "Összeg", "Pénznem", "Számla", "Összeg a számla pénznemében", "Számla pénzneme",
-        "Kategória", "Alkategória", "Cél számla", "Cél összeg", "Cél pénznem", "Árfolyam", "Díj", "Megjegyzés",
+        "Kategória", "Alkategória", "Cél számla", "Cél összeg", "Cél pénznem", "Árfolyam", "Díj", "Megjegyzés", "Kölcsön",
     )
 
     private val TYPE_NAMES = mapOf("INCOME" to "Bevétel", "EXPENSE" to "Kiadás", "EXCHANGE" to "Váltás")
@@ -58,6 +60,7 @@ object CsvExport {
                     r.rate?.let { BigDecimal.valueOf(it).round(MathContext(8)).stripTrailingZeros().toPlainString().replace('.', ',') }.orEmpty(),
                     r.feeMinor?.takeIf { it > 0 }?.let { money(it, decimalsOf(r.currencyCode)) }.orEmpty(),
                     r.note,
+                    r.loanName.orEmpty(),
                 ).joinToString(SEP) { escape(it) }
             )
         }

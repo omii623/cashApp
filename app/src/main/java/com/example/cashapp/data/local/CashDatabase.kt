@@ -12,6 +12,7 @@ import com.example.cashapp.data.local.dao.AccountDao
 import com.example.cashapp.data.local.dao.BudgetDao
 import com.example.cashapp.data.local.dao.CategoryDao
 import com.example.cashapp.data.local.dao.CurrencyDao
+import com.example.cashapp.data.local.dao.LoanDao
 import com.example.cashapp.data.local.dao.ExchangeRateDao
 import com.example.cashapp.data.local.dao.RecurringDao
 import com.example.cashapp.data.local.dao.TransactionDao
@@ -21,6 +22,7 @@ import com.example.cashapp.data.local.entity.CategoryEntity
 import com.example.cashapp.data.local.entity.CurrencyEntity
 import com.example.cashapp.data.local.entity.ExchangeDetailEntity
 import com.example.cashapp.data.local.entity.ExchangeRateEntity
+import com.example.cashapp.data.local.entity.LoanEntity
 import com.example.cashapp.data.local.entity.PendingRecurringEntity
 import com.example.cashapp.data.local.entity.RecurringRuleEntity
 import com.example.cashapp.data.local.entity.SubcategoryEntity
@@ -43,8 +45,9 @@ import java.time.LocalDate
         RecurringRuleEntity::class,
         PendingRecurringEntity::class,
         BudgetEntity::class,
+        LoanEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -56,6 +59,7 @@ abstract class CashDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
     abstract fun recurringDao(): RecurringDao
     abstract fun budgetDao(): BudgetDao
+    abstract fun loanDao(): LoanDao
 
     companion object {
         private const val NAME = "cashapp.db"
@@ -109,7 +113,31 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
+    /**
+     * v3 → v4: magánkölcsönök. Új `loans` tábla, és a tételek opcionálisan egy kölcsönhöz
+     * tartozhatnak (transactions.loanId). A meglévő tételek loanId-ja NULL marad.
+     */
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `loans` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`personName` TEXT NOT NULL, `direction` TEXT NOT NULL, `currencyCode` TEXT NOT NULL, " +
+                    "`openingAmountMinor` INTEGER NOT NULL, `openingRepaidMinor` INTEGER NOT NULL, `startDate` INTEGER NOT NULL, `note` TEXT NOT NULL, " +
+                    "`createdAt` INTEGER NOT NULL, `closedDate` INTEGER, `color` INTEGER, `icon` TEXT, " +
+                    "FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION )"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_loans_currencyCode` ON `loans` (`currencyCode`)")
+            db.execSQL(
+                "ALTER TABLE `transactions` ADD COLUMN `loanId` INTEGER DEFAULT NULL " +
+                    "REFERENCES `loans`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_loanId` ON `transactions` (`loanId`)")
+            db.execSQL("ALTER TABLE `transactions` ADD COLUMN `loanOpening` TEXT DEFAULT NULL")
+            db.execSQL("ALTER TABLE `transactions` ADD COLUMN `loanAmountMinor` INTEGER DEFAULT NULL")
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
 }
 
 class Converters {

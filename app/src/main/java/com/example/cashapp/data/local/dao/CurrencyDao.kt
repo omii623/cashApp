@@ -30,7 +30,7 @@ interface CurrencyDao {
     @Query("SELECT COALESCE(MAX(sortOrder), -1) FROM currencies")
     suspend fun maxSortOrder(): Int
 
-    /** Hány tétel / számla / szabály / keret használja a pénznemet (ha > 0: nem törölhető). */
+    /** Hány tétel / számla / szabály / keret / kölcsön használja a pénznemet (ha > 0: nem törölhető). */
     @Query(
         """
         SELECT (SELECT COUNT(*) FROM accounts WHERE currencyCode = :code)
@@ -38,6 +38,7 @@ interface CurrencyDao {
              + (SELECT COUNT(*) FROM exchange_details WHERE targetCurrencyCode = :code)
              + (SELECT COUNT(*) FROM recurring_rules WHERE currencyCode = :code)
              + (SELECT COUNT(*) FROM budgets WHERE currencyCode = :code)
+             + (SELECT COUNT(*) FROM loans WHERE currencyCode = :code)
         """
     )
     suspend fun usageCount(code: String): Int

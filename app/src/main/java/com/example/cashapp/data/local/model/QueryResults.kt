@@ -2,7 +2,10 @@ package com.example.cashapp.data.local.model
 
 import androidx.room.Embedded
 import com.example.cashapp.data.local.entity.AccountEntity
+import com.example.cashapp.data.local.entity.LoanEntity
 import com.example.cashapp.data.local.entity.RecurringRuleEntity
+import com.example.cashapp.domain.model.LoanDirection
+import com.example.cashapp.domain.model.LoanOpeningPart
 import com.example.cashapp.domain.model.TransactionType
 import java.time.LocalDate
 
@@ -83,4 +86,20 @@ data class TransactionListItem(
     val targetAmountMinor: Long?,
     val targetCurrencyCode: String?,
     val exchangeRate: Double?,
+    /** Magánkölcsön mozgásánál a kölcsön adatai (különben null). */
+    val loanId: Long? = null,
+    val loanName: String? = null,
+    val loanDirection: LoanDirection? = null,
+    /** Nem null: a kölcsön nyitó adatából könyvelt tétel. */
+    val loanOpening: LoanOpeningPart? = null,
+    /** A kölcsön választott jelölése (null: alapértelmezett). */
+    val loanColor: Long? = null,
+    val loanIcon: String? = null,
+)
+
+/** Magánkölcsön + számolt hátralék (a kölcsön pénznemében; 0 = rendezve). */
+data class LoanWithBalance(
+    @Embedded val loan: LoanEntity,
+    val outstandingMinor: Long,
+    val lastMovementDate: LocalDate?,
 )

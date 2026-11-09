@@ -72,7 +72,12 @@ internal fun AmountSection(
 }
 
 @Composable
-internal fun CurrencyChip(state: TransactionFormUiState, onSelect: (String) -> Unit) {
+internal fun CurrencyChip(state: TransactionFormUiState, onSelect: (String) -> Unit) =
+    CurrencyChip(state.currency?.code, state.currencies, onSelect)
+
+/** Pénznem-választó „chip” (a bevétel/kiadás és a kölcsön mozgás űrlapja használja). */
+@Composable
+internal fun CurrencyChip(code: String?, currencies: List<com.example.cashapp.domain.model.Currency>, onSelect: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Box(Modifier.padding(top = 8.dp)) {
         Surface(
@@ -81,10 +86,10 @@ internal fun CurrencyChip(state: TransactionFormUiState, onSelect: (String) -> U
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
-            Text("${state.currency?.code ?: ""} ▾", Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
+            Text("${code ?: ""} ▾", Modifier.padding(horizontal = 20.dp, vertical = 6.dp))
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            state.currencies.forEach { c ->
+            currencies.forEach { c ->
                 DropdownMenuItem(
                     text = { Text(currencyLabel(c)) },
                     onClick = { expanded = false; onSelect(c.code) },

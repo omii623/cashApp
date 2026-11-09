@@ -20,6 +20,10 @@ import com.example.cashapp.ui.backup.BackupViewModel
 import com.example.cashapp.ui.currency.CurrenciesViewModel
 import com.example.cashapp.ui.exchange.ExchangeViewModel
 import com.example.cashapp.ui.home.HomeViewModel
+import com.example.cashapp.ui.loan.LoanDetailViewModel
+import com.example.cashapp.ui.loan.LoanEditViewModel
+import com.example.cashapp.ui.loan.LoanMovementViewModel
+import com.example.cashapp.ui.loan.LoansViewModel
 import com.example.cashapp.ui.navigation.Routes
 import com.example.cashapp.ui.reports.ReportsViewModel
 import com.example.cashapp.ui.settings.SettingsViewModel
@@ -101,6 +105,28 @@ object AppViewModelProvider {
             val id = createSavedStateHandle().get<Long>(Routes.ARG_ID)?.takeIf { it >= 0 }
             with(container()) {
                 RuleEditViewModel(id, recurringRepository, accountRepository, categoryRepository, currencyRepository)
+            }
+        }
+        initializer {
+            with(container()) { LoansViewModel(loanRepository, currencyRepository, settingsRepository) }
+        }
+        initializer {
+            val id = createSavedStateHandle().get<Long>(Routes.ARG_ID)?.takeIf { it >= 0 }
+            with(container()) { LoanEditViewModel(id, loanRepository, accountRepository, currencyRepository, settingsRepository) }
+        }
+        initializer {
+            val id = checkNotNull(createSavedStateHandle().get<Long>(Routes.ARG_ID))
+            with(container()) {
+                LoanDetailViewModel(id, loanRepository, currencyRepository, settingsRepository)
+            }
+        }
+        initializer {
+            val args = createSavedStateHandle()
+            val loanId = checkNotNull(args.get<Long>(Routes.ARG_LOAN))
+            val increase = args.get<Boolean>(Routes.ARG_INCREASE) ?: true
+            val editId = args.get<Long>(Routes.ARG_ID)?.takeIf { it >= 0 }
+            with(container()) {
+                LoanMovementViewModel(loanId, increase, editId, loanRepository, accountRepository, currencyRepository)
             }
         }
         initializer {

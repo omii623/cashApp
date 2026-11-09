@@ -28,6 +28,11 @@ import com.example.cashapp.ui.exchange.ExchangeRoute
 import com.example.cashapp.ui.backup.BackupRoute
 import com.example.cashapp.ui.currency.CurrenciesRoute
 import com.example.cashapp.ui.more.MoreScreen
+import com.example.cashapp.ui.loan.LoanDetailRoute
+import com.example.cashapp.ui.loan.LoanEditRoute
+import com.example.cashapp.ui.loan.LoanHubScreen
+import com.example.cashapp.ui.loan.LoanMovementRoute
+import com.example.cashapp.ui.loan.LoansRoute
 import com.example.cashapp.ui.reports.ReportsRoute
 import com.example.cashapp.ui.settings.SettingsRoute
 import com.example.cashapp.ui.transactions.TransactionsRoute
@@ -77,13 +82,13 @@ fun CashApp(openPendingRequest: Int = 0) {
                         onIncome = { navController.navigate(Routes.transactionForm(TransactionType.INCOME)) },
                         onExpense = { navController.navigate(Routes.transactionForm(TransactionType.EXPENSE)) },
                         onExchange = { navController.navigate(Routes.EXCHANGE_NEW) },
-                        onTransaction = { navController.navigate(Routes.editTransaction(it.type, it.id)) },
+                        onTransaction = { navController.navigate(Routes.openRow(it)) },
                         onPending = { navController.navigate(Routes.RECURRING) },
                     )
                 )
             }
             composable(Routes.TRANSACTIONS) {
-                TransactionsRoute(onEdit = { navController.navigate(Routes.editTransaction(it.type, it.id)) })
+                TransactionsRoute(onEdit = { navController.navigate(Routes.openRow(it)) })
             }
             composable(Routes.REPORTS) { ReportsRoute() }
             composable(Routes.MORE) {
@@ -91,6 +96,7 @@ fun CashApp(openPendingRequest: Int = 0) {
                     onAccounts = { navController.navigate(Routes.ACCOUNTS) },
                     onCategories = { navController.navigate(Routes.CATEGORIES) },
                     onRecurring = { navController.navigate(Routes.RECURRING) },
+                    onLoans = { navController.navigate(Routes.LOANS_HUB) },
                     onCurrencies = { navController.navigate(Routes.CURRENCIES) },
                     onSettings = { navController.navigate(Routes.SETTINGS) },
                 )
@@ -123,7 +129,7 @@ fun CashApp(openPendingRequest: Int = 0) {
                 AccountDetailRoute(
                     onBack = { navController.popBackStack() },
                     onEdit = { navController.navigate(Routes.accountEdit(id)) },
-                    onTransaction = { navController.navigate(Routes.editTransaction(it.type, it.id)) },
+                    onTransaction = { navController.navigate(Routes.openRow(it)) },
                 )
             }
             composable(
@@ -175,6 +181,43 @@ fun CashApp(openPendingRequest: Int = 0) {
                 Routes.RULE_EDIT,
                 arguments = listOf(navArgument(Routes.ARG_ID) { type = NavType.LongType; defaultValue = -1L }),
             ) { RuleEditRoute(onDone = back) }
+
+            composable(Routes.LOANS_HUB) {
+                LoanHubScreen(onBack = back, onPrivateLoans = { navController.navigate(Routes.LOANS) })
+            }
+            composable(Routes.LOANS) {
+                LoansRoute(
+                    onBack = back,
+                    onOpen = { navController.navigate(Routes.loanDetail(it)) },
+                    onNew = { navController.navigate(Routes.LOAN_NEW) },
+                )
+            }
+            composable(Routes.LOAN_DETAIL, arguments = listOf(navArgument(Routes.ARG_ID) { type = NavType.LongType })) { entry ->
+                val id = entry.arguments?.getLong(Routes.ARG_ID) ?: -1L
+                LoanDetailRoute(
+                    onBack = back,
+                    onEdit = { navController.navigate(Routes.loanEdit(id)) },
+                    onNewMovement = { increase -> navController.navigate(Routes.loanMovementNew(id, increase)) },
+                    onMovement = { txId -> navController.navigate(Routes.loanMovementEdit(id, txId)) },
+                )
+            }
+            composable(
+                Routes.LOAN_MOVEMENT,
+                arguments = listOf(
+                    navArgument(Routes.ARG_LOAN) { type = NavType.LongType },
+                    navArgument(Routes.ARG_INCREASE) { type = NavType.BoolType; defaultValue = true },
+                    navArgument(Routes.ARG_ID) { type = NavType.LongType; defaultValue = -1L },
+                ),
+            ) { LoanMovementRoute(onDone = back) }
+            composable(
+                Routes.LOAN_EDIT,
+                arguments = listOf(navArgument(Routes.ARG_ID) { type = NavType.LongType; defaultValue = -1L }),
+            ) {
+                LoanEditRoute(onDone = { newId ->
+                    if (newId == null) navController.popBackStack()
+                    else navController.navigate(Routes.loanDetail(newId)) { popUpTo(Routes.LOAN_EDIT) { inclusive = true } }
+                })
+            }
         }
     }
 }

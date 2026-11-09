@@ -54,6 +54,27 @@ object Routes {
     fun editTransaction(type: TransactionType, id: Long) =
         if (type == TransactionType.EXCHANGE) exchangeEdit(id) else transactionEdit(type, id)
 
+    /** Lista sorra koppintás: kölcsön mozgásánál a kölcsön oldala, különben a tétel szerkesztője. */
+    fun openRow(row: com.example.cashapp.ui.components.TransactionRowUi) =
+        row.loanId?.let { loanDetail(it) } ?: editTransaction(row.type, row.id)
+
+    /** Továbbiak → Kölcsönök (magán / banki választó). */
+    const val LOANS_HUB = "loans-hub"
+    const val LOANS = "loans"
+    const val LOAN_DETAIL = "loans/{$ARG_ID}"
+    fun loanDetail(id: Long) = "loans/$id"
+    /** Kölcsön szerkesztő; [ARG_ID] = -1 → új kölcsön. */
+    const val LOAN_EDIT = "loan-edit?$ARG_ID={$ARG_ID}"
+    fun loanEdit(id: Long) = "loan-edit?$ARG_ID=$id"
+    const val LOAN_NEW = "loan-edit?$ARG_ID=-1"
+
+    const val ARG_LOAN = "loanId"
+    const val ARG_INCREASE = "increase"
+    /** Kölcsön mozgás űrlap; [ARG_INCREASE]: új kölcsön (true) vagy törlesztés; [ARG_ID] = -1 → új mozgás. */
+    const val LOAN_MOVEMENT = "loan-movement/{$ARG_LOAN}?$ARG_INCREASE={$ARG_INCREASE}&$ARG_ID={$ARG_ID}"
+    fun loanMovementNew(loanId: Long, increase: Boolean) = "loan-movement/$loanId?$ARG_INCREASE=$increase"
+    fun loanMovementEdit(loanId: Long, id: Long) = "loan-movement/$loanId?$ARG_ID=$id"
+
     const val RECURRING = "recurring"
     /** Ismétlődő szabály szerkesztő; [ARG_ID] = -1 → új szabály. */
     const val RULE_EDIT = "recurring-rule?$ARG_ID={$ARG_ID}"

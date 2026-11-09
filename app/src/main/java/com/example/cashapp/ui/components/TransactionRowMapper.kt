@@ -1,6 +1,7 @@
 package com.example.cashapp.ui.components
 
 import com.example.cashapp.data.local.model.TransactionListItem
+import com.example.cashapp.domain.loan.LoanMath
 import com.example.cashapp.domain.model.Currency
 import com.example.cashapp.domain.model.TransactionType
 import com.example.cashapp.domain.money.MoneyFormatter
@@ -39,13 +40,16 @@ object TransactionRowMapper {
             date = item.date,
             categoryName = item.categoryName,
             subcategoryName = item.subcategoryName,
-            categoryColor = item.categoryColor,
-            categoryIcon = item.categoryIcon,
+            categoryColor = item.categoryColor ?: item.loanColor,
+            categoryIcon = item.categoryIcon ?: item.loanIcon,
             accountName = item.accountName,
             fromCurrency = item.currencyCode,
             toCurrency = item.targetCurrencyCode,
             rateText = item.exchangeRate?.let { rateText(it, item.currencyCode, item.targetCurrencyCode, currencies) },
             amountText = amountText,
+            loanId = item.loanId,
+            loanName = item.loanName,
+            loanIncrease = item.loanDirection?.let { LoanMath.isIncrease(it, item.type) } ?: false,
         )
     }
 

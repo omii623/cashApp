@@ -17,3 +17,15 @@ enum class PendingStatus { PENDING, APPROVED, SKIPPED }
 
 /** Megjelenési téma. */
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
+
+/**
+ * Magánkölcsön iránya. [BORROWED]: én tartozom valakinek; [LENT]: nekem tartoznak.
+ * A Room név szerint tárolja – átnevezés migrációt igényel!
+ */
+enum class LoanDirection { BORROWED, LENT }
+
+/**
+ * Kölcsön nyitó adatából könyvelt tétel: a kölcsön összege ([AMOUNT]) vagy az abból
+ * már visszafizetett rész ([REPAID]). A Room név szerint tárolja.
+ */
+enum class LoanOpeningPart { AMOUNT, REPAID }

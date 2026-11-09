@@ -24,12 +24,15 @@ private const val LIST_SELECT = """
                t.accountAmountMinor, a.currencyCode AS accountCurrencyCode,
                c.name AS categoryName, c.color AS categoryColor, c.icon AS categoryIcon,
                s.name AS subcategoryName,
-               e.targetAccountId, e.targetAmountMinor, e.targetCurrencyCode, e.rate AS exchangeRate
+               e.targetAccountId, e.targetAmountMinor, e.targetCurrencyCode, e.rate AS exchangeRate,
+               t.loanId, l.personName AS loanName, l.direction AS loanDirection, t.loanOpening,
+               l.color AS loanColor, l.icon AS loanIcon
         FROM transactions t
         JOIN accounts a ON a.id = t.accountId
         LEFT JOIN categories c ON c.id = t.categoryId
         LEFT JOIN subcategories s ON s.id = t.subcategoryId
         LEFT JOIN exchange_details e ON e.transactionId = t.id
+        LEFT JOIN loans l ON l.id = t.loanId
 """
 
 @Dao
@@ -48,6 +51,17 @@ interface TransactionDao {
     )
     fun observeForAccount(accountId: Long): Flow<List<TransactionListItem>>
 
+    /** Egy magánkölcsön mozgásai (kölcsön / törlesztés), legújabb elöl – a nyitó adatokból könyveltek nélkül. */
+    @Query("$LIST_SELECT WHERE t.loanId = :loanId AND t.loanOpening IS NULL ORDER BY t.date DESC, t.id DESC")
+    fun observeForLoan(loanId: Long): Flow<List<TransactionListItem>>
+
+    /** A kölcsön nyitó adataiból könyvelt tételek (legfeljebb egy összeg és egy visszafizetett rész). */
+    @Query("$LIST_SELECT WHERE t.loanId = :loanId AND t.loanOpening IS NOT NULL")
+    fun observeLoanOpenings(loanId: Long): Flow<List<TransactionListItem>>
+
+    @Query("SELECT * FROM transactions WHERE loanId = :loanId AND loanOpening IS NOT NULL")
+    suspend fun getLoanOpenings(loanId: Long): List<TransactionEntity>
+
     /**
      * Tranzakciók lap: szűrt lista. A null / üres paraméter azt jelenti, hogy arra nincs szűrés.
      * A keresés a megjegyzésben, kategória-, alkategória- és számlanévben keres.
@@ -64,7 +78,8 @@ interface TransactionDao {
                OR t.note LIKE '%' || :query || '%'
                OR c.name LIKE '%' || :query || '%'
                OR s.name LIKE '%' || :query || '%'
-               OR a.name LIKE '%' || :query || '%')
+               OR a.name LIKE '%' || :query || '%'
+               OR l.personName LIKE '%' || :query || '%')
         ORDER BY t.date DESC, t.id DESC
         """
     )
@@ -117,13 +132,17 @@ interface TransactionDao {
 
     // ------------------------------------------------------------------ Kimutatások
 
-    /** Összeg kategóriánként (a számla pénznemében) egy típusra és időszakra. */
+    /**
+     * Összeg kategóriánként (a számla pénznemében) egy típusra és időszakra.
+     * A magánkölcsön-mozgások (kategória nélküliek) külön csoportba kerülnek: id = -1 (ReportCalculator.LOAN_GROUP_ID).
+     */
     @Query(
         """
-        SELECT t.categoryId AS id, a.currencyCode AS currencyCode, SUM(t.accountAmountMinor) AS amountMinor
+        SELECT CASE WHEN t.loanId IS NOT NULL THEN -1 ELSE t.categoryId END AS id,
+               a.currencyCode AS currencyCode, SUM(t.accountAmountMinor) AS amountMinor
         FROM transactions t JOIN accounts a ON a.id = t.accountId
         WHERE t.type = :type AND t.date BETWEEN :from AND :to
-        GROUP BY t.categoryId, a.currencyCode
+        GROUP BY CASE WHEN t.loanId IS NOT NULL THEN -1 ELSE t.categoryId END, a.currencyCode
         """
     )
     fun observeCategoryTotals(type: String, from: LocalDate, to: LocalDate): Flow<List<GroupTotal>>

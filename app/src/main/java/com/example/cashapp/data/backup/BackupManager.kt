@@ -95,6 +95,7 @@ class BackupManager(
                     rate = c.doubleOrNull(12) ?: c.doubleOrNull(13),
                     feeMinor = c.longOrNull(14),
                     note = c.getString(15).orEmpty(),
+                    loanName = c.stringOrNull(16),
                 )
             }
         }
@@ -161,20 +162,21 @@ class BackupManager(
 
         /** Beszúrási sorrend: előbb az, amire hivatkoznak (törlés fordítva). */
         val TABLES = listOf(
-            "currencies", "accounts", "categories", "subcategories", "recurring_rules",
+            "currencies", "accounts", "categories", "subcategories", "recurring_rules", "loans",
             "transactions", "exchange_details", "pending_recurring", "budgets", "exchange_rates",
         )
 
         private const val CSV_QUERY = """
             SELECT t.date, t.type, t.amountMinor, t.currencyCode, a.name, t.accountAmountMinor, a.currencyCode,
                    c.name, s.name, ta.name, e.targetAmountMinor, e.targetCurrencyCode, e.rate, t.rateToAccount,
-                   e.feeMinor, t.note
+                   e.feeMinor, t.note, l.personName
             FROM transactions t
             JOIN accounts a ON a.id = t.accountId
             LEFT JOIN categories c ON c.id = t.categoryId
             LEFT JOIN subcategories s ON s.id = t.subcategoryId
             LEFT JOIN exchange_details e ON e.transactionId = t.id
             LEFT JOIN accounts ta ON ta.id = e.targetAccountId
+            LEFT JOIN loans l ON l.id = t.loanId
             ORDER BY t.date, t.id
         """
     }

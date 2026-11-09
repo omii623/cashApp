@@ -47,6 +47,11 @@ data class TransactionRowUi(
     /** Pl. „1 € = 399 Ft” – csak váltásnál. */
     val rateText: String?,
     val amountText: String,
+    /** Magánkölcsön mozgásánál: a kölcsön azonosítója és a másik fél neve. */
+    val loanId: Long? = null,
+    val loanName: String? = null,
+    /** Igaz: új kölcsön (nő a tartozás); hamis: törlesztés. */
+    val loanIncrease: Boolean = false,
 )
 
 /** Egy tranzakció sor (főoldal, később a tranzakciólista is ezt használja). */
@@ -58,10 +63,14 @@ fun TransactionRow(item: TransactionRowUi, modifier: Modifier = Modifier, onClic
         TransactionType.EXPENSE -> colors.expense
         TransactionType.EXCHANGE -> colors.exchange
     }
-    val title = when (item.type) {
+    val title = when {
+        item.loanName != null ->
+            stringResource(if (item.loanIncrease) R.string.loan_row_increase else R.string.loan_row_decrease, item.loanName)
+        else -> when (item.type) {
         TransactionType.EXCHANGE -> stringResource(R.string.tx_exchange_title, item.fromCurrency, item.toCurrency ?: "?")
         else -> listOfNotNull(item.categoryName, item.subcategoryName).joinToString(" · ")
             .ifEmpty { stringResource(R.string.tx_uncategorized) }
+        }
     }
     val subtitle = listOfNotNull(relativeDate(item.date), item.rateText ?: item.accountName).joinToString(" · ")
 
@@ -75,7 +84,7 @@ fun TransactionRow(item: TransactionRowUi, modifier: Modifier = Modifier, onClic
         if (item.type == TransactionType.EXCHANGE) {
             ExchangeBadge(accent)
         } else {
-            CategoryBadge(item.categoryIcon, item.categoryColor?.let { Color(it) } ?: accent, item.categoryName)
+            CategoryBadge(item.categoryIcon, item.categoryColor?.let { Color(it) } ?: accent, item.categoryName ?: item.loanName)
         }
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
