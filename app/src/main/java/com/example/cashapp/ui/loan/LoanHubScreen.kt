@@ -24,10 +24,10 @@ import com.example.cashapp.R
 import com.example.cashapp.ui.more.MenuCard
 import com.example.cashapp.ui.more.MoreEntry
 
-/** Továbbiak → Kölcsönök: magánkölcsönök, valamint (még nem elérhető, szürke) banki kölcsönök és kalkulátor. */
+/** Továbbiak → Kölcsönök: magánkölcsönök, hitelkalkulátor és (még nem elérhető, szürke) banki kölcsönök. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoanHubScreen(onBack: () -> Unit, onPrivateLoans: () -> Unit) {
+fun LoanHubScreen(onBack: () -> Unit, onPrivateLoans: () -> Unit, onCalculator: () -> Unit) {
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         topBar = {
@@ -46,8 +46,7 @@ fun LoanHubScreen(onBack: () -> Unit, onPrivateLoans: () -> Unit) {
                     MoreEntry(R.string.more_loans, Icons.Filled.Handshake, onPrivateLoans),
                     // Banki kölcsönök: még nincs kész → szürke, nem nyitható.
                     MoreEntry(R.string.loan_hub_bank, Icons.Filled.AccountBalance, null),
-                    // Kalkulátor: még nincs kész → szürke, nem nyitható.
-                    MoreEntry(R.string.loan_hub_calculator, Icons.Filled.Calculate, null),
+                    MoreEntry(R.string.loan_hub_calculator, Icons.Filled.Calculate, onCalculator),
                 )
             )
         }

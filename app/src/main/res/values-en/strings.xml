@@ -408,4 +408,50 @@
     <string name="more_loans_hub">Loans</string>
     <string name="loan_hub_bank">Bank loans</string>
     <string name="loan_hub_calculator">Calculator</string>
+    <string name="calc_amount">Requested loan</string>
+    <string name="calc_thm">APR</string>
+    <string name="calc_thm_edit">Enter APR</string>
+    <string name="calc_thm_error">Enter a number of 0 or more</string>
+    <string name="calc_months">Term</string>
+    <string name="calc_years_months">%1$d y %2$d mo</string>
+    <string name="calc_monthly">Monthly payment</string>
+    <string name="calc_total">Total repayment</string>
+    <string name="calc_cost">Total cost of credit</string>
+    <string name="calc_hint">Estimate with equal monthly payments (annuity), monthly rate = APR / 12. The bank’s actual offer may differ.</string>
+    <plurals name="calc_months_value">
+        <item quantity="one">%1$d month</item>
+        <item quantity="other">%1$d months</item>
+    </plurals>
+    <plurals name="calc_years">
+        <item quantity="one">%1$d year</item>
+        <item quantity="other">%1$d years</item>
+    </plurals>
+    <string name="calc_months_edit">Enter term</string>
+    <string name="calc_months_unit">months</string>
+    <string name="calc_months_error">Enter a positive whole number</string>
+    <string name="calc_prepay">Prepayment</string>
+    <string name="calc_prepay_amount">Amount</string>
+    <string name="calc_prepay_month">After month</string>
+    <string name="calc_prepay_month_suffix"></string>
+    <string name="calc_prepay_month_error">The month must be between 1 and %1$d (within the term)</string>
+    <string name="calc_penalty">Penalty</string>
+    <string name="calc_threshold">Threshold</string>
+    <string name="calc_threshold_hint">The penalty applies only to the part above the threshold. Empty field = 0.</string>
+    <string name="calc_balance_before">Balance after payment %1$d</string>
+    <string name="calc_prepaid">Prepayment</string>
+    <string name="calc_penalty_amount">Penalty</string>
+    <string name="calc_paid_off">The prepayment pays off the whole balance.</string>
+    <string name="calc_saving">Saving</string>
+    <string name="calc_option_lower">Lower payment</string>
+    <string name="calc_option_shorter">Shorter term</string>
+    <string name="calc_new_monthly">New monthly payment</string>
+    <string name="calc_remaining">Remaining</string>
+    <string name="calc_last_payment">last payment: %1$s</string>
+    <string name="calc_inflation">Inflation (yearly)</string>
+    <string name="calc_inflation_edit">Enter inflation</string>
+    <string name="calc_inflation_hint">For purchasing power: payments are converted to today’s money. 0 = off.</string>
+    <string name="calc_real_title">IN TODAY’S MONEY (%1$s inflation)</string>
+    <string name="calc_real_cost">Real cost of credit</string>
+    <string name="calc_real_last">Last payment in today’s money: %1$s</string>
+    <string name="calc_real_saving">Saving in today’s money</string>
 </resources>

@@ -29,6 +29,7 @@ import com.example.cashapp.ui.backup.BackupRoute
 import com.example.cashapp.ui.currency.CurrenciesRoute
 import com.example.cashapp.ui.more.MoreScreen
 import com.example.cashapp.ui.loan.LoanDetailRoute
+import com.example.cashapp.ui.loan.LoanCalculatorRoute
 import com.example.cashapp.ui.loan.LoanEditRoute
 import com.example.cashapp.ui.loan.LoanHubScreen
 import com.example.cashapp.ui.loan.LoanMovementRoute
@@ -183,8 +184,13 @@ fun CashApp(openPendingRequest: Int = 0) {
             ) { RuleEditRoute(onDone = back) }
 
             composable(Routes.LOANS_HUB) {
-                LoanHubScreen(onBack = back, onPrivateLoans = { navController.navigate(Routes.LOANS) })
+                LoanHubScreen(
+                    onBack = back,
+                    onPrivateLoans = { navController.navigate(Routes.LOANS) },
+                    onCalculator = { navController.navigate(Routes.LOAN_CALCULATOR) },
+                )
             }
+            composable(Routes.LOAN_CALCULATOR) { LoanCalculatorRoute(onBack = back) }
             composable(Routes.LOANS) {
                 LoansRoute(
                     onBack = back,

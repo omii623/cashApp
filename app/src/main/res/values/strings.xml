@@ -408,4 +408,50 @@
     <string name="more_loans_hub">Kölcsönök</string>
     <string name="loan_hub_bank">Banki kölcsönök</string>
     <string name="loan_hub_calculator">Kalkulátor</string>
+    <string name="calc_amount">Igényelt hitel</string>
+    <string name="calc_thm">THM</string>
+    <string name="calc_thm_edit">THM beírása</string>
+    <string name="calc_thm_error">Adj meg egy 0 vagy nagyobb számot</string>
+    <string name="calc_months">Futamidő</string>
+    <string name="calc_years_months">%1$d év %2$d hó</string>
+    <string name="calc_monthly">Havi törlesztő</string>
+    <string name="calc_total">Teljes visszafizetés</string>
+    <string name="calc_cost">Teljes hitelköltség</string>
+    <string name="calc_hint">Tájékoztató számítás egyenlő havi részletekkel (annuitás), havi kamat = THM / 12. A bank tényleges ajánlata eltérhet.</string>
+    <plurals name="calc_months_value">
+        <item quantity="one">%1$d hónap</item>
+        <item quantity="other">%1$d hónap</item>
+    </plurals>
+    <plurals name="calc_years">
+        <item quantity="one">%1$d év</item>
+        <item quantity="other">%1$d év</item>
+    </plurals>
+    <string name="calc_months_edit">Futamidő beírása</string>
+    <string name="calc_months_unit">hónap</string>
+    <string name="calc_months_error">Adj meg egy pozitív egész számot</string>
+    <string name="calc_prepay">Előtörlesztés</string>
+    <string name="calc_prepay_amount">Összeg</string>
+    <string name="calc_prepay_month">Hónap után</string>
+    <string name="calc_prepay_month_suffix">. hó</string>
+    <string name="calc_prepay_month_error">A hónap 1 és %1$d között legyen (a futamidőn belül)</string>
+    <string name="calc_penalty">Büntető</string>
+    <string name="calc_threshold">Küszöb</string>
+    <string name="calc_threshold_hint">A büntető csak a küszöb feletti részre számít. Üres mező = 0.</string>
+    <string name="calc_balance_before">Hátralék a %1$d. részlet után</string>
+    <string name="calc_prepaid">Előtörlesztés</string>
+    <string name="calc_penalty_amount">Büntető</string>
+    <string name="calc_paid_off">Az előtörlesztés a teljes hátralékot kifizeti.</string>
+    <string name="calc_saving">Megtakarítás</string>
+    <string name="calc_option_lower">Csökkenő részlet</string>
+    <string name="calc_option_shorter">Rövidebb futamidő</string>
+    <string name="calc_new_monthly">Új havi részlet</string>
+    <string name="calc_remaining">Még hátra</string>
+    <string name="calc_last_payment">utolsó részlet: %1$s</string>
+    <string name="calc_inflation">Infláció (évi)</string>
+    <string name="calc_inflation_edit">Infláció beírása</string>
+    <string name="calc_inflation_hint">Vásárlóerőhöz: a részleteket mai pénzre számolja vissza. 0 = nincs.</string>
+    <string name="calc_real_title">MAI ÉRTÉKEN (%1$s infláció)</string>
+    <string name="calc_real_cost">Valós hitelköltség</string>
+    <string name="calc_real_last">Az utolsó részlet mai értéken: %1$s</string>
+    <string name="calc_real_saving">Megtakarítás mai értéken</string>
 </resources>

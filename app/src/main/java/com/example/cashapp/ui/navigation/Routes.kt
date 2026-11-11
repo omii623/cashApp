@@ -60,6 +60,7 @@ object Routes {
 
     /** Továbbiak → Kölcsönök (magán / banki választó). */
     const val LOANS_HUB = "loans-hub"
+    const val LOAN_CALCULATOR = "loan-calculator"
     const val LOANS = "loans"
     const val LOAN_DETAIL = "loans/{$ARG_ID}"
     fun loanDetail(id: Long) = "loans/$id"

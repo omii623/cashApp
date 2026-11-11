@@ -20,6 +20,7 @@ import com.example.cashapp.ui.backup.BackupViewModel
 import com.example.cashapp.ui.currency.CurrenciesViewModel
 import com.example.cashapp.ui.exchange.ExchangeViewModel
 import com.example.cashapp.ui.home.HomeViewModel
+import com.example.cashapp.ui.loan.LoanCalculatorViewModel
 import com.example.cashapp.ui.loan.LoanDetailViewModel
 import com.example.cashapp.ui.loan.LoanEditViewModel
 import com.example.cashapp.ui.loan.LoanMovementViewModel
@@ -106,6 +107,9 @@ object AppViewModelProvider {
             with(container()) {
                 RuleEditViewModel(id, recurringRepository, accountRepository, categoryRepository, currencyRepository)
             }
+        }
+        initializer {
+            with(container()) { LoanCalculatorViewModel(settingsRepository, currencyRepository) }
         }
         initializer {
             with(container()) { LoansViewModel(loanRepository, currencyRepository, settingsRepository) }
