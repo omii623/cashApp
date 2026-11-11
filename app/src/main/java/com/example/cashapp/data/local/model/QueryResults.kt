@@ -106,7 +106,7 @@ data class LoanWithBalance(
 )
 
 /**
- * Banki hitel + a befizetett részletek száma (a nyilvántartott részből, előtörlesztések nélkül)
+ * Banki hitel + a befizetett részletek száma (a követés előtt befizetettekkel együtt, előtörlesztések nélkül)
  * és az utolsó hozzá könyvelt tétel dátuma. A hátralék a törlesztési tervből számol.
  */
 data class BankLoanWithProgress(

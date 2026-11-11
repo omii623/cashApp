@@ -19,13 +19,13 @@ import kotlinx.coroutines.flow.combine
 
 /**
  * Banki hitel + a törlesztési terve és a befizetések állása (a UI ebből dolgozik).
- * A „befizetett” hónapok és a hitelösszeg a progresshez a futó hitel rögzítés előtti adataival együtt értendő.
+ * A befizetett részletek a követés előtt befizetetteket ([BankLoanEntity.paidMonthsBefore]) is tartalmazzák.
  */
 data class BankLoanOverview(
     val loan: BankLoanEntity,
     val events: List<BankLoanEventEntity>,
     val schedule: AmortizationSchedule.Schedule,
-    /** Befizetett részletek a nyilvántartott részből. */
+    /** Befizetett részletek (a követés előtt befizetettekkel együtt). */
     val paidInstallments: Int,
     val lastPaymentDate: LocalDate?,
 ) {
@@ -34,12 +34,9 @@ data class BankLoanOverview(
     val isClosed: Boolean get() = loan.closedDate != null
     val isPaidOff: Boolean get() = nextInstallment == null
 
-    /** Progresshez: összes / befizetett hónap a rögzítés előtt befizetettekkel együtt. */
-    val totalMonthsForProgress: Int get() = loan.paidMonthsBefore + schedule.installments.size
-    val paidMonthsForProgress: Int get() = loan.paidMonthsBefore + paidInstallments.coerceAtMost(schedule.installments.size)
-
-    /** Progresshez: az eredeti hitelösszeg (futó hitelnél a megadott, különben a nyilvántartott). */
-    val originalPrincipalMinor: Long get() = loan.originalPrincipalMinor ?: loan.principalMinor
+    /** Progresshez: összes / befizetett részlet. */
+    val totalMonthsForProgress: Int get() = schedule.installments.size
+    val paidMonthsForProgress: Int get() = paidInstallments.coerceAtMost(schedule.installments.size)
 }
 
 /**
@@ -85,9 +82,9 @@ class BankLoanRepository(private val db: CashDatabase) {
         require(loan.thmPercent >= 0) { "A THM nem lehet negatív" }
         require(loan.termMonths >= 1) { "A futamidő legalább 1 hónap" }
         require(loan.monthlyPaymentOverrideMinor == null || loan.monthlyPaymentOverrideMinor > 0) { "A részlet legyen pozitív" }
-        require(loan.paidMonthsBefore >= 0) { "A befizetett hónapok száma nem lehet negatív" }
-        require(loan.originalPrincipalMinor == null || loan.originalPrincipalMinor >= loan.principalMinor) {
-            "Az eredeti hitelösszeg nem lehet kisebb a hátraléknál"
+        require(loan.paidMonthsBefore in 0 until loan.termMonths) { "A már befizetett részletek száma kevesebb legyen a futamidőnél" }
+        require(loan.bankBalanceMinor == null || (loan.bankBalanceMinor > 0 && loan.paidMonthsBefore > 0)) {
+            "A bank szerinti hátralék csak korábban felvett hitelnél adható meg, és pozitív legyen"
         }
         val account = checkNotNull(accountDao.getById(loan.accountId)) { "Nincs ilyen számla" }
         val category = checkNotNull(categoryDao.getById(loan.categoryId)) { "Nincs ilyen kategória" }

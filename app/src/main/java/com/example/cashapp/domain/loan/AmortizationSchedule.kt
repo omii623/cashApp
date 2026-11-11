@@ -22,6 +22,10 @@ import java.time.LocalDate
  *   [PrepaymentMode.LOWER_PAYMENT] azonos hátralévő hónapokkal új részlet, [PrepaymentMode.SHORTER_TERM] azonos
  *   részlettel addig, amíg a hátralék elfogy. Kamatváltozás: új részlet a hátralékra a hátralévő hónapokra.
  * - A büntető nem csökkenti a hátralékot (külön kiadás), ezért itt nem szerepel.
+ * - Korábban felvett hitelnél [Params.openingBalanceMinor]: a bank szerinti hátralék az első
+ *   [Params.openingPaid] részlet után. Ha megadják, a terv onnan ezzel a hátralékkal folytatódik (a részlet
+ *   a hátralévő hónapokra újraszámolva, hacsak nincs felülírt részlet) – így a korábbi, nem rögzített
+ *   előtörlesztések / kamatváltozások is kiegyenlítődnek.
  */
 object AmortizationSchedule {
 
@@ -32,6 +36,10 @@ object AmortizationSchedule {
         val firstDueDate: LocalDate,
         /** A bank által ténylegesen terhelt részlet; null → a számolt annuitás. Csak az első eseményig érvényes. */
         val paymentOverrideMinor: Long? = null,
+        /** A követés kezdete előtt már befizetett (könyveletlen) részletek száma. */
+        val openingPaid: Int = 0,
+        /** A bank szerinti hátralék [openingPaid] részlet után; null → a számolt érték. */
+        val openingBalanceMinor: Long? = null,
     )
 
     sealed interface Event {
@@ -57,6 +65,8 @@ object AmortizationSchedule {
         val thmPercent: Double,
         /** A részlet előtt (az előző részlet után) ténylegesen előtörlesztett összeg; 0, ha nem volt. */
         val prepaidBeforeMinor: Long = 0,
+        /** Nem null: e részlet előtt a bank szerinti hátralékra igazodott a terv (korábban felvett hitel). */
+        val bankBalanceBeforeMinor: Long? = null,
     )
 
     data class Schedule(val installments: List<Installment>, val prepaidMinor: Long) {
@@ -80,11 +90,17 @@ object AmortizationSchedule {
     fun dueDate(firstDueDate: LocalDate, index: Int): LocalDate =
         Recurrence.occurrence(firstDueDate, RecurrenceFrequency.MONTHLY, 1, (index - 1).toLong())
 
+    /** Hány részlet esedékes [date] előtt (az aznapi még nem): korábban felvett hitelnél a már befizetettek. */
+    fun installmentsDueBefore(firstDueDate: LocalDate, months: Int, date: LocalDate): Int =
+        (1..months).count { dueDate(firstDueDate, it).isBefore(date) }
+
     fun build(params: Params, events: List<Event> = emptyList()): Schedule {
         require(params.principalMinor > 0) { "A hitelösszeg legyen pozitív" }
         require(params.thmPercent >= 0) { "A THM nem lehet negatív" }
         require(params.months >= 1) { "A futamidő legalább 1 hónap" }
         require(params.paymentOverrideMinor == null || params.paymentOverrideMinor > 0) { "A részlet legyen pozitív" }
+        require(params.openingPaid in 0 until params.months) { "A már befizetett részletek száma kevesebb legyen a futamidőnél" }
+        require(params.openingBalanceMinor == null || params.openingBalanceMinor > 0) { "A hátralék legyen pozitív" }
         val mc = MathContext.DECIMAL64
         val byInstallment = events.groupBy { it.afterInstallment }
 
@@ -100,6 +116,15 @@ object AmortizationSchedule {
 
         var index = 0
         while (balance.signum() > 0 && index < MAX_INSTALLMENTS) {
+            // Korábban felvett hitel: a bank szerinti hátralékkal folytatódik a hátralévő hónapokra.
+            val bankBalanceHere = params.openingBalanceMinor.takeIf { index == params.openingPaid && index > 0 }
+            if (bankBalanceHere != null) {
+                balance = BigDecimal.valueOf(bankBalanceHere)
+                val months = remaining ?: (params.months - index)
+                payment = params.paymentOverrideMinor
+                    ?: LoanCalculator.calculate(bankBalanceHere, thm, months).monthlyPaymentMinor
+                remaining = months
+            }
             // Az előző (index.) részlet után érvényes események, a megadás sorrendjében.
             var prepaidHere = 0L
             for (event in byInstallment[index].orEmpty()) {
@@ -159,6 +184,7 @@ object AmortizationSchedule {
                 balanceAfterMinor = after,
                 thmPercent = thm,
                 prepaidBeforeMinor = prepaidHere,
+                bankBalanceBeforeMinor = bankBalanceHere,
             )
             remaining = remaining?.minus(1)
         }

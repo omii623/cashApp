@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -36,7 +35,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -49,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -164,25 +161,10 @@ private fun BankLoanEditScreen(state: BankLoanEditUiState, vm: BankLoanEditViewM
                 }
             }
 
-            Row(
-                Modifier.fillMaxWidth().toggleable(value = state.running, role = Role.Switch, onValueChange = vm::onRunning),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.bank_running), style = MaterialTheme.typography.bodyLarge)
-                    Text(
-                        stringResource(R.string.bank_running_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Switch(checked = state.running, onCheckedChange = null)
-            }
-
             AmountField(
                 value = state.principalText,
                 onChange = vm::onPrincipal,
-                label = stringResource(if (state.running) R.string.bank_principal_running else R.string.bank_principal),
+                label = stringResource(R.string.bank_principal),
                 suffix = symbol,
                 isError = state.principalError,
                 errorText = stringResource(R.string.form_amount_error),
@@ -202,7 +184,7 @@ private fun BankLoanEditScreen(state: BankLoanEditUiState, vm: BankLoanEditViewM
                 OutlinedTextField(
                     value = state.monthsText,
                     onValueChange = vm::onMonths,
-                    label = { Text(stringResource(if (state.running) R.string.bank_months_running else R.string.bank_months)) },
+                    label = { Text(stringResource(R.string.bank_months)) },
                     suffix = { Text(stringResource(R.string.calc_months_unit)) },
                     isError = state.monthsError,
                     supportingText = if (state.monthsError) ({ Text(stringResource(R.string.calc_months_error)) }) else null,
@@ -211,42 +193,10 @@ private fun BankLoanEditScreen(state: BankLoanEditUiState, vm: BankLoanEditViewM
                     modifier = Modifier.weight(1f),
                 )
             }
-            DateField(
-                state.firstDueDate,
-                vm::onFirstDue,
-                Modifier.fillMaxWidth(),
-                label = stringResource(if (state.running) R.string.bank_first_due_running else R.string.bank_first_due),
-            )
+            DateField(state.firstDueDate, vm::onFirstDue, Modifier.fillMaxWidth(), label = stringResource(R.string.bank_first_due))
 
-            if (state.running) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
-                    OutlinedTextField(
-                        value = state.originalText,
-                        onValueChange = vm::onOriginal,
-                        label = { Text(stringResource(R.string.bank_original)) },
-                        suffix = { Text(symbol) },
-                        isError = state.originalError,
-                        supportingText = if (state.originalError) ({ Text(stringResource(R.string.bank_original_error)) }) else null,
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        modifier = Modifier.weight(1f),
-                    )
-                    OutlinedTextField(
-                        value = state.paidBeforeText,
-                        onValueChange = vm::onPaidBefore,
-                        label = { Text(stringResource(R.string.bank_paid_before)) },
-                        isError = state.paidBeforeError,
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-                Text(
-                    stringResource(R.string.bank_optional_progress_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            // Korábban felvett hitel: az első részlet a múltban → a már befizetett részletek és a banki hátralék.
+            if (state.isPast) PastLoanSection(state, vm, symbol)
 
             AmountField(
                 value = state.overrideText,
@@ -332,6 +282,41 @@ private fun AmountField(
     )
 }
 
+/** Korábban felvett hitel: követés előtt befizetett részletek (a dátumból előtöltve) és a bank szerinti hátralék. */
+@Composable
+private fun PastLoanSection(state: BankLoanEditUiState, vm: BankLoanEditViewModel, symbol: String) {
+    Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainer, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(R.string.bank_past_title), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.bank_past_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            OutlinedTextField(
+                value = state.paidBeforeText,
+                onValueChange = vm::onPaidBefore,
+                label = { Text(stringResource(R.string.bank_paid_before)) },
+                placeholder = { Text("0") },
+                isError = state.paidBeforeError,
+                supportingText = if (state.paidBeforeError) ({ Text(stringResource(R.string.bank_paid_before_error)) }) else null,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            AmountField(
+                value = state.bankBalanceText,
+                onChange = vm::onBankBalance,
+                label = stringResource(R.string.bank_bank_balance),
+                suffix = symbol,
+                isError = state.bankBalanceError,
+                errorText = stringResource(R.string.form_amount_error),
+                hint = stringResource(R.string.bank_bank_balance_hint, state.preview?.calculatedBalance ?: "–"),
+            )
+        }
+    }
+}
+
 /** Élő előnézet: havi részlet, teljes visszafizetés, hitelköltség és az utolsó részlet dátuma. */
 @Composable
 private fun PreviewCard(preview: BankLoanPreview?) {
@@ -352,6 +337,14 @@ private fun PreviewCard(preview: BankLoanPreview?) {
             }
             preview?.lastDue?.let {
                 Text(stringResource(R.string.bank_preview_end, formatDate(it, R.string.fmt_date)), color = c.onHeroMuted, style = MaterialTheme.typography.bodySmall)
+            }
+            preview?.currentBalance?.let {
+                Text(
+                    stringResource(R.string.bank_preview_now, it, preview.remainingInstallments),
+                    color = c.onHero,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Bold,
+                )
             }
         }
     }

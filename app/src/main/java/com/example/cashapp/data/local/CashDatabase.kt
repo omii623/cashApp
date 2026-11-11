@@ -153,8 +153,8 @@ object Migrations {
                 "CREATE TABLE IF NOT EXISTS `bank_loans` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     "`name` TEXT NOT NULL, `bankName` TEXT NOT NULL, `kind` TEXT NOT NULL, `currencyCode` TEXT NOT NULL, " +
                     "`principalMinor` INTEGER NOT NULL, `thmPercent` REAL NOT NULL, `termMonths` INTEGER NOT NULL, " +
-                    "`firstDueDate` INTEGER NOT NULL, `monthlyPaymentOverrideMinor` INTEGER, `originalPrincipalMinor` INTEGER, " +
-                    "`paidMonthsBefore` INTEGER NOT NULL, `accountId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, " +
+                    "`firstDueDate` INTEGER NOT NULL, `monthlyPaymentOverrideMinor` INTEGER, " +
+                    "`paidMonthsBefore` INTEGER NOT NULL, `bankBalanceMinor` INTEGER, `accountId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, " +
                     "`subcategoryId` INTEGER, `recurringRuleId` INTEGER, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `closedDate` INTEGER, " +
                     "`color` INTEGER, `icon` TEXT, " +
                     "FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +

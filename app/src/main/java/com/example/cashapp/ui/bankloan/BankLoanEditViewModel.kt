@@ -36,6 +36,11 @@ data class BankLoanPreview(
     val total: String,
     val cost: String,
     val lastDue: LocalDate?,
+    /** Korábban felvett hitelnél: a számolt hátralék a már befizetett részletek után (a banki hátralék súgója). */
+    val calculatedBalance: String? = null,
+    /** Korábban felvett hitelnél: a hátralék most (a banki hátralékkal, ha meg van adva) és a hátralévő részletek. */
+    val currentBalance: String? = null,
+    val remainingInstallments: Int = 0,
 )
 
 /**
@@ -51,8 +56,6 @@ data class BankLoanEditUiState(
     val nameError: Boolean = false,
     val bankName: String = "",
     val kind: BankLoanKind = BankLoanKind.PERSONAL,
-    /** Már futó hitel: a hitelösszeg = jelenlegi hátralék, a futamidő = hátralévő részletek. */
-    val running: Boolean = false,
     val principalText: String = "",
     val principalError: Boolean = false,
     val thmText: String = "",
@@ -60,10 +63,13 @@ data class BankLoanEditUiState(
     val monthsText: String = "",
     val monthsError: Boolean = false,
     val firstDueDate: LocalDate = LocalDate.now(),
-    val originalText: String = "",
-    val originalError: Boolean = false,
+    /** A követés előtt már befizetett részletek (üres → 0). Új hitelnél a dátumból számolódik, amíg át nem írják. */
     val paidBeforeText: String = "",
+    val paidBeforeEdited: Boolean = false,
     val paidBeforeError: Boolean = false,
+    /** A bank szerinti hátralék a már befizetett részletek után (nem kötelező). */
+    val bankBalanceText: String = "",
+    val bankBalanceError: Boolean = false,
     val overrideText: String = "",
     val overrideError: Boolean = false,
     val accounts: List<AccountEntity> = emptyList(),
@@ -82,6 +88,9 @@ data class BankLoanEditUiState(
     val doneId: Long? = null,
 ) {
     val account: AccountEntity? get() = accounts.firstOrNull { it.id == accountId }
+
+    /** Korábban felvett hitel: az első részlet a múltban van → látszanak a „már befizetett” mezők. */
+    val isPast: Boolean get() = firstDueDate.isBefore(LocalDate.now()) || paidBeforeText.isNotBlank()
 }
 
 class BankLoanEditViewModel(
@@ -144,13 +153,14 @@ class BankLoanEditViewModel(
                 name = loan.name,
                 bankName = loan.bankName,
                 kind = loan.kind,
-                running = loan.originalPrincipalMinor != null || loan.paidMonthsBefore > 0,
                 principalText = AmountParser.toEditText(loan.principalMinor, decimals),
                 thmText = formatNumber(loan.thmPercent),
                 monthsText = loan.termMonths.toString(),
                 firstDueDate = loan.firstDueDate,
-                originalText = loan.originalPrincipalMinor?.let { p -> AmountParser.toEditText(p, decimals) }.orEmpty(),
+                // Mentett hitelnél a tárolt érték marad (nem számolódik újra a mai dátumból).
                 paidBeforeText = loan.paidMonthsBefore.takeIf { m -> m > 0 }?.toString().orEmpty(),
+                paidBeforeEdited = true,
+                bankBalanceText = loan.bankBalanceMinor?.let { b -> AmountParser.toEditText(b, decimals) }.orEmpty(),
                 overrideText = loan.monthlyPaymentOverrideMinor?.let { p -> AmountParser.toEditText(p, decimals) }.orEmpty(),
                 accounts = accountList,
                 accountId = loan.accountId,
@@ -161,29 +171,52 @@ class BankLoanEditViewModel(
         }
     }
 
-    /** Kategória- és alkategória-lista, pénznem és előnézet a jelenlegi mezők alapján. */
+    /** A követés előtt befizetett részletek: üres → 0; különben 0 és futamidő − 1 között. */
+    private fun parsePaidBefore(text: String, months: Int?): Int? =
+        if (text.isBlank()) 0 else text.trim().toIntOrNull()?.takeIf { it >= 0 && (months == null || it < months) }
+
+    /**
+     * Kategória- és alkategória-lista, pénznem, a „már befizetett” részletek automatikus értéke (új hitelnél,
+     * amíg kézzel át nem írják: az első részlet dátumától máig esedékesek) és az előnézet.
+     */
     private fun BankLoanEditUiState.withOptions(): BankLoanEditUiState {
         val currency = account?.let { currencies[it.currencyCode] }
         val decimals = currency?.decimals ?: 0
         val principal = AmountParser.parseAmount(principalText, decimals)
         val thm = parseThm(thmText)
         val months = parseMonths(monthsText)
+        val paidText = if (paidBeforeEdited || months == null) paidBeforeText else {
+            AmortizationSchedule.installmentsDueBefore(firstDueDate, months, LocalDate.now())
+                .coerceAtMost(months - 1).takeIf { it > 0 }?.toString().orEmpty()
+        }
+        val paidBefore = parsePaidBefore(paidText, months)
         val override = if (overrideText.isBlank()) null else AmountParser.parseAmount(overrideText, decimals)
-        val preview = if (currency != null && principal != null && thm != null && months != null && (overrideText.isBlank() || override != null)) {
+        val bankBalance = if (bankBalanceText.isBlank()) null else AmountParser.parseAmount(bankBalanceText, decimals)
+        val inputsOk = currency != null && principal != null && thm != null && months != null && paidBefore != null &&
+            (overrideText.isBlank() || override != null) && (bankBalanceText.isBlank() || bankBalance != null)
+        val preview = if (inputsOk) {
             runCatching {
-                val schedule = AmortizationSchedule.build(AmortizationSchedule.Params(principal, thm, months, firstDueDate, override))
+                val params = AmortizationSchedule.Params(principal!!, thm!!, months!!, firstDueDate, override, paidBefore!!)
+                val calculatedSchedule = AmortizationSchedule.build(params)
+                val schedule = if (bankBalance != null && paidBefore > 0)
+                    AmortizationSchedule.build(params.copy(openingBalanceMinor = bankBalance)) else calculatedSchedule
                 val calculated = LoanCalculator.calculate(principal, thm, months).monthlyPaymentMinor
+                fun m(v: Long) = MoneyFormatter.format(v, currency!!)
                 BankLoanPreview(
-                    monthly = MoneyFormatter.format(override ?: calculated, currency),
-                    calculatedMonthly = MoneyFormatter.format(calculated, currency),
-                    total = MoneyFormatter.format(schedule.totalPaymentMinor, currency),
-                    cost = MoneyFormatter.format(schedule.totalPaymentMinor - principal, currency),
+                    monthly = m(schedule.nextAfter(paidBefore)?.paymentMinor ?: override ?: calculated),
+                    calculatedMonthly = m(calculated),
+                    total = m(schedule.totalPaymentMinor),
+                    cost = m(schedule.totalPaymentMinor - principal),
                     lastDue = schedule.lastDueDate,
+                    calculatedBalance = if (paidBefore > 0) m(calculatedSchedule.outstandingAfter(paidBefore)) else null,
+                    currentBalance = if (paidBefore > 0) m(schedule.outstandingAfter(paidBefore)) else null,
+                    remainingInstallments = (schedule.installments.size - paidBefore).coerceAtLeast(0),
                 )
             }.getOrNull()
         } else null
         return copy(
             currency = currency,
+            paidBeforeText = paidText,
             // A ViewModel listái (az állapot azonos nevű mezői itt elfednék őket).
             categories = this@BankLoanEditViewModel.categories.map { CategoryOption(it.id, it.name, it.color, it.icon) },
             subcategories = this@BankLoanEditViewModel.subcategories
@@ -198,13 +231,12 @@ class BankLoanEditViewModel(
     fun onName(text: String) = edit { it.copy(name = text, nameError = false) }
     fun onBankName(text: String) = edit { it.copy(bankName = text) }
     fun onKind(kind: BankLoanKind) = edit { it.copy(kind = kind) }
-    fun onRunning(on: Boolean) = edit { it.copy(running = on) }
-    fun onPrincipal(text: String) = edit { it.copy(principalText = text, principalError = false, originalError = false) }
+    fun onPrincipal(text: String) = edit { it.copy(principalText = text, principalError = false) }
     fun onThm(text: String) = edit { it.copy(thmText = text, thmError = false) }
-    fun onMonths(text: String) = edit { it.copy(monthsText = text, monthsError = false) }
+    fun onMonths(text: String) = edit { it.copy(monthsText = text, monthsError = false, paidBeforeError = false) }
     fun onFirstDue(date: LocalDate) = edit { it.copy(firstDueDate = date) }
-    fun onOriginal(text: String) = edit { it.copy(originalText = text, originalError = false) }
-    fun onPaidBefore(text: String) = edit { it.copy(paidBeforeText = text, paidBeforeError = false) }
+    fun onPaidBefore(text: String) = edit { it.copy(paidBeforeText = text, paidBeforeEdited = true, paidBeforeError = false) }
+    fun onBankBalance(text: String) = edit { it.copy(bankBalanceText = text, bankBalanceError = false) }
     fun onOverride(text: String) = edit { it.copy(overrideText = text, overrideError = false) }
     fun onAccount(id: Long) = edit { it.copy(accountId = id) }
     fun onCategory(id: Long) = edit { if (it.categoryId == id) it else it.copy(categoryId = id, subcategoryId = null, categoryError = false) }
@@ -222,14 +254,13 @@ class BankLoanEditViewModel(
         val months = parseMonths(s.monthsText)
         val override = if (s.overrideText.isBlank()) null else AmountParser.parseAmount(s.overrideText, decimals)
         val overrideOk = s.overrideText.isBlank() || override != null
-        // Futó hitelnél: eredeti összeg (≥ hátralék) és befizetett hónapok – mindkettő elhagyható.
-        val originalValue = if (!s.running || s.originalText.isBlank()) null else AmountParser.parseAmount(s.originalText, decimals)
-        val originalOk = !s.running || s.originalText.isBlank() ||
-            (originalValue != null && (principal == null || originalValue >= principal))
-        val paidBefore = if (!s.running || s.paidBeforeText.isBlank()) 0 else s.paidBeforeText.trim().toIntOrNull()?.takeIf { it >= 0 }
+        val paidBefore = parsePaidBefore(s.paidBeforeText, months)
+        // Banki hátralék csak akkor számít, ha van már befizetett részlet.
+        val bankBalance = if (s.bankBalanceText.isBlank() || paidBefore == 0) null else AmountParser.parseAmount(s.bankBalanceText, decimals)
+        val bankBalanceOk = s.bankBalanceText.isBlank() || paidBefore == 0 || bankBalance != null
         val account = s.account
-        if (name.isEmpty() || principal == null || thm == null || months == null || !overrideOk || !originalOk ||
-            paidBefore == null || account == null || s.categoryId == null
+        if (name.isEmpty() || principal == null || thm == null || months == null || !overrideOk || paidBefore == null ||
+            !bankBalanceOk || account == null || s.categoryId == null
         ) {
             _state.update {
                 it.copy(
@@ -238,8 +269,8 @@ class BankLoanEditViewModel(
                     thmError = thm == null,
                     monthsError = months == null,
                     overrideError = !overrideOk,
-                    originalError = !originalOk,
                     paidBeforeError = paidBefore == null,
+                    bankBalanceError = !bankBalanceOk,
                     categoryError = s.categoryId == null,
                 )
             }
@@ -261,8 +292,8 @@ class BankLoanEditViewModel(
                         termMonths = months,
                         firstDueDate = s.firstDueDate,
                         monthlyPaymentOverrideMinor = override,
-                        originalPrincipalMinor = originalValue,
                         paidMonthsBefore = paidBefore,
+                        bankBalanceMinor = bankBalance,
                         accountId = account.id,
                         categoryId = s.categoryId,
                         subcategoryId = s.subcategoryId,

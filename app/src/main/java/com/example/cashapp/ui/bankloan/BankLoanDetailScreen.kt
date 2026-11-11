@@ -372,6 +372,9 @@ private fun ScheduleRow(row: ScheduleRowUi, isNext: Boolean) {
             row.prepaidBefore?.let {
                 Text(stringResource(R.string.bank_row_prepaid, it), style = MaterialTheme.typography.bodySmall, color = CashTheme.colors.income)
             }
+            row.bankBalanceBefore?.let {
+                Text(stringResource(R.string.bank_row_bank_balance, it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+            }
         }
         Spacer(Modifier.width(8.dp))
         Column(horizontalAlignment = Alignment.End) {

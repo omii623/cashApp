@@ -481,18 +481,10 @@
     <string name="bank_name_hint">e.g. Mortgage</string>
     <string name="bank_bank">Bank (optional)</string>
     <string name="bank_kind">Type</string>
-    <string name="bank_running">Existing loan</string>
-    <string name="bank_running_hint">Turn on if you took out the loan earlier: the current balance and the number of remaining instalments are enough.</string>
     <string name="bank_principal">Loan amount</string>
-    <string name="bank_principal_running">Current balance</string>
     <string name="bank_months">Term</string>
-    <string name="bank_months_running">Remaining instalments</string>
     <string name="bank_first_due">First instalment date</string>
-    <string name="bank_first_due_running">Next instalment date</string>
-    <string name="bank_original">Original loan amount</string>
-    <string name="bank_original_error">Cannot be less than the balance</string>
     <string name="bank_paid_before">Instalments already paid</string>
-    <string name="bank_optional_progress_hint">Optional; only used to show progress.</string>
     <string name="bank_override">Actual monthly instalment</string>
     <string name="bank_override_hint">Optional. If the amount your bank charges differs from the calculated one (%1$s).</string>
     <string name="bank_account">Account charged</string>
@@ -535,4 +527,11 @@
     <string name="bank_prepay_save">Record prepayment</string>
     <string name="bank_prepay_balance">Current balance</string>
     <string name="bank_prepay_hint">The prepayment and the fee are booked as one expense on the loan’s account.</string>
+    <string name="bank_past_title">Loan taken out earlier</string>
+    <string name="bank_past_hint">The first instalment was in the past. Instalments due until now count as paid but are not booked – tracking starts from here.</string>
+    <string name="bank_paid_before_error">Must be between 0 and one less than the term</string>
+    <string name="bank_bank_balance">Balance according to the bank</string>
+    <string name="bank_bank_balance_hint">Optional. Calculated: %1$s. If your bank shows something else (e.g. due to an earlier prepayment or rate change), the schedule continues from it.</string>
+    <string name="bank_preview_now">Balance now: %1$s · %2$d instalments left</string>
+    <string name="bank_row_bank_balance">Balance per bank before: %1$s</string>
 </resources>

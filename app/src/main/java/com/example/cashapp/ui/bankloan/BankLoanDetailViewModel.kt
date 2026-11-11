@@ -30,6 +30,8 @@ data class ScheduleRowUi(
     val paid: Boolean,
     /** A részlet előtti előtörlesztés (null: nem volt). */
     val prepaidBefore: String?,
+    /** A részlet előtt a bank szerinti hátralékra igazodott a terv (null: nem). */
+    val bankBalanceBefore: String? = null,
 )
 
 /** Előtörlesztés / kamatváltozás a listában. */
@@ -89,7 +91,7 @@ class BankLoanDetailViewModel(
         val schedule = overview.schedule
         val paid = overview.paidInstallments
         val next = overview.nextInstallment
-        val original = overview.originalPrincipalMinor
+        val original = loan.principalMinor
         BankLoanDetailUiState(
             isLoading = false,
             item = overview.toItemUi(currencies, hidden),
@@ -110,6 +112,7 @@ class BankLoanDetailViewModel(
                     balanceAfter = money(it.balanceAfterMinor),
                     paid = it.index <= paid,
                     prepaidBefore = it.prepaidBeforeMinor.takeIf { p -> p > 0 }?.let(::money),
+                    bankBalanceBefore = it.bankBalanceBeforeMinor?.let(::money),
                 )
             },
             paidCount = paid,

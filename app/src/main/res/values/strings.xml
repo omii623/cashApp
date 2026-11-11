@@ -481,18 +481,10 @@
     <string name="bank_name_hint">pl. Lakáshitel</string>
     <string name="bank_bank">Bank (nem kötelező)</string>
     <string name="bank_kind">Fajta</string>
-    <string name="bank_running">Már futó hitel</string>
-    <string name="bank_running_hint">Kapcsold be, ha a hitelt korábban vetted fel: elég a mostani hátralék és a hátralévő részletek száma.</string>
     <string name="bank_principal">Hitelösszeg</string>
-    <string name="bank_principal_running">Jelenlegi hátralék</string>
     <string name="bank_months">Futamidő</string>
-    <string name="bank_months_running">Hátralévő részletek</string>
     <string name="bank_first_due">Első részlet dátuma</string>
-    <string name="bank_first_due_running">Következő részlet dátuma</string>
-    <string name="bank_original">Eredeti hitelösszeg</string>
-    <string name="bank_original_error">Nem lehet kevesebb a hátraléknál</string>
     <string name="bank_paid_before">Már befizetett részletek</string>
-    <string name="bank_optional_progress_hint">Nem kötelező; csak a haladás kijelzéséhez.</string>
     <string name="bank_override">Tényleges havi részlet</string>
     <string name="bank_override_hint">Nem kötelező. Ha a bank által terhelt összeg eltér a számolttól (%1$s).</string>
     <string name="bank_account">Terhelt számla</string>
@@ -535,4 +527,11 @@
     <string name="bank_prepay_save">Előtörlesztés rögzítése</string>
     <string name="bank_prepay_balance">Jelenlegi hátralék</string>
     <string name="bank_prepay_hint">Az előtörlesztés és a büntető egy kiadás tételként kerül a hitel számlájára.</string>
+    <string name="bank_past_title">Korábban felvett hitel</string>
+    <string name="bank_past_hint">Az első részlet a múltban volt. Az addig esedékes részleteket befizetettnek veszi, de nem könyveli őket – a követés innen indul.</string>
+    <string name="bank_paid_before_error">0 és a futamidőnél eggyel kevesebb között legyen</string>
+    <string name="bank_bank_balance">Hátralék a bank szerint</string>
+    <string name="bank_bank_balance_hint">Nem kötelező. Számolt: %1$s. Ha a bank mást mutat (pl. korábbi előtörlesztés vagy kamatváltozás miatt), a terv ettől folytatódik.</string>
+    <string name="bank_preview_now">Hátralék most: %1$s · még %2$d részlet</string>
+    <string name="bank_row_bank_balance">Előtte a bank szerinti hátralék: %1$s</string>
 </resources>

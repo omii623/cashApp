@@ -167,8 +167,8 @@ class BackupManagerTest {
         val loanId = dao.insert(
             BankLoanEntity(
                 name = "Lakáshitel", bankName = "Bank", kind = BankLoanKind.MORTGAGE, currencyCode = "HUF",
-                principalMinor = 3_950_000, thmPercent = 6.37, termMonths = 72, firstDueDate = day,
-                monthlyPaymentOverrideMinor = 66_000, originalPrincipalMinor = 6_000_000, paidMonthsBefore = 48,
+                principalMinor = 6_000_000, thmPercent = 6.37, termMonths = 120, firstDueDate = day.minusMonths(48),
+                monthlyPaymentOverrideMinor = 66_000, paidMonthsBefore = 48, bankBalanceMinor = 3_812_000,
                 accountId = accountId, categoryId = categoryId, color = 0xFF5C6BC0, icon = "home",
             )
         )
@@ -180,7 +180,7 @@ class BackupManagerTest {
         )
         dao.insertEvent(
             BankLoanEventEntity(
-                bankLoanId = loanId, date = day, afterInstallment = 0, type = BankLoanEventType.PREPAYMENT,
+                bankLoanId = loanId, date = day, afterInstallment = 48, type = BankLoanEventType.PREPAYMENT,
                 amountMinor = 245_000, penaltyMinor = 5_000, mode = PrepaymentMode.LOWER_PAYMENT, transactionId = txId,
             )
         )

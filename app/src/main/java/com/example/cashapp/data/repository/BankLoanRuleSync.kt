@@ -19,6 +19,8 @@ fun BankLoanEntity.schedule(events: List<BankLoanEventEntity>): AmortizationSche
             months = termMonths,
             firstDueDate = firstDueDate,
             paymentOverrideMinor = monthlyPaymentOverrideMinor,
+            openingPaid = paidMonthsBefore,
+            openingBalanceMinor = bankBalanceMinor,
         ),
         events.mapNotNull { it.toDomain() },
     )

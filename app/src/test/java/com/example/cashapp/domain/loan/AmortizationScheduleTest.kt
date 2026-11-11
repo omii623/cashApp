@@ -160,7 +160,47 @@ class AmortizationScheduleTest {
     }
 
     @Test
+    fun korabban_felvett_hitel_banki_hatralek_nelkul_azonos_az_alaptervvel() {
+        val plain = AmortizationSchedule.build(base)
+        val s = AmortizationSchedule.build(base.copy(openingPaid = 12))
+        assertEquals(plain.installments, s.installments)
+        assertEquals(plain.installments[11].balanceAfterMinor, s.outstandingAfter(12))
+    }
+
+    @Test
+    fun korabban_felvett_hitel_banki_hatralekkal_folytatodik() {
+        // 12 részlet után a bank szerint 650 000 Ft a hátralék (a számolt 711 185 Ft helyett, pl. korábbi előtörlesztés miatt).
+        val s = AmortizationSchedule.build(base.copy(openingPaid = 12, openingBalanceMinor = 650_000))
+        assertEquals(36, s.installments.size)
+        assertEquals(650_000L, s.outstandingAfter(12))
+        assertEquals(650_000L, s.installments[12].bankBalanceBeforeMinor)
+        assertEquals(LoanCalculator.calculate(650_000, 13.79, 24).monthlyPaymentMinor, s.installments[12].paymentMinor)
+        // A követés előtti részletek változatlanok.
+        assertEquals(AmortizationSchedule.build(base).installments.take(12), s.installments.take(12))
+        assertEquals(0L, s.installments.last().balanceAfterMinor)
+        // A befizetett részek a banki hátralékból: a 13. részlettől a tőkerészek összege 650 000 Ft.
+        assertEquals(650_000L, s.installments.drop(12).sumOf { it.principalMinor })
+    }
+
+    @Test
+    fun korabban_felvett_hitel_felulirt_reszlettel_a_reszlet_marad() {
+        val s = AmortizationSchedule.build(base.copy(paymentOverrideMinor = 34_100, openingPaid = 12, openingBalanceMinor = 650_000))
+        assertEquals(34_100L, s.installments[12].paymentMinor)
+        assertTrue(s.installments.size < 36) // kisebb hátralék, azonos részlet → hamarabb kifut
+    }
+
+    @Test
+    fun esedekes_reszletek_szama_egy_datum_elott() {
+        assertEquals(0, AmortizationSchedule.installmentsDueBefore(first, 36, first))
+        assertEquals(1, AmortizationSchedule.installmentsDueBefore(first, 36, first.plusDays(1)))
+        assertEquals(10, AmortizationSchedule.installmentsDueBefore(first, 36, first.plusMonths(10)))
+        assertEquals(36, AmortizationSchedule.installmentsDueBefore(first, 36, first.plusYears(10)))
+    }
+
+    @Test
     fun ervenytelen_bemenet() {
+        assertThrows(IllegalArgumentException::class.java) { AmortizationSchedule.build(base.copy(openingPaid = 36)) }
+        assertThrows(IllegalArgumentException::class.java) { AmortizationSchedule.build(base.copy(openingPaid = 5, openingBalanceMinor = 0)) }
         assertThrows(IllegalArgumentException::class.java) { AmortizationSchedule.build(base.copy(principalMinor = 0)) }
         assertThrows(IllegalArgumentException::class.java) { AmortizationSchedule.build(base.copy(months = 0)) }
         assertThrows(IllegalArgumentException::class.java) { AmortizationSchedule.build(base.copy(thmPercent = -1.0)) }

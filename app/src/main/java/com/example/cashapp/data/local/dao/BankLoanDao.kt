@@ -11,11 +11,12 @@ import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Befizetett részletek (a `b` alias a hitel): a hitelhez tartozó tételek, kivéve az előtörlesztések
- * tételeit (azokra egy esemény hivatkozik). A hátralék és a következő részlet a törlesztési tervből számol.
+ * Befizetett részletek (a `b` alias a hitel): a követés előtt befizetettek ([BankLoanEntity.paidMonthsBefore])
+ * + a hitelhez tartozó tételek, kivéve az előtörlesztések tételeit (azokra egy esemény hivatkozik).
+ * A hátralék és a következő részlet a törlesztési tervből számol.
  */
-private const val PAID_COUNT_SQL = """(SELECT COUNT(*) FROM transactions t WHERE t.bankLoanId = b.id
-    AND t.id NOT IN (SELECT e.transactionId FROM bank_loan_events e WHERE e.bankLoanId = b.id AND e.transactionId IS NOT NULL))"""
+private const val PAID_COUNT_SQL = """(b.paidMonthsBefore + (SELECT COUNT(*) FROM transactions t WHERE t.bankLoanId = b.id
+    AND t.id NOT IN (SELECT e.transactionId FROM bank_loan_events e WHERE e.bankLoanId = b.id AND e.transactionId IS NOT NULL)))"""
 
 private const val BANK_LOAN_SELECT = """
     SELECT b.*, $PAID_COUNT_SQL AS paidInstallments,

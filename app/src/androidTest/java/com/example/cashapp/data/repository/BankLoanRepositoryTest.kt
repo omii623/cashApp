@@ -243,12 +243,38 @@ class BankLoanRepositoryTest {
     }
 
     @Test
-    fun futoHitelProgressAdatai() = runTest {
-        val id = repo.save(loan().copy(originalPrincipalMinor = 2_000_000, paidMonthsBefore = 24))
+    fun korabbanFelvettHitel_bankiHatralekkal() = runTest {
+        // Az első részlet jan. 15-én volt; 10 részlet már befizetve (könyvelés nélkül), a bank szerint 700 000 Ft a hátralék.
+        val id = repo.save(loan().copy(paidMonthsBefore = 10, bankBalanceMinor = 700_000))
         val o = repo.getOverview(id)!!
-        assertEquals(60, o.totalMonthsForProgress)
-        assertEquals(24, o.paidMonthsForProgress)
-        assertEquals(2_000_000L, o.originalPrincipalMinor)
+        assertEquals(10, o.paidInstallments)
+        assertEquals(700_000L, o.outstandingMinor)
+        assertEquals(36, o.totalMonthsForProgress)
+        assertEquals(10, o.paidMonthsForProgress)
+        val next = o.nextInstallment!!
+        assertEquals(11, next.index)
+        assertEquals(first.plusMonths(10), next.dueDate)
+        assertEquals(LoanCalculator.calculate(700_000, 13.79, 26).monthlyPaymentMinor, next.paymentMinor)
+
+        // A szabály a 11. részlettől indul: a korábbi esedékességeket nem kéri jóváhagyásra.
+        val r = rule(id)
+        assertEquals(first, r.startDate)
+        assertEquals(first.plusMonths(10), r.nextDueDate)
+        assertEquals(next.paymentMinor, r.amountMinor)
+        recurring.generateDue(first.plusMonths(10))
+        assertEquals(listOf(first.plusMonths(10) to PendingStatus.PENDING), pendingStatuses(r.id))
+
+        repo.payNextInstallment(id, first.plusMonths(10), next.paymentMinor)
+        assertEquals(11, repo.getOverview(id)!!.paidInstallments)
+        assertEquals(1, db.openHelper.readableDatabase.query("SELECT COUNT(*) FROM transactions").use { c -> c.moveToFirst(); c.getInt(0) })
+    }
+
+    @Test
+    fun korabbanFelvettHitel_bankiHatralekNelkulASzamoltErtek() = runTest {
+        val id = repo.save(loan().copy(paidMonthsBefore = 12))
+        val o = repo.getOverview(id)!!
+        assertEquals(o.schedule.installments[11].balanceAfterMinor, o.outstandingMinor)
+        assertEquals(monthly, o.nextInstallment!!.paymentMinor)
     }
 
     @Test
@@ -257,7 +283,10 @@ class BankLoanRepositoryTest {
         assertThrows(IllegalArgumentException::class.java) { kotlinx.coroutines.runBlocking { repo.save(loan().copy(name = " ")) } }
         assertThrows(IllegalArgumentException::class.java) { kotlinx.coroutines.runBlocking { repo.save(loan().copy(categoryId = incomeCategory)) } }
         assertThrows(IllegalArgumentException::class.java) {
-            kotlinx.coroutines.runBlocking { repo.save(loan().copy(originalPrincipalMinor = 500_000)) }
+            kotlinx.coroutines.runBlocking { repo.save(loan().copy(paidMonthsBefore = 36)) } // nem maradna részlet
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            kotlinx.coroutines.runBlocking { repo.save(loan().copy(bankBalanceMinor = 500_000)) } // befizetett részlet nélkül
         }
         db.currencyDao().insertAll(listOf(CurrencyEntity("EUR", "Euró", "€", 2)))
         val eur = db.accountDao().insert(AccountEntity(name = "EUR", currencyCode = "EUR", color = 0, icon = "cash"))

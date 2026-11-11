@@ -38,7 +38,7 @@
 | **PendingRecurring** | id, ruleId, esedékes dátum, állapot (VÁR / JÓVÁHAGYVA / KIHAGYVA), transactionId (jóváhagyás után) |
 | **Budget** | id, categoryId, havi keret, pénznem, figyelmeztetési küszöb (%, alap 80), aktív |
 | **Loan** (magánkölcsön, DB v4) | id, személy neve, irány (TARTOZOM / NEKEM TARTOZNAK), pénznem, nyitó összeg, nyitó visszafizetett rész, kezdés, megjegyzés, lezárás dátuma, szín, ikon |
-| **BankLoan** (DB v5) | id, név, bank neve, fajta (LAKÁS / SZEMÉLYI / AUTÓ / EGYÉB), pénznem (= terhelt számla pénzneme), hitelösszeg, THM, futamidő (hónap), első esedékesség, felülírt havi részlet (opc.), eredeti hitelösszeg + korábban befizetett hónapok (futó hitelnél, opc.), accountId, categoryId, subcategoryId (opc.), recurringRuleId (opc.), lezárás dátuma, megjegyzés, szín, ikon |
+| **BankLoan** (DB v5) | id, név, bank neve, fajta (LAKÁS / SZEMÉLYI / AUTÓ / EGYÉB), pénznem (= terhelt számla pénzneme), hitelösszeg, THM, futamidő (hónap), első esedékesség (az eredeti szerződés szerint, lehet múltbeli), felülírt havi részlet (opc.), követés előtt befizetett részletek, bank szerinti hátralék (opc.), accountId, categoryId, subcategoryId (opc.), recurringRuleId (opc.), lezárás dátuma, megjegyzés, szín, ikon |
 | **BankLoanEvent** (DB v5) | id, bankLoanId, dátum, hányadik részlet után, típus (ELŐTÖRLESZTÉS / KAMATVÁLTOZÁS), összeg, büntető, mód (CSÖKKENŐ RÉSZLET / RÖVIDEBB FUTAMIDŐ), új THM, transactionId (opc.) |
 
 - A Transaction kiegészítései: `loanId`, `loanOpening`, `loanAmountMinor` (magánkölcsön, v4); `bankLoanId` (banki hitel, v5).
@@ -156,7 +156,9 @@ Továbbiak → **Kölcsönök** hub: Magánkölcsönök | Banki kölcsönök | K
   - ⋮ menü: szerkesztés, kamatváltozás, lezárás / újranyitás, törlés
 - **Új / szerkesztés:**
   - név, bank, fajta, hitelösszeg, THM, futamidő, első törlesztés dátuma, terhelt számla, kategória
-  - **„Már futó hitel”** kapcsoló: jelenlegi hátralék + hátralévő hónapok (opc. eredeti összeg és befizetett hónapok a progresshez)
+  - **Korábban felvett hitel:** az eredeti szerződés adatai, múltbeli első részlettel. Ilyenkor megjelenik:
+    - **Már befizetett részletek:** a dátumból számolva (a mai napig esedékesek), átírható; befizetettnek számítanak, de nem könyvelődnek
+    - **Hátralék a bank szerint** (opc., súgóban a számolt érték): ha eltér, a terv ettől folytatódik (a részlet a hátralévő hónapokra újraszámolva); a tervben az érintett sor jelölve
   - felülírható havi részlet (a bank által ténylegesen terhelt összeg)
   - élő előnézet alul: havi részlet, teljes költség (a kalkulátor számolásával)
 - **Előtörlesztés:** a kalkulátor előtörlesztés-blokkja (közös composable), előre kitöltve; a két változat közül választva mentés

@@ -162,10 +162,12 @@ data class LoanEntity(
 
 /**
  * Banki hitel (DB v5), annuitásos törlesztéssel (terv.md 4.12 / 9).
- * - [principalMinor] / [termMonths] / [firstDueDate]: a **nyilvántartott** rész. Futó hitelnél ez a
- *   rögzítéskori hátralék, a hátralévő hónapok és a következő esedékesség.
- * - [originalPrincipalMinor] / [paidMonthsBefore]: futó hitelnél az eredeti összeg és a rögzítés előtt
- *   már befizetett hónapok (csak a progress kijelzéséhez); új hitelnél null / 0.
+ * - [principalMinor] / [termMonths] / [firstDueDate]: az eredeti szerződés adatai (korábban felvett hitelnél
+ *   az első részlet a múltban van).
+ * - [paidMonthsBefore]: a követés kezdete előtt már befizetett részletek (nem könyvelődnek, de befizetettnek
+ *   számítanak); új hitelnél 0.
+ * - [bankBalanceMinor]: a bank szerinti hátralék [paidMonthsBefore] részlet után; ha eltér a számolttól
+ *   (pl. korábbi előtörlesztés / kamatváltozás miatt), a terv ettől folytatódik. Null → a számolt érték.
  * - [monthlyPaymentOverrideMinor]: a bank által ténylegesen terhelt részlet, ha eltér a számolttól.
  * - [currencyCode] mindig a terhelt [accountId] számla pénzneme; a részletek a [categoryId] / [subcategoryId] alá kerülnek.
  * - [recurringRuleId]: a részletekhez generált havi ismétlődő szabály (a szabály törlésekor null).
@@ -194,8 +196,8 @@ data class BankLoanEntity(
     val termMonths: Int,
     val firstDueDate: LocalDate,
     val monthlyPaymentOverrideMinor: Long? = null,
-    val originalPrincipalMinor: Long? = null,
     val paidMonthsBefore: Int = 0,
+    val bankBalanceMinor: Long? = null,
     val accountId: Long,
     val categoryId: Long,
     val subcategoryId: Long? = null,
