@@ -28,6 +28,10 @@ import com.example.cashapp.ui.exchange.ExchangeRoute
 import com.example.cashapp.ui.backup.BackupRoute
 import com.example.cashapp.ui.currency.CurrenciesRoute
 import com.example.cashapp.ui.more.MoreScreen
+import com.example.cashapp.ui.bankloan.BankLoanDetailRoute
+import com.example.cashapp.ui.bankloan.BankLoanEditRoute
+import com.example.cashapp.ui.bankloan.BankLoanPrepaymentRoute
+import com.example.cashapp.ui.bankloan.BankLoansRoute
 import com.example.cashapp.ui.loan.LoanDetailRoute
 import com.example.cashapp.ui.loan.LoanCalculatorRoute
 import com.example.cashapp.ui.loan.LoanEditRoute
@@ -187,10 +191,53 @@ fun CashApp(openPendingRequest: Int = 0) {
                 LoanHubScreen(
                     onBack = back,
                     onPrivateLoans = { navController.navigate(Routes.LOANS) },
+                    onBankLoans = { navController.navigate(Routes.BANK_LOANS) },
                     onCalculator = { navController.navigate(Routes.LOAN_CALCULATOR) },
                 )
             }
-            composable(Routes.LOAN_CALCULATOR) { LoanCalculatorRoute(onBack = back) }
+            composable(Routes.LOAN_CALCULATOR) {
+                LoanCalculatorRoute(
+                    onBack = back,
+                    onSaveAsLoan = { principalText, thm, months ->
+                        navController.navigate(Routes.bankLoanFromCalculator(principalText, thm, months))
+                    },
+                )
+            }
+            composable(Routes.BANK_LOANS) {
+                BankLoansRoute(
+                    onBack = back,
+                    onOpen = { navController.navigate(Routes.bankLoanDetail(it)) },
+                    onNew = { navController.navigate(Routes.BANK_LOAN_NEW) },
+                )
+            }
+            composable(Routes.BANK_LOAN_DETAIL, arguments = listOf(navArgument(Routes.ARG_ID) { type = NavType.LongType })) { entry ->
+                val id = entry.arguments?.getLong(Routes.ARG_ID) ?: -1L
+                BankLoanDetailRoute(
+                    onBack = back,
+                    onEdit = { navController.navigate(Routes.bankLoanEdit(id)) },
+                    onPrepay = { navController.navigate(Routes.bankLoanPrepay(id)) },
+                )
+            }
+            composable(
+                Routes.BANK_LOAN_EDIT,
+                arguments = listOf(
+                    navArgument(Routes.ARG_ID) { type = NavType.LongType; defaultValue = -1L },
+                    navArgument(Routes.ARG_PRINCIPAL) { type = NavType.StringType; nullable = true; defaultValue = null },
+                    navArgument(Routes.ARG_THM) { type = NavType.StringType; nullable = true; defaultValue = null },
+                    navArgument(Routes.ARG_MONTHS) { type = NavType.IntType; defaultValue = -1 },
+                ),
+            ) { entry ->
+                val isNew = (entry.arguments?.getLong(Routes.ARG_ID) ?: -1L) < 0
+                BankLoanEditRoute(onDone = { savedId ->
+                    // Új hitel mentése után a részletek oldal nyílik (a szerkesztő helyén); egyébként vissza.
+                    if (savedId == null || !isNew) navController.popBackStack()
+                    else navController.navigate(Routes.bankLoanDetail(savedId)) { popUpTo(Routes.BANK_LOAN_EDIT) { inclusive = true } }
+                })
+            }
+            composable(
+                Routes.BANK_LOAN_PREPAY,
+                arguments = listOf(navArgument(Routes.ARG_ID) { type = NavType.LongType }),
+            ) { BankLoanPrepaymentRoute(onDone = back) }
             composable(Routes.LOANS) {
                 LoansRoute(
                     onBack = back,

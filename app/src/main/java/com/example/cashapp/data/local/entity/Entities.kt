@@ -5,11 +5,14 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.cashapp.domain.model.BankLoanEventType
+import com.example.cashapp.domain.model.BankLoanKind
 import com.example.cashapp.domain.model.CategoryType
 import com.example.cashapp.domain.model.Currency
 import com.example.cashapp.domain.model.LoanDirection
 import com.example.cashapp.domain.model.LoanOpeningPart
 import com.example.cashapp.domain.model.PendingStatus
+import com.example.cashapp.domain.model.PrepaymentMode
 import com.example.cashapp.domain.model.RateSource
 import com.example.cashapp.domain.model.RecurrenceFrequency
 import com.example.cashapp.domain.model.TransactionType
@@ -88,10 +91,11 @@ data class SubcategoryEntity(
         ForeignKey(SubcategoryEntity::class, ["id"], ["subcategoryId"], onDelete = ForeignKey.SET_NULL),
         ForeignKey(RecurringRuleEntity::class, ["id"], ["recurringRuleId"], onDelete = ForeignKey.SET_NULL),
         ForeignKey(LoanEntity::class, ["id"], ["loanId"]),
+        ForeignKey(BankLoanEntity::class, ["id"], ["bankLoanId"], onDelete = ForeignKey.SET_NULL),
     ],
     indices = [
         Index("accountId"), Index("currencyCode"), Index("categoryId"),
-        Index("subcategoryId"), Index("recurringRuleId"), Index("date"), Index("loanId"),
+        Index("subcategoryId"), Index("recurringRuleId"), Index("date"), Index("loanId"), Index("bankLoanId"),
     ],
 )
 data class TransactionEntity(
@@ -120,6 +124,11 @@ data class TransactionEntity(
      * visszafizetésnél / számlánál eltérhet az [amountMinor]-tól és az [accountAmountMinor]-tól.
      */
     val loanAmountMinor: Long? = null,
+    /**
+     * Banki hitel részlete vagy előtörlesztése (DB v5). Rendes kiadás tétel; a hitel törlésekor
+     * megmarad (valódi kiadás volt), csak a hivatkozás nullázódik.
+     */
+    val bankLoanId: Long? = null,
 )
 
 /**
@@ -149,6 +158,80 @@ data class LoanEntity(
     val closedDate: LocalDate? = null,
     val color: Long? = null,
     val icon: String? = null,
+)
+
+/**
+ * Banki hitel (DB v5), annuitásos törlesztéssel (terv.md 4.12 / 9).
+ * - [principalMinor] / [termMonths] / [firstDueDate]: a **nyilvántartott** rész. Futó hitelnél ez a
+ *   rögzítéskori hátralék, a hátralévő hónapok és a következő esedékesség.
+ * - [originalPrincipalMinor] / [paidMonthsBefore]: futó hitelnél az eredeti összeg és a rögzítés előtt
+ *   már befizetett hónapok (csak a progress kijelzéséhez); új hitelnél null / 0.
+ * - [monthlyPaymentOverrideMinor]: a bank által ténylegesen terhelt részlet, ha eltér a számolttól.
+ * - [currencyCode] mindig a terhelt [accountId] számla pénzneme; a részletek a [categoryId] / [subcategoryId] alá kerülnek.
+ * - [recurringRuleId]: a részletekhez generált havi ismétlődő szabály (a szabály törlésekor null).
+ * - A befizetett részletek a [TransactionEntity.bankLoanId]-val hivatkozó tételek; az előtörlesztések
+ *   és kamatváltozások a [BankLoanEventEntity] sorai.
+ */
+@Entity(
+    tableName = "bank_loans",
+    foreignKeys = [
+        ForeignKey(CurrencyEntity::class, ["code"], ["currencyCode"]),
+        ForeignKey(AccountEntity::class, ["id"], ["accountId"]),
+        ForeignKey(CategoryEntity::class, ["id"], ["categoryId"]),
+        ForeignKey(SubcategoryEntity::class, ["id"], ["subcategoryId"], onDelete = ForeignKey.SET_NULL),
+        ForeignKey(RecurringRuleEntity::class, ["id"], ["recurringRuleId"], onDelete = ForeignKey.SET_NULL),
+    ],
+    indices = [Index("currencyCode"), Index("accountId"), Index("categoryId"), Index("subcategoryId"), Index("recurringRuleId")],
+)
+data class BankLoanEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    val bankName: String = "",
+    val kind: BankLoanKind = BankLoanKind.OTHER,
+    val currencyCode: String,
+    val principalMinor: Long,
+    val thmPercent: Double,
+    val termMonths: Int,
+    val firstDueDate: LocalDate,
+    val monthlyPaymentOverrideMinor: Long? = null,
+    val originalPrincipalMinor: Long? = null,
+    val paidMonthsBefore: Int = 0,
+    val accountId: Long,
+    val categoryId: Long,
+    val subcategoryId: Long? = null,
+    val recurringRuleId: Long? = null,
+    val note: String = "",
+    val createdAt: Long = System.currentTimeMillis(),
+    val closedDate: LocalDate? = null,
+    val color: Long? = null,
+    val icon: String? = null,
+)
+
+/**
+ * Banki hitel eseménye (DB v5): a [afterInstallment]. részlet után érvényes.
+ * - [BankLoanEventType.PREPAYMENT]: [amountMinor] előtörlesztés + [penaltyMinor] büntető, [mode] szerinti
+ *   folytatással; a könyvelt kiadás tétel a [transactionId].
+ * - [BankLoanEventType.RATE_CHANGE]: [newThmPercent] az új éves ráta.
+ */
+@Entity(
+    tableName = "bank_loan_events",
+    foreignKeys = [
+        ForeignKey(BankLoanEntity::class, ["id"], ["bankLoanId"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(TransactionEntity::class, ["id"], ["transactionId"], onDelete = ForeignKey.SET_NULL),
+    ],
+    indices = [Index("bankLoanId"), Index("transactionId")],
+)
+data class BankLoanEventEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val bankLoanId: Long,
+    val date: LocalDate,
+    val afterInstallment: Int,
+    val type: BankLoanEventType,
+    val amountMinor: Long? = null,
+    val penaltyMinor: Long? = null,
+    val mode: PrepaymentMode? = null,
+    val newThmPercent: Double? = null,
+    val transactionId: Long? = null,
 )
 
 /** Váltás cél oldala (1:1 a [TransactionEntity]-vel, ahol type = EXCHANGE). */

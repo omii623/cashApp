@@ -21,7 +21,7 @@
 10. Export/import (CSV, JSON mentés)
 11. **Magánkölcsönök** – tartozások és kölcsönadások (kamat nélkül)
 12. **Hitelkalkulátor** – törlesztőrészlet, előtörlesztés, infláció
-13. **Banki kölcsönök** – futó hitelek nyilvántartása törlesztési tervvel *(tervezés alatt)*
+13. **Banki kölcsönök** – futó hitelek nyilvántartása törlesztési tervvel
 
 ## 3. Adatmodell
 
@@ -38,10 +38,10 @@
 | **PendingRecurring** | id, ruleId, esedékes dátum, állapot (VÁR / JÓVÁHAGYVA / KIHAGYVA), transactionId (jóváhagyás után) |
 | **Budget** | id, categoryId, havi keret, pénznem, figyelmeztetési küszöb (%, alap 80), aktív |
 | **Loan** (magánkölcsön, DB v4) | id, személy neve, irány (TARTOZOM / NEKEM TARTOZNAK), pénznem, nyitó összeg, nyitó visszafizetett rész, kezdés, megjegyzés, lezárás dátuma, szín, ikon |
-| **BankLoan** *(terv, DB v5)* | id, név, bank neve, fajta (LAKÁS / SZEMÉLYI / AUTÓ / EGYÉB), pénznem (= terhelt számla pénzneme), hitelösszeg, THM, futamidő (hónap), első esedékesség, felülírt havi részlet (opc.), eredeti hitelösszeg + korábban befizetett hónapok (futó hitelnél, opc.), accountId, categoryId, recurringRuleId (opc.), lezárás dátuma, megjegyzés, szín, ikon |
-| **BankLoanEvent** *(terv, DB v5)* | id, bankLoanId, dátum, hányadik részlet után, típus (ELŐTÖRLESZTÉS / KAMATVÁLTOZÁS), összeg, büntető, mód (CSÖKKENŐ RÉSZLET / RÖVIDEBB FUTAMIDŐ), új THM, transactionId (opc.) |
+| **BankLoan** (DB v5) | id, név, bank neve, fajta (LAKÁS / SZEMÉLYI / AUTÓ / EGYÉB), pénznem (= terhelt számla pénzneme), hitelösszeg, THM, futamidő (hónap), első esedékesség, felülírt havi részlet (opc.), eredeti hitelösszeg + korábban befizetett hónapok (futó hitelnél, opc.), accountId, categoryId, subcategoryId (opc.), recurringRuleId (opc.), lezárás dátuma, megjegyzés, szín, ikon |
+| **BankLoanEvent** (DB v5) | id, bankLoanId, dátum, hányadik részlet után, típus (ELŐTÖRLESZTÉS / KAMATVÁLTOZÁS), összeg, büntető, mód (CSÖKKENŐ RÉSZLET / RÖVIDEBB FUTAMIDŐ), új THM, transactionId (opc.) |
 
-- A Transaction kiegészítései: `loanId`, `loanOpening`, `loanAmountMinor` (magánkölcsön, v4); `bankLoanId` *(terv, v5)*.
+- A Transaction kiegészítései: `loanId`, `loanOpening`, `loanAmountMinor` (magánkölcsön, v4); `bankLoanId` (banki hitel, v5).
 
 - Összeg: `Long` (legkisebb egység), nem `Double`.
 - Törlés: ha a kategóriához tartozik tranzakció → archiválás vagy áthelyezés másik kategóriába (rákérdez).
@@ -146,7 +146,7 @@ Továbbiak → **Kölcsönök** hub: Magánkölcsönök | Banki kölcsönök | K
 - Előtörlesztés adott hónap után büntetővel és küszöbbel: csökkenő részlet vagy rövidebb futamidő
 - Infláció: a részletek és a megtakarítás mai értéken
 
-**Banki kölcsönök** *(terv)*
+**Banki kölcsönök** (kész, 1.3.0)
 - **Lista:** összesítő kártya (teljes hátralék, havi teher, hitelek száma); hitelenként kártya: ikon, név + bank, hátralék, progress sáv (befizetett / összes hónap), következő részlet dátuma és összege (3 napon belül kiemelve); FAB → új hitel
 - **Részletek:**
   - progress kör (% visszafizetve, hátralék / hitelösszeg)
@@ -161,7 +161,6 @@ Továbbiak → **Kölcsönök** hub: Magánkölcsönök | Banki kölcsönök | K
   - élő előnézet alul: havi részlet, teljes költség (a kalkulátor számolásával)
 - **Előtörlesztés:** a kalkulátor előtörlesztés-blokkja (közös composable), előre kitöltve; a két változat közül választva mentés
 - A kalkulátorból **„Mentés hitelként”** → előre kitöltött új hitel űrlap
-- Tranzakciólistában a hitelhez tartozó tételre kattintva a hitel oldala nyílik
 
 ## 5. Navigáció
 Alsó sáv: **Főoldal | Tranzakciók | Kimutatások | Továbbiak**
@@ -186,7 +185,7 @@ Alsó sáv: **Főoldal | Tranzakciók | Kimutatások | Továbbiak**
 - Küszöb (pl. 80%) és 100% elérésekor egyszeri értesítés havonta
 - Kiadás rögzítésekor az űrlapon látszik a kategória maradék kerete
 
-## 9. Banki kölcsönök logika *(terv)*
+## 9. Banki kölcsönök logika
 - **Törlesztési terv** (`domain/loan/AmortizationSchedule`): tiszta számolás, unit tesztelve
   - ugyanaz a kerekítés, mint a `LoanCalculator`-ban (havi kamat = THM / 12, részlet HALF_UP, hátralék egész egységre)
   - részletenként: dátum, részlet, kamat, tőke, hátralék; az utolsó részlet korrigálva, hogy a hátralék pontosan 0 legyen
@@ -199,7 +198,9 @@ Alsó sáv: **Főoldal | Tranzakciók | Kimutatások | Továbbiak**
 - **Kamatváltozás:** esemény + a szabály összegének frissítése.
 - **Lezárás:** a szabály kikapcsol; újranyitáskor visszakapcsol. **Törlés:** a hitel, az események és a szabály törlődik, a könyvelt tételek megmaradnak (valódi kiadások voltak; `bankLoanId` → NULL).
 - A hitel pénzneme mindig a terhelt számla pénzneme (devizahitel egyelőre nincs).
-- A kategóriát a felhasználó választja (nincs automatikusan létrehozott „Hiteltörlesztés” kategória).
+- A kategóriát / alkategóriát a felhasználó választja; új hitelnél az alapadatok „Hitel” kategóriája (ikon: `loan`) és első alkategóriája az alapértelmezett (nincs automatikusan létrehozott kategória).
+- A hitel szabálya az Ismétlődő tételek között is szerkeszthető, de a következő befizetés / módosítás a törlesztési tervhez igazítja.
+- A részlet tétele a tranzakciólistában rendes kiadásként szerkeszthető / törölhető (nem a hitel oldalára visz).
 - A kimutatásokban a részlet egy kiadás; a tőke / kamat bontás csak a hitel oldalán látszik.
 - Mentés / visszaállítás: `bank_loans` a `recurring_rules` után, `bank_loan_events` a `transactions` után; régi mentés továbbra is betölthető.
 
@@ -216,11 +217,11 @@ Alsó sáv: **Főoldal | Tranzakciók | Kimutatások | Továbbiak**
 10. Export / import, beállítások
 11. Magánkölcsönök (DB v4) – kész, 1.2.0
 12. Hitelkalkulátor – kész
-13. Banki kölcsönök:
+13. Banki kölcsönök – kész, 1.3.0:
     1. Adatréteg: `BankLoan` / `BankLoanEvent` entitás, DAO, `transactions.bankLoanId`, `MIGRATION_4_5`, mentés / visszaállítás, migrációs teszt
     2. Domain: `AmortizationSchedule` + unit tesztek
     3. `BankLoanRepository`, `RecurringRepository.approve` bővítése, műszeres tesztek
     4. Lista + szerkesztő képernyő, navigáció, hub bejegyzés engedélyezése → **MVP**
     5. Részletek képernyő: törlesztési terv, „Részlet befizetve”
     6. Előtörlesztés + kamatváltozás (közös composable a kalkulátorral)
-    7. CSV export oszlop, tranzakciólistából a hitelre ugrás, „Mentés hitelként” a kalkulátorból, verzió 1.3.0
+    7. CSV export („Kölcsön” oszlop a hitel nevével), „Mentés banki hitelként” a kalkulátorból, verzió 1.3.0

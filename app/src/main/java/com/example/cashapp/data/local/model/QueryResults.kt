@@ -2,6 +2,7 @@ package com.example.cashapp.data.local.model
 
 import androidx.room.Embedded
 import com.example.cashapp.data.local.entity.AccountEntity
+import com.example.cashapp.data.local.entity.BankLoanEntity
 import com.example.cashapp.data.local.entity.LoanEntity
 import com.example.cashapp.data.local.entity.RecurringRuleEntity
 import com.example.cashapp.domain.model.LoanDirection
@@ -102,4 +103,14 @@ data class LoanWithBalance(
     @Embedded val loan: LoanEntity,
     val outstandingMinor: Long,
     val lastMovementDate: LocalDate?,
+)
+
+/**
+ * Banki hitel + a befizetett részletek száma (a nyilvántartott részből, előtörlesztések nélkül)
+ * és az utolsó hozzá könyvelt tétel dátuma. A hátralék a törlesztési tervből számol.
+ */
+data class BankLoanWithProgress(
+    @Embedded val loan: BankLoanEntity,
+    val paidInstallments: Int,
+    val lastPaymentDate: LocalDate?,
 )

@@ -9,6 +9,7 @@ import com.example.cashapp.data.repository.AccountRepository
 import com.example.cashapp.data.repository.CategoryRepository
 import com.example.cashapp.data.repository.ExchangeRateRepository
 import com.example.cashapp.data.repository.CurrencyRepository
+import com.example.cashapp.data.repository.BankLoanRepository
 import com.example.cashapp.data.repository.LoanRepository
 import com.example.cashapp.data.repository.RecurringRepository
 import com.example.cashapp.data.repository.ReportRepository
@@ -38,6 +39,7 @@ class AppContainer(context: Context) {
     val recurringRepository = RecurringRepository(database)
     val reportRepository = ReportRepository(database.transactionDao())
     val loanRepository = LoanRepository(database)
+    val bankLoanRepository = BankLoanRepository(database)
     val dataResetter = DataResetter(database, settingsRepository, exchangeRateRepository)
     val backupManager = BackupManager(database, settingsRepository, recurringRepository, context.contentResolver)
 

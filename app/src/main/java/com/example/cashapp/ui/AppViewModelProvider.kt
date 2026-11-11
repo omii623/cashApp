@@ -17,6 +17,11 @@ import com.example.cashapp.ui.account.AccountsViewModel
 import com.example.cashapp.ui.category.CategoriesViewModel
 import com.example.cashapp.ui.category.CategoryEditViewModel
 import com.example.cashapp.ui.backup.BackupViewModel
+import com.example.cashapp.ui.bankloan.BankLoanDetailViewModel
+import com.example.cashapp.ui.bankloan.BankLoanEditViewModel
+import com.example.cashapp.ui.bankloan.BankLoanPrefill
+import com.example.cashapp.ui.bankloan.BankLoanPrepaymentViewModel
+import com.example.cashapp.ui.bankloan.BankLoansViewModel
 import com.example.cashapp.ui.currency.CurrenciesViewModel
 import com.example.cashapp.ui.exchange.ExchangeViewModel
 import com.example.cashapp.ui.home.HomeViewModel
@@ -132,6 +137,29 @@ object AppViewModelProvider {
             with(container()) {
                 LoanMovementViewModel(loanId, increase, editId, loanRepository, accountRepository, currencyRepository)
             }
+        }
+        initializer {
+            with(container()) { BankLoansViewModel(bankLoanRepository, currencyRepository, settingsRepository) }
+        }
+        initializer {
+            val args = createSavedStateHandle()
+            val id = args.get<Long>(Routes.ARG_ID)?.takeIf { it >= 0 }
+            val prefill = BankLoanPrefill(
+                principalText = args.get<String>(Routes.ARG_PRINCIPAL)?.takeIf { it.isNotBlank() },
+                thmPercent = args.get<String>(Routes.ARG_THM)?.toDoubleOrNull(),
+                months = args.get<Int>(Routes.ARG_MONTHS)?.takeIf { it > 0 },
+            ).takeIf { it.principalText != null || it.thmPercent != null || it.months != null }
+            with(container()) {
+                BankLoanEditViewModel(id, prefill, bankLoanRepository, accountRepository, categoryRepository, currencyRepository)
+            }
+        }
+        initializer {
+            val id = checkNotNull(createSavedStateHandle().get<Long>(Routes.ARG_ID))
+            with(container()) { BankLoanDetailViewModel(id, bankLoanRepository, currencyRepository, settingsRepository) }
+        }
+        initializer {
+            val id = checkNotNull(createSavedStateHandle().get<Long>(Routes.ARG_ID))
+            with(container()) { BankLoanPrepaymentViewModel(id, bankLoanRepository, currencyRepository) }
         }
         initializer {
             with(container()) { ReportsViewModel(reportRepository, categoryRepository, currencyRepository, settingsRepository) }

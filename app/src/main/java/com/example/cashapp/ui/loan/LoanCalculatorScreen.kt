@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -49,6 +50,7 @@ import kotlin.math.roundToInt
 @Composable
 fun LoanCalculatorRoute(
     onBack: () -> Unit,
+    onSaveAsLoan: (principalText: String, thmPercent: Double, months: Int) -> Unit = { _, _, _ -> },
     viewModel: LoanCalculatorViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -56,6 +58,7 @@ fun LoanCalculatorRoute(
         state, onBack, viewModel::onAmount, viewModel::onThm, viewModel::onMonths,
         PrepayActions(viewModel::onPrepay, viewModel::onPrepayMonth, viewModel::onPenalty, viewModel::onThreshold),
         onInflation = viewModel::onInflation,
+        onSaveAsLoan = { onSaveAsLoan(state.amountText.trim(), state.thmPercent, state.months) },
     )
 }
 
@@ -70,6 +73,7 @@ fun LoanCalculatorScreen(
     onMonths: (Int) -> Unit,
     prepayActions: PrepayActions = PrepayActions(),
     onInflation: (Double) -> Unit = {},
+    onSaveAsLoan: (() -> Unit)? = null,
 ) {
     var editInflation by remember { mutableStateOf(false) }
     var editThm by remember { mutableStateOf(false) }
@@ -91,6 +95,15 @@ fun LoanCalculatorScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             ResultCard(state)
+            // A kiszámolt hitel felvétele a banki kölcsönök közé (előre kitöltött űrlap).
+            if (onSaveAsLoan != null) {
+                OutlinedButton(
+                    onClick = onSaveAsLoan,
+                    enabled = state.monthlyPayment != null,
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.calc_save_as_loan)) }
+            }
 
             OutlinedTextField(
                 value = state.amountText,
@@ -246,7 +259,7 @@ private fun ResultCard(state: LoanCalculatorUiState) {
 
 /** THM kézi beírása (pl. „13,9”). */
 @Composable
-private fun ThmDialog(current: Double, onConfirm: (Double) -> Unit, onDismiss: () -> Unit, title: String = stringResource(R.string.calc_thm)) {
+internal fun ThmDialog(current: Double, onConfirm: (Double) -> Unit, onDismiss: () -> Unit, title: String = stringResource(R.string.calc_thm)) {
     var text by remember { mutableStateOf(formatNumber(current)) }
     val value = text.trim().replace(',', '.').toDoubleOrNull()?.takeIf { it >= 0.0 && it.isFinite() }
     AlertDialog(
@@ -346,10 +359,10 @@ private fun PrepaymentSection(state: LoanCalculatorUiState, actions: PrepayActio
 }
 
 @Composable
-private fun PrepaymentResultCard(p: PrepaymentUi) {
+internal fun PrepaymentResultCard(p: PrepaymentUi, balanceLabel: String? = null) {
     Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainer, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            InfoLine(stringResource(R.string.calc_balance_before, p.month), p.balanceBefore)
+            InfoLine(balanceLabel ?: stringResource(R.string.calc_balance_before, p.month), p.balanceBefore)
             InfoLine(stringResource(R.string.calc_prepaid), p.prepaid)
             InfoLine(stringResource(R.string.calc_penalty_amount), p.penalty)
             if (p.paidOff) {
@@ -383,7 +396,7 @@ private fun PrepaymentResultCard(p: PrepaymentUi) {
 }
 
 @Composable
-private fun OptionBox(title: String, main: String, mainLabel: String, extra: String?, saving: String, realSaving: String?, modifier: Modifier) {
+internal fun OptionBox(title: String, main: String, mainLabel: String, extra: String?, saving: String, realSaving: String?, modifier: Modifier) {
     Surface(shape = RoundedCornerShape(10.dp), color = MaterialTheme.colorScheme.surface, modifier = modifier) {
         Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(title, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
@@ -402,7 +415,7 @@ private fun OptionBox(title: String, main: String, mainLabel: String, extra: Str
 }
 
 @Composable
-private fun InfoLine(label: String, value: String, bold: Boolean = false) {
+internal fun InfoLine(label: String, value: String, bold: Boolean = false) {
     Row {
         Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
         Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = if (bold) FontWeight.Bold else FontWeight.Medium)
@@ -411,12 +424,12 @@ private fun InfoLine(label: String, value: String, bold: Boolean = false) {
 
 /** Futamidő kézi beírása: pozitív egész hónap, felső határ nélkül. */
 @Composable
-private fun MonthsDialog(current: Int, onConfirm: (Int) -> Unit, onDismiss: () -> Unit) {
+internal fun MonthsDialog(current: Int, onConfirm: (Int) -> Unit, onDismiss: () -> Unit, title: String = stringResource(R.string.calc_months)) {
     var text by remember { mutableStateOf(current.toString()) }
     val value = text.trim().toIntOrNull()?.takeIf { it >= 1 }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.calc_months)) },
+        title = { Text(title) },
         text = {
             OutlinedTextField(
                 value = text,
@@ -435,7 +448,7 @@ private fun MonthsDialog(current: Int, onConfirm: (Int) -> Unit, onDismiss: () -
 
 /** „60 hónap (5 év)”, „18 hónap (1 év 6 hó)”, „7 hónap”. */
 @Composable
-private fun monthsLabel(months: Int): String {
+internal fun monthsLabel(months: Int): String {
     val years = months / 12
     val rest = months % 12
     val base = pluralStringResource(R.plurals.calc_months_value, months, months)
@@ -447,7 +460,7 @@ private fun monthsLabel(months: Int): String {
 }
 
 /** 15.0 → „15”, 13.9 → „13,9”, 13.95 → „13,95”. */
-private fun formatNumber(value: Double): String =
+internal fun formatNumber(value: Double): String =
     java.math.BigDecimal.valueOf(value).setScale(2, java.math.RoundingMode.HALF_UP).stripTrailingZeros().toPlainString().replace('.', ',')
 
-private fun formatPercent(value: Double): String = formatNumber(value) + " %"
+internal fun formatPercent(value: Double): String = formatNumber(value) + " %"

@@ -29,3 +29,15 @@ enum class LoanDirection { BORROWED, LENT }
  * már visszafizetett rész ([REPAID]). A Room név szerint tárolja.
  */
 enum class LoanOpeningPart { AMOUNT, REPAID }
+
+/** Banki hitel fajtája (ikon és alapértelmezett név miatt). A Room név szerint tárolja. */
+enum class BankLoanKind { MORTGAGE, PERSONAL, CAR, OTHER }
+
+/** Banki hitel eseménye: előtörlesztés vagy kamatváltozás. A Room név szerint tárolja. */
+enum class BankLoanEventType { PREPAYMENT, RATE_CHANGE }
+
+/**
+ * Előtörlesztés utáni folytatás: [LOWER_PAYMENT] azonos futamidő kisebb részlettel,
+ * [SHORTER_TERM] azonos részlet rövidebb futamidővel. A Room név szerint tárolja.
+ */
+enum class PrepaymentMode { LOWER_PAYMENT, SHORTER_TERM }

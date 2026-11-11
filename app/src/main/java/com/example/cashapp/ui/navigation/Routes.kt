@@ -76,6 +76,27 @@ object Routes {
     fun loanMovementNew(loanId: Long, increase: Boolean) = "loan-movement/$loanId?$ARG_INCREASE=$increase"
     fun loanMovementEdit(loanId: Long, id: Long) = "loan-movement/$loanId?$ARG_ID=$id"
 
+    /** Továbbiak → Kölcsönök → Banki kölcsönök. */
+    const val BANK_LOANS = "bank-loans"
+    const val BANK_LOAN_DETAIL = "bank-loans/{$ARG_ID}"
+    fun bankLoanDetail(id: Long) = "bank-loans/$id"
+
+    const val ARG_PRINCIPAL = "principal"
+    const val ARG_THM = "thm"
+    const val ARG_MONTHS = "months"
+    /**
+     * Banki hitel szerkesztő; [ARG_ID] = -1 → új hitel. Új hitelnél a kalkulátorból kitölthető:
+     * [ARG_PRINCIPAL] a beírt összeg szövege, [ARG_THM] a THM, [ARG_MONTHS] a futamidő.
+     */
+    const val BANK_LOAN_EDIT = "bank-loan-edit?$ARG_ID={$ARG_ID}&$ARG_PRINCIPAL={$ARG_PRINCIPAL}&$ARG_THM={$ARG_THM}&$ARG_MONTHS={$ARG_MONTHS}"
+    fun bankLoanEdit(id: Long) = "bank-loan-edit?$ARG_ID=$id"
+    const val BANK_LOAN_NEW = "bank-loan-edit?$ARG_ID=-1"
+    fun bankLoanFromCalculator(principalText: String, thmPercent: Double, months: Int) =
+        "bank-loan-edit?$ARG_ID=-1&$ARG_PRINCIPAL=${android.net.Uri.encode(principalText)}&$ARG_THM=$thmPercent&$ARG_MONTHS=$months"
+
+    const val BANK_LOAN_PREPAY = "bank-loan-prepay/{$ARG_ID}"
+    fun bankLoanPrepay(id: Long) = "bank-loan-prepay/$id"
+
     const val RECURRING = "recurring"
     /** Ismétlődő szabály szerkesztő; [ARG_ID] = -1 → új szabály. */
     const val RULE_EDIT = "recurring-rule?$ARG_ID={$ARG_ID}"

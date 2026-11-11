@@ -162,14 +162,14 @@ class BackupManager(
 
         /** Beszúrási sorrend: előbb az, amire hivatkoznak (törlés fordítva). */
         val TABLES = listOf(
-            "currencies", "accounts", "categories", "subcategories", "recurring_rules", "loans",
-            "transactions", "exchange_details", "pending_recurring", "budgets", "exchange_rates",
+            "currencies", "accounts", "categories", "subcategories", "recurring_rules", "loans", "bank_loans",
+            "transactions", "exchange_details", "pending_recurring", "budgets", "exchange_rates", "bank_loan_events",
         )
 
         private const val CSV_QUERY = """
             SELECT t.date, t.type, t.amountMinor, t.currencyCode, a.name, t.accountAmountMinor, a.currencyCode,
                    c.name, s.name, ta.name, e.targetAmountMinor, e.targetCurrencyCode, e.rate, t.rateToAccount,
-                   e.feeMinor, t.note, l.personName
+                   e.feeMinor, t.note, COALESCE(l.personName, b.name)
             FROM transactions t
             JOIN accounts a ON a.id = t.accountId
             LEFT JOIN categories c ON c.id = t.categoryId
@@ -177,6 +177,7 @@ class BackupManager(
             LEFT JOIN exchange_details e ON e.transactionId = t.id
             LEFT JOIN accounts ta ON ta.id = e.targetAccountId
             LEFT JOIN loans l ON l.id = t.loanId
+            LEFT JOIN bank_loans b ON b.id = t.bankLoanId
             ORDER BY t.date, t.id
         """
     }

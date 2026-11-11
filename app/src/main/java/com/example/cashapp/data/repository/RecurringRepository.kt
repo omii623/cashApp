@@ -24,6 +24,8 @@ class RecurringRepository(private val db: CashDatabase) {
     private val dao = db.recurringDao()
     private val accountDao = db.accountDao()
     private val transactionDao = db.transactionDao()
+    private val bankLoanDao = db.bankLoanDao()
+    private val bankLoanRuleSync = BankLoanRuleSync(db)
 
     fun observePendingCount(today: LocalDate = LocalDate.now()): Flow<Int> = dao.observePendingCount(today)
 
@@ -108,13 +110,17 @@ class RecurringRepository(private val db: CashDatabase) {
         created
     }
 
-    /** Jóváhagyás: létrejön a tranzakció (a megadott összeggel és dátummal). */
+    /**
+     * Jóváhagyás: létrejön a tranzakció (a megadott összeggel és dátummal).
+     * Banki hitel szabályánál a tétel a hitelhez kötődik (bankLoanId), és a szabály a következő részlethez igazodik.
+     */
     suspend fun approve(pendingId: Long, amountMinor: Long, date: LocalDate) = db.withTransaction {
         require(amountMinor > 0) { "Az összeg legyen pozitív" }
         val pending = dao.getPending(pendingId) ?: return@withTransaction
         if (pending.status != PendingStatus.PENDING) return@withTransaction
         // A szabályt közben törölhették (a függő tétel CASCADE-del vele megy) → nincs teendő.
         val rule = dao.getRule(pending.ruleId) ?: return@withTransaction
+        val bankLoanId = bankLoanDao.getByRuleId(rule.id)?.id
         val txId = transactionDao.insert(
             TransactionEntity(
                 type = rule.type,
@@ -127,9 +133,11 @@ class RecurringRepository(private val db: CashDatabase) {
                 subcategoryId = rule.subcategoryId,
                 note = rule.note.ifBlank { rule.name },
                 recurringRuleId = rule.id,
+                bankLoanId = bankLoanId,
             )
         )
         dao.updatePending(pending.copy(status = PendingStatus.APPROVED, transactionId = txId))
+        bankLoanId?.let { bankLoanRuleSync.sync(it) }
     }
 
     suspend fun skip(pendingId: Long) {

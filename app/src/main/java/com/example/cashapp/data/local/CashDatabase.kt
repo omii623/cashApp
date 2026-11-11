@@ -9,6 +9,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.cashapp.data.local.dao.AccountDao
+import com.example.cashapp.data.local.dao.BankLoanDao
 import com.example.cashapp.data.local.dao.BudgetDao
 import com.example.cashapp.data.local.dao.CategoryDao
 import com.example.cashapp.data.local.dao.CurrencyDao
@@ -17,6 +18,8 @@ import com.example.cashapp.data.local.dao.ExchangeRateDao
 import com.example.cashapp.data.local.dao.RecurringDao
 import com.example.cashapp.data.local.dao.TransactionDao
 import com.example.cashapp.data.local.entity.AccountEntity
+import com.example.cashapp.data.local.entity.BankLoanEntity
+import com.example.cashapp.data.local.entity.BankLoanEventEntity
 import com.example.cashapp.data.local.entity.BudgetEntity
 import com.example.cashapp.data.local.entity.CategoryEntity
 import com.example.cashapp.data.local.entity.CurrencyEntity
@@ -46,8 +49,10 @@ import java.time.LocalDate
         PendingRecurringEntity::class,
         BudgetEntity::class,
         LoanEntity::class,
+        BankLoanEntity::class,
+        BankLoanEventEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -60,6 +65,7 @@ abstract class CashDatabase : RoomDatabase() {
     abstract fun recurringDao(): RecurringDao
     abstract fun budgetDao(): BudgetDao
     abstract fun loanDao(): LoanDao
+    abstract fun bankLoanDao(): BankLoanDao
 
     companion object {
         private const val NAME = "cashapp.db"
@@ -137,7 +143,52 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+    /**
+     * v4 → v5: banki kölcsönök. Új `bank_loans` és `bank_loan_events` tábla, és a tételek
+     * opcionálisan egy banki hitelhez tartozhatnak (transactions.bankLoanId, törléskor NULL).
+     */
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `bank_loans` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`name` TEXT NOT NULL, `bankName` TEXT NOT NULL, `kind` TEXT NOT NULL, `currencyCode` TEXT NOT NULL, " +
+                    "`principalMinor` INTEGER NOT NULL, `thmPercent` REAL NOT NULL, `termMonths` INTEGER NOT NULL, " +
+                    "`firstDueDate` INTEGER NOT NULL, `monthlyPaymentOverrideMinor` INTEGER, `originalPrincipalMinor` INTEGER, " +
+                    "`paidMonthsBefore` INTEGER NOT NULL, `accountId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, " +
+                    "`subcategoryId` INTEGER, `recurringRuleId` INTEGER, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `closedDate` INTEGER, " +
+                    "`color` INTEGER, `icon` TEXT, " +
+                    "FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
+                    "FOREIGN KEY(`accountId`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
+                    "FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
+                    "FOREIGN KEY(`subcategoryId`) REFERENCES `subcategories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL , " +
+                    "FOREIGN KEY(`recurringRuleId`) REFERENCES `recurring_rules`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_currencyCode` ON `bank_loans` (`currencyCode`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_accountId` ON `bank_loans` (`accountId`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_categoryId` ON `bank_loans` (`categoryId`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_subcategoryId` ON `bank_loans` (`subcategoryId`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_recurringRuleId` ON `bank_loans` (`recurringRuleId`)")
+
+            db.execSQL(
+                "ALTER TABLE `transactions` ADD COLUMN `bankLoanId` INTEGER DEFAULT NULL " +
+                    "REFERENCES `bank_loans`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_bankLoanId` ON `transactions` (`bankLoanId`)")
+
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `bank_loan_events` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`bankLoanId` INTEGER NOT NULL, `date` INTEGER NOT NULL, `afterInstallment` INTEGER NOT NULL, " +
+                    "`type` TEXT NOT NULL, `amountMinor` INTEGER, `penaltyMinor` INTEGER, `mode` TEXT, " +
+                    "`newThmPercent` REAL, `transactionId` INTEGER, " +
+                    "FOREIGN KEY(`bankLoanId`) REFERENCES `bank_loans`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , " +
+                    "FOREIGN KEY(`transactionId`) REFERENCES `transactions`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loan_events_bankLoanId` ON `bank_loan_events` (`bankLoanId`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loan_events_transactionId` ON `bank_loan_events` (`transactionId`)")
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
 }
 
 class Converters {

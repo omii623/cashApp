@@ -20,7 +20,7 @@ data class CsvRow(
     val rate: Double?,
     val feeMinor: Long?,
     val note: String,
-    /** Magánkölcsön mozgásánál a másik fél neve. */
+    /** Magánkölcsön mozgásánál a másik fél neve, banki hitel részleténél / előtörlesztésénél a hitel neve. */
     val loanName: String? = null,
 )
 

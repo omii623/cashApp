@@ -86,6 +86,14 @@ interface RecurringDao {
     /** Szabály módosításakor a még el nem bírált tételei elavulnak – ezeket töröljük. */
     @Query("DELETE FROM pending_recurring WHERE ruleId = :ruleId AND status = 'PENDING'")
     suspend fun deletePendingOfRule(ruleId: Long)
+
+    /** Egy szabály adott esedékessége (bármilyen állapotban), ha már létrejött. */
+    @Query("SELECT * FROM pending_recurring WHERE ruleId = :ruleId AND dueDate = :dueDate")
+    suspend fun getPendingFor(ruleId: Long, dueDate: LocalDate): PendingRecurringEntity?
+
+    /** A záró dátum utáni, még el nem bírált tételek törlése (pl. rövidebb lett egy hitel futamideje). */
+    @Query("DELETE FROM pending_recurring WHERE ruleId = :ruleId AND status = 'PENDING' AND dueDate > :date")
+    suspend fun deletePendingOfRuleAfter(ruleId: Long, date: LocalDate)
 }
 
 @Dao
