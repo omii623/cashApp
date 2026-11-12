@@ -137,7 +137,7 @@ class RuleEditViewModel(
             // Archivált számla/kategória is maradjon kiválasztva – különben mentéskor csendben lecserélődne.
             pinned.value = Pinned(
                 account = accountRepository.get(rule.accountId),
-                category = categoryRepository.getCategory(rule.categoryId),
+                category = rule.categoryId?.let { categoryRepository.getCategory(it) },
                 subcategory = rule.subcategoryId?.let { categoryRepository.getSubcategory(it) },
             )
             val decimals = currencyRepository.observeCurrencies().first()[rule.currencyCode]?.decimals ?: 0

@@ -43,12 +43,12 @@ class BankLoanDaoTest {
     private fun loan(name: String, ruleId: Long? = null) = BankLoanEntity(
         name = name, bankName = "Bank", kind = BankLoanKind.PERSONAL, currencyCode = "HUF",
         principalMinor = 1_000_000, thmPercent = 13.79, termMonths = 36, firstDueDate = first,
-        accountId = accountId, categoryId = categoryId, recurringRuleId = ruleId,
+        accountId = accountId, recurringRuleId = ruleId,
     )
 
     private fun payment(loanId: Long, date: LocalDate, amount: Long = 34_076) = TransactionEntity(
         type = TransactionType.EXPENSE, date = date, amountMinor = amount, currencyCode = "HUF",
-        accountId = accountId, accountAmountMinor = amount, categoryId = categoryId, bankLoanId = loanId,
+        accountId = accountId, accountAmountMinor = amount, bankLoanId = loanId,
     )
 
     private suspend fun rule() = db.recurringDao().insertRule(

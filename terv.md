@@ -155,7 +155,7 @@ Továbbiak → **Kölcsönök** hub: Magánkölcsönök | Banki kölcsönök | K
   - kibontható **törlesztési terv**: dátum, részlet, tőke / kamat bontás; befizetett sorok pipával, halványítva
   - ⋮ menü: szerkesztés, kamatváltozás, lezárás / újranyitás, törlés
 - **Új / szerkesztés:**
-  - név, bank, fajta, hitelösszeg, THM, futamidő, első törlesztés dátuma, terhelt számla, kategória
+  - név, bank, fajta, hitelösszeg, THM, futamidő, első törlesztés dátuma, terhelt számla, szín és ikon / betű (mint a magánkölcsönnél; alapból a fajta ikonja)
   - **Korábban felvett hitel:** az eredeti szerződés adatai, múltbeli első részlettel. Ilyenkor megjelenik:
     - **Már befizetett részletek:** a dátumból számolva (a mai napig esedékesek), átírható; befizetettnek számítanak, de nem könyvelődnek
     - **Hátralék a bank szerint** (opc., súgóban a számolt érték): ha eltér, a terv ettől folytatódik (a részlet a hátralévő hónapokra újraszámolva); a tervben az érintett sor jelölve
@@ -192,7 +192,7 @@ Alsó sáv: **Főoldal | Tranzakciók | Kimutatások | Továbbiak**
   - ugyanaz a kerekítés, mint a `LoanCalculator`-ban (havi kamat = THM / 12, részlet HALF_UP, hátralék egész egységre)
   - részletenként: dátum, részlet, kamat, tőke, hátralék; az utolsó részlet korrigálva, hogy a hátralék pontosan 0 legyen
   - események a megadott részlet után: előtörlesztés (a `prepayment()` két ága), kamatváltozás (új részlet a hátralékból a hátralévő hónapokra)
-- **Ismétlődő szabály:** mentéskor a hitelhez havi kiadás szabály jön létre / frissül (kezdés = első esedékesség, záró dátum = utolsó részlet, összeg = részlet, számla, kategória). A részletek így a meglévő **Jóváhagyásra vár** listán át könyvelődnek – automatikusan most sem jön létre tranzakció.
+- **Ismétlődő szabály:** mentéskor a hitelhez havi kiadás szabály jön létre / frissül (kezdés = első esedékesség, záró dátum = utolsó részlet, összeg = részlet, számla, kategória nélkül). A részletek így a meglévő **Jóváhagyásra vár** listán át könyvelődnek – automatikusan most sem jön létre tranzakció.
 - Jóváhagyáskor a tétel `bankLoanId`-t kap, ha a szabály banki hitelhez tartozik.
 - **Befizetett részletek** = a hitel részlet tételeinek száma; hátralék és következő részlet a törlesztési tervből.
 - **„Részlet befizetve”:** ha van függő tétel a következő esedékességre → jóváhagyja; különben közvetlenül könyvel + APPROVED függő sort ír, így az egyedi (ruleId, dueDate) index miatt a generátor nem duplikál.
@@ -200,10 +200,10 @@ Alsó sáv: **Főoldal | Tranzakciók | Kimutatások | Továbbiak**
 - **Kamatváltozás:** esemény + a szabály összegének frissítése.
 - **Lezárás:** a szabály kikapcsol; újranyitáskor visszakapcsol. **Törlés:** a hitel, az események és a szabály törlődik, a könyvelt tételek megmaradnak (valódi kiadások voltak; `bankLoanId` → NULL).
 - A hitel pénzneme mindig a terhelt számla pénzneme (devizahitel egyelőre nincs).
-- A kategóriát / alkategóriát a felhasználó választja; új hitelnél az alapadatok „Hitel” kategóriája (ikon: `loan`) és első alkategóriája az alapértelmezett (nincs automatikusan létrehozott kategória).
-- A hitel szabálya az Ismétlődő tételek között is szerkeszthető, de a következő befizetés / módosítás a törlesztési tervhez igazítja.
-- A részlet tétele a tranzakciólistában rendes kiadásként szerkeszthető / törölhető (nem a hitel oldalára visz).
-- A kimutatásokban a részlet egy kiadás; a tőke / kamat bontás csak a hitel oldalán látszik.
+- **Nincs kategória** (mint a magánkölcsönnél): a részletek és az előtörlesztés kategória nélküli kiadások; a listákban (tranzakciók, Jóváhagyásra vár, szabályok) a hitel neve, színe és ikonja jelöli őket. A szabály kategóriája ezért lehet NULL (DB v5).
+- A hitel szabályára koppintva a hitel oldala nyílik (a szabályt a hitel tartja karban).
+- A részlet tétele a tranzakciólistában szerkeszthető / törölhető; az űrlapon kategória helyett a hitel látszik, és a hitelhez kötés megmarad.
+- A kimutatásokban a részletek a „Kölcsönök” csoportba kerülnek (a magánkölcsön-mozgásokkal együtt); a tőke / kamat bontás csak a hitel oldalán látszik.
 - Mentés / visszaállítás: `bank_loans` a `recurring_rules` után, `bank_loan_events` a `transactions` után; régi mentés továbbra is betölthető.
 
 ## 10. Megvalósítási sorrend

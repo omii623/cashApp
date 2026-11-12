@@ -169,7 +169,8 @@ data class LoanEntity(
  * - [bankBalanceMinor]: a bank szerinti hátralék [paidMonthsBefore] részlet után; ha eltér a számolttól
  *   (pl. korábbi előtörlesztés / kamatváltozás miatt), a terv ettől folytatódik. Null → a számolt érték.
  * - [monthlyPaymentOverrideMinor]: a bank által ténylegesen terhelt részlet, ha eltér a számolttól.
- * - [currencyCode] mindig a terhelt [accountId] számla pénzneme; a részletek a [categoryId] / [subcategoryId] alá kerülnek.
+ * - [currencyCode] mindig a terhelt [accountId] számla pénzneme. A részletek kategória nélküli kiadások (mint a
+ *   magánkölcsön mozgásai): a listákban a hitel neve, [color] és [icon] jelöli őket (null → a [kind] ikonja).
  * - [recurringRuleId]: a részletekhez generált havi ismétlődő szabály (a szabály törlésekor null).
  * - A befizetett részletek a [TransactionEntity.bankLoanId]-val hivatkozó tételek; az előtörlesztések
  *   és kamatváltozások a [BankLoanEventEntity] sorai.
@@ -179,11 +180,9 @@ data class LoanEntity(
     foreignKeys = [
         ForeignKey(CurrencyEntity::class, ["code"], ["currencyCode"]),
         ForeignKey(AccountEntity::class, ["id"], ["accountId"]),
-        ForeignKey(CategoryEntity::class, ["id"], ["categoryId"]),
-        ForeignKey(SubcategoryEntity::class, ["id"], ["subcategoryId"], onDelete = ForeignKey.SET_NULL),
         ForeignKey(RecurringRuleEntity::class, ["id"], ["recurringRuleId"], onDelete = ForeignKey.SET_NULL),
     ],
-    indices = [Index("currencyCode"), Index("accountId"), Index("categoryId"), Index("subcategoryId"), Index("recurringRuleId")],
+    indices = [Index("currencyCode"), Index("accountId"), Index("recurringRuleId")],
 )
 data class BankLoanEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -199,8 +198,6 @@ data class BankLoanEntity(
     val paidMonthsBefore: Int = 0,
     val bankBalanceMinor: Long? = null,
     val accountId: Long,
-    val categoryId: Long,
-    val subcategoryId: Long? = null,
     val recurringRuleId: Long? = null,
     val note: String = "",
     val createdAt: Long = System.currentTimeMillis(),
@@ -295,7 +292,8 @@ data class RecurringRuleEntity(
     val amountMinor: Long,
     val currencyCode: String,
     val accountId: Long,
-    val categoryId: Long,
+    /** Null: banki hitel részletei (a hitel jelöli őket, lásd [BankLoanEntity]); DB v5 óta lehet null. */
+    val categoryId: Long?,
     val subcategoryId: Long? = null,
     val note: String = "",
     val frequency: RecurrenceFrequency,

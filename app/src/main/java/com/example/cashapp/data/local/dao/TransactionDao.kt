@@ -26,13 +26,15 @@ private const val LIST_SELECT = """
                s.name AS subcategoryName,
                e.targetAccountId, e.targetAmountMinor, e.targetCurrencyCode, e.rate AS exchangeRate,
                t.loanId, l.personName AS loanName, l.direction AS loanDirection, t.loanOpening,
-               l.color AS loanColor, l.icon AS loanIcon
+               l.color AS loanColor, l.icon AS loanIcon,
+               t.bankLoanId, b.name AS bankLoanName, b.kind AS bankLoanKind, b.color AS bankLoanColor, b.icon AS bankLoanIcon
         FROM transactions t
         JOIN accounts a ON a.id = t.accountId
         LEFT JOIN categories c ON c.id = t.categoryId
         LEFT JOIN subcategories s ON s.id = t.subcategoryId
         LEFT JOIN exchange_details e ON e.transactionId = t.id
         LEFT JOIN loans l ON l.id = t.loanId
+        LEFT JOIN bank_loans b ON b.id = t.bankLoanId
 """
 
 @Dao
@@ -79,7 +81,8 @@ interface TransactionDao {
                OR c.name LIKE '%' || :query || '%'
                OR s.name LIKE '%' || :query || '%'
                OR a.name LIKE '%' || :query || '%'
-               OR l.personName LIKE '%' || :query || '%')
+               OR l.personName LIKE '%' || :query || '%'
+               OR b.name LIKE '%' || :query || '%')
         ORDER BY t.date DESC, t.id DESC
         """
     )
@@ -134,15 +137,16 @@ interface TransactionDao {
 
     /**
      * Összeg kategóriánként (a számla pénznemében) egy típusra és időszakra.
-     * A magánkölcsön-mozgások (kategória nélküliek) külön csoportba kerülnek: id = -1 (ReportCalculator.LOAN_GROUP_ID).
+     * A magánkölcsön-mozgások és a banki hitel tételei (kategória nélküliek) külön csoportba kerülnek:
+     * id = -1 (ReportCalculator.LOAN_GROUP_ID).
      */
     @Query(
         """
-        SELECT CASE WHEN t.loanId IS NOT NULL THEN -1 ELSE t.categoryId END AS id,
+        SELECT CASE WHEN t.loanId IS NOT NULL OR t.bankLoanId IS NOT NULL THEN -1 ELSE t.categoryId END AS id,
                a.currencyCode AS currencyCode, SUM(t.accountAmountMinor) AS amountMinor
         FROM transactions t JOIN accounts a ON a.id = t.accountId
         WHERE t.type = :type AND t.date BETWEEN :from AND :to
-        GROUP BY CASE WHEN t.loanId IS NOT NULL THEN -1 ELSE t.categoryId END, a.currencyCode
+        GROUP BY CASE WHEN t.loanId IS NOT NULL OR t.bankLoanId IS NOT NULL THEN -1 ELSE t.categoryId END, a.currencyCode
         """
     )
     fun observeCategoryTotals(type: String, from: LocalDate, to: LocalDate): Flow<List<GroupTotal>>
@@ -193,13 +197,20 @@ interface TransactionDao {
 
     /**
      * Meglévő bevétel/kiadás módosítása egy tranzakcióban: az eredeti beolvasása és a
-     * felülírás atomi. A létrehozási idő és az ismétlődő-szabály hivatkozás megmarad.
+     * felülírás atomi. A létrehozási idő, az ismétlődő-szabály és a banki hitel hivatkozás megmarad.
      */
     @Transaction
     suspend fun updateIncomeOrExpenseKeepingMeta(id: Long, edited: TransactionEntity) {
         val original = checkNotNull(getById(id)) { "Nincs ilyen tétel: $id" }
         require(original.type == edited.type) { "A tétel típusa nem változhat" }
-        update(edited.copy(id = id, createdAt = original.createdAt, recurringRuleId = original.recurringRuleId))
+        update(
+            edited.copy(
+                id = id,
+                createdAt = original.createdAt,
+                recurringRuleId = original.recurringRuleId,
+                bankLoanId = original.bankLoanId,
+            )
+        )
     }
 
     /** Meglévő váltás módosítása egy tranzakcióban, az eredeti létrehozási idő megtartásával. */

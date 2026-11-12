@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "9c51ed2aaba7be64f580b4a28874b506",
+    "identityHash": "fba74d563ecb46a18f29abb40ec0a22a",
     "entities": [
       {
         "tableName": "currencies",
@@ -667,7 +667,7 @@
       },
       {
         "tableName": "recurring_rules",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `amountMinor` INTEGER NOT NULL, `currencyCode` TEXT NOT NULL, `accountId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, `subcategoryId` INTEGER, `note` TEXT NOT NULL, `frequency` TEXT NOT NULL, `interval` INTEGER NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER, `nextDueDate` INTEGER NOT NULL, `isActive` INTEGER NOT NULL, FOREIGN KEY(`accountId`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`subcategoryId`) REFERENCES `subcategories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `amountMinor` INTEGER NOT NULL, `currencyCode` TEXT NOT NULL, `accountId` INTEGER NOT NULL, `categoryId` INTEGER, `subcategoryId` INTEGER, `note` TEXT NOT NULL, `frequency` TEXT NOT NULL, `interval` INTEGER NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER, `nextDueDate` INTEGER NOT NULL, `isActive` INTEGER NOT NULL, FOREIGN KEY(`accountId`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`subcategoryId`) REFERENCES `subcategories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
@@ -708,8 +708,7 @@
           {
             "fieldPath": "categoryId",
             "columnName": "categoryId",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "subcategoryId",
@@ -1163,7 +1162,7 @@
       },
       {
         "tableName": "bank_loans",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `bankName` TEXT NOT NULL, `kind` TEXT NOT NULL, `currencyCode` TEXT NOT NULL, `principalMinor` INTEGER NOT NULL, `thmPercent` REAL NOT NULL, `termMonths` INTEGER NOT NULL, `firstDueDate` INTEGER NOT NULL, `monthlyPaymentOverrideMinor` INTEGER, `paidMonthsBefore` INTEGER NOT NULL, `bankBalanceMinor` INTEGER, `accountId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, `subcategoryId` INTEGER, `recurringRuleId` INTEGER, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `closedDate` INTEGER, `color` INTEGER, `icon` TEXT, FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`accountId`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`subcategoryId`) REFERENCES `subcategories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL , FOREIGN KEY(`recurringRuleId`) REFERENCES `recurring_rules`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `bankName` TEXT NOT NULL, `kind` TEXT NOT NULL, `currencyCode` TEXT NOT NULL, `principalMinor` INTEGER NOT NULL, `thmPercent` REAL NOT NULL, `termMonths` INTEGER NOT NULL, `firstDueDate` INTEGER NOT NULL, `monthlyPaymentOverrideMinor` INTEGER, `paidMonthsBefore` INTEGER NOT NULL, `bankBalanceMinor` INTEGER, `accountId` INTEGER NOT NULL, `recurringRuleId` INTEGER, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `closedDate` INTEGER, `color` INTEGER, `icon` TEXT, FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`accountId`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`recurringRuleId`) REFERENCES `recurring_rules`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
@@ -1242,17 +1241,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "categoryId",
-            "columnName": "categoryId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "subcategoryId",
-            "columnName": "subcategoryId",
-            "affinity": "INTEGER"
-          },
-          {
             "fieldPath": "recurringRuleId",
             "columnName": "recurringRuleId",
             "affinity": "INTEGER"
@@ -1311,24 +1299,6 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_bank_loans_accountId` ON `${TABLE_NAME}` (`accountId`)"
           },
           {
-            "name": "index_bank_loans_categoryId",
-            "unique": false,
-            "columnNames": [
-              "categoryId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_bank_loans_categoryId` ON `${TABLE_NAME}` (`categoryId`)"
-          },
-          {
-            "name": "index_bank_loans_subcategoryId",
-            "unique": false,
-            "columnNames": [
-              "subcategoryId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_bank_loans_subcategoryId` ON `${TABLE_NAME}` (`subcategoryId`)"
-          },
-          {
             "name": "index_bank_loans_recurringRuleId",
             "unique": false,
             "columnNames": [
@@ -1356,28 +1326,6 @@
             "onUpdate": "NO ACTION",
             "columns": [
               "accountId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          },
-          {
-            "table": "categories",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "categoryId"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          },
-          {
-            "table": "subcategories",
-            "onDelete": "SET NULL",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "subcategoryId"
             ],
             "referencedColumns": [
               "id"
@@ -1510,7 +1458,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9c51ed2aaba7be64f580b4a28874b506')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fba74d563ecb46a18f29abb40ec0a22a')"
     ]
   }
 }

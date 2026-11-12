@@ -83,8 +83,25 @@ class MigrationTest {
                 "INSERT INTO transactions (id, type, date, amountMinor, currencyCode, accountId, accountAmountMinor, categoryId, note, createdAt) " +
                     "VALUES (1, 'EXPENSE', 100, 500, 'HUF', 1, 500, 1, '', 0)"
             )
+            db.execSQL(
+                "INSERT INTO recurring_rules (id, name, type, amountMinor, currencyCode, accountId, categoryId, note, frequency, " +
+                    "interval, startDate, nextDueDate, isActive) VALUES (1, 'Lakbér', 'EXPENSE', 900, 'HUF', 1, 1, '', 'MONTHLY', 1, 100, 130, 1)"
+            )
+            db.execSQL("INSERT INTO pending_recurring (id, ruleId, dueDate, status) VALUES (1, 1, 100, 'PENDING')")
         }
         helper.runMigrationsAndValidate(dbName, 5, true, Migrations.MIGRATION_4_5).use { db ->
+            // Az újraépített szabálytábla megtartja a szabályt és a függő tételt; a kategória már lehet null.
+            db.query("SELECT name, categoryId FROM recurring_rules WHERE id = 1").use { c ->
+                c.moveToFirst()
+                assertEquals("Lakbér", c.getString(0))
+                assertEquals(1L, c.getLong(1))
+            }
+            db.query("SELECT COUNT(*) FROM pending_recurring WHERE ruleId = 1").use { c -> c.moveToFirst(); assertEquals(1, c.getInt(0)) }
+            db.execSQL(
+                "INSERT INTO recurring_rules (id, name, type, amountMinor, currencyCode, accountId, categoryId, note, frequency, " +
+                    "interval, startDate, nextDueDate, isActive) VALUES (2, 'Részlet', 'EXPENSE', 900, 'HUF', 1, NULL, '', 'MONTHLY', 1, 100, 130, 1)"
+            )
+
             db.query("SELECT bankLoanId FROM transactions WHERE id = 1").use { c ->
                 c.moveToFirst()
                 assertEquals(true, c.isNull(0))
@@ -92,8 +109,8 @@ class MigrationTest {
             // Az új táblák használhatók: hitel + rá hivatkozó tétel és esemény.
             db.execSQL(
                 "INSERT INTO bank_loans (id, name, bankName, kind, currencyCode, principalMinor, thmPercent, termMonths, firstDueDate, " +
-                    "paidMonthsBefore, accountId, categoryId, note, createdAt) " +
-                    "VALUES (1, 'Személyi', 'Bank', 'PERSONAL', 'HUF', 1000000, 13.79, 36, 200, 0, 1, 1, '', 0)"
+                    "paidMonthsBefore, accountId, recurringRuleId, note, createdAt) " +
+                    "VALUES (1, 'Személyi', 'Bank', 'PERSONAL', 'HUF', 1000000, 13.79, 36, 200, 0, 1, 2, '', 0)"
             )
             db.execSQL("UPDATE transactions SET bankLoanId = 1 WHERE id = 1")
             db.execSQL("INSERT INTO bank_loan_events (bankLoanId, date, afterInstallment, type, newThmPercent) VALUES (1, 300, 1, 'RATE_CHANGE', 9.5)")

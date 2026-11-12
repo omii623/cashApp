@@ -52,6 +52,8 @@ data class TransactionRowUi(
     val loanName: String? = null,
     /** Igaz: új kölcsön (nő a tartozás); hamis: törlesztés. */
     val loanIncrease: Boolean = false,
+    /** Banki hitel tételénél a hitel neve (kategória helyett). */
+    val bankLoanName: String? = null,
 )
 
 /** Egy tranzakció sor (főoldal, később a tranzakciólista is ezt használja). */
@@ -66,6 +68,7 @@ fun TransactionRow(item: TransactionRowUi, modifier: Modifier = Modifier, onClic
     val title = when {
         item.loanName != null ->
             stringResource(if (item.loanIncrease) R.string.loan_row_increase else R.string.loan_row_decrease, item.loanName)
+        item.bankLoanName != null -> item.bankLoanName
         else -> when (item.type) {
         TransactionType.EXCHANGE -> stringResource(R.string.tx_exchange_title, item.fromCurrency, item.toCurrency ?: "?")
         else -> listOfNotNull(item.categoryName, item.subcategoryName).joinToString(" · ")
@@ -84,7 +87,7 @@ fun TransactionRow(item: TransactionRowUi, modifier: Modifier = Modifier, onClic
         if (item.type == TransactionType.EXCHANGE) {
             ExchangeBadge(accent)
         } else {
-            CategoryBadge(item.categoryIcon, item.categoryColor?.let { Color(it) } ?: accent, item.categoryName ?: item.loanName)
+            CategoryBadge(item.categoryIcon, item.categoryColor?.let { Color(it) } ?: accent, item.categoryName ?: item.loanName ?: item.bankLoanName)
         }
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {

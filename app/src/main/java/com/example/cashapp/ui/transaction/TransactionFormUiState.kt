@@ -30,6 +30,8 @@ data class TransactionFormUiState(
 
     val amountError: Boolean = false,
     val categoryError: Boolean = false,
+    /** Banki hitel kategória nélküli tétele: kategória helyett a hitel látszik. */
+    val bankLoan: BankLoanTag? = null,
     val isSaving: Boolean = false,
     val isSaved: Boolean = false,
     /** A mentés hibára futott (a képernyő nyitva marad, hibaüzenettel). */
@@ -46,6 +48,9 @@ data class AccountOption(val id: Long, val name: String, val currencyCode: Strin
 data class CategoryOption(val id: Long, val name: String, val color: Long, val icon: String)
 
 data class SubcategoryOption(val id: Long, val name: String)
+
+/** A tételhez tartozó banki hitel jelölése (név, szín, ikon). */
+data class BankLoanTag(val name: String, val color: Long?, val icon: String)
 
 /**
  * Árfolyam mező. A felhasználó mindig az „1 drágább = X olcsóbb” irányt látja

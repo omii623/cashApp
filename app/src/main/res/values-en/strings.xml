@@ -457,6 +457,7 @@
     <string name="calc_save_as_loan">Save as bank loan</string>
     <!-- Bank loans -->
     <string name="bank_title">Bank loans</string>
+    <string name="form_bank_loan">Bank loan</string>
     <string name="bank_new">New loan</string>
     <string name="bank_empty">No bank loans yet. Add your loans and the app will keep track of instalments and the remaining balance!</string>
     <string name="bank_total_outstanding">Total outstanding</string>
@@ -488,7 +489,7 @@
     <string name="bank_override">Actual monthly instalment</string>
     <string name="bank_override_hint">Optional. If the amount your bank charges differs from the calculated one (%1$s).</string>
     <string name="bank_account">Account charged</string>
-    <string name="bank_book_hint">Instalments appear as a monthly recurring expense in the Awaiting approval list, on this account and category. The loan uses the account’s currency.</string>
+    <string name="bank_book_hint">Instalments appear as a monthly recurring expense in the Awaiting approval list, from this account, under the loan’s name. The loan uses the account’s currency.</string>
     <string name="bank_preview_end">Last instalment: %1$s</string>
     <string name="bank_delete_title">Delete loan</string>
     <string name="bank_delete_text">Delete “%1$s”? The loan and its monthly recurring rule are deleted; instalments already booked stay as expenses.</string>

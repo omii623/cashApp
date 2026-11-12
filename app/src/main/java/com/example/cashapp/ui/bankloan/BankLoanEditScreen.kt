@@ -63,8 +63,8 @@ import com.example.cashapp.ui.components.SaveErrorDialog
 import com.example.cashapp.ui.components.formatDate
 import com.example.cashapp.ui.loan.SectionTitle
 import com.example.cashapp.ui.theme.CashTheme
-import com.example.cashapp.ui.transaction.CategoryGrid
-import com.example.cashapp.ui.transaction.SubcategoryChips
+import com.example.cashapp.ui.components.ColorPicker
+import com.example.cashapp.ui.components.IconPicker
 
 /** @param onDone mentés után a hitel azonosítójával (új hitelnél a részletek oldal nyílik), vissza / törlés után `null`. */
 @Composable
@@ -217,16 +217,6 @@ private fun BankLoanEditScreen(state: BankLoanEditUiState, vm: BankLoanEditViewM
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            val accent = CashTheme.colors.expense
-            SectionTitle(stringResource(R.string.form_category))
-            if (state.categoryError) {
-                Text(stringResource(R.string.form_category_error), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-            }
-            CategoryGrid(state.categories, state.categoryId, accent, vm::onCategory)
-            if (state.subcategories.isNotEmpty()) {
-                SectionTitle(stringResource(R.string.form_subcategory))
-                SubcategoryChips(state.subcategories, state.subcategoryId, accent, vm::onSubcategory)
-            }
             Text(
                 stringResource(R.string.bank_book_hint),
                 style = MaterialTheme.typography.bodySmall,
@@ -239,6 +229,17 @@ private fun BankLoanEditScreen(state: BankLoanEditUiState, vm: BankLoanEditViewM
                 label = { Text(stringResource(R.string.form_note)) },
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 modifier = Modifier.fillMaxWidth(),
+            )
+
+            // Szín és ikon / betű – mint a magánkölcsönnél; alapból a kiadás színe és a fajta ikonja.
+            SectionTitle(stringResource(R.string.cat_color))
+            ColorPicker(state.color ?: 0L, vm::onColor)
+            SectionTitle(stringResource(R.string.cat_icon))
+            IconPicker(
+                state.icon ?: state.kind.iconKey(),
+                state.color?.let { Color(it) } ?: CashTheme.colors.expense,
+                state.name,
+                vm::onIcon,
             )
             Spacer(Modifier.height(8.dp))
         }

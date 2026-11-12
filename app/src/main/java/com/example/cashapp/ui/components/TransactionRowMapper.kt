@@ -5,6 +5,7 @@ import com.example.cashapp.domain.loan.LoanMath
 import com.example.cashapp.domain.model.Currency
 import com.example.cashapp.domain.model.TransactionType
 import com.example.cashapp.domain.money.MoneyFormatter
+import com.example.cashapp.ui.bankloan.iconKey
 import java.util.Locale
 
 /** [TransactionListItem] → megformázott [TransactionRowUi]. Minden lista ezt használja. */
@@ -40,8 +41,8 @@ object TransactionRowMapper {
             date = item.date,
             categoryName = item.categoryName,
             subcategoryName = item.subcategoryName,
-            categoryColor = item.categoryColor ?: item.loanColor,
-            categoryIcon = item.categoryIcon ?: item.loanIcon,
+            categoryColor = item.categoryColor ?: item.loanColor ?: item.bankLoanColor,
+            categoryIcon = item.categoryIcon ?: item.loanIcon ?: item.bankLoanIcon ?: item.bankLoanKind?.iconKey(),
             accountName = item.accountName,
             fromCurrency = item.currencyCode,
             toCurrency = item.targetCurrencyCode,
@@ -50,6 +51,7 @@ object TransactionRowMapper {
             loanId = item.loanId,
             loanName = item.loanName,
             loanIncrease = item.loanDirection?.let { LoanMath.isIncrease(it, item.type) } ?: false,
+            bankLoanName = item.bankLoanName,
         )
     }
 

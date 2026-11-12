@@ -9,7 +9,6 @@ import com.example.cashapp.data.local.entity.TransactionEntity
 import com.example.cashapp.data.local.model.BankLoanWithProgress
 import com.example.cashapp.domain.loan.AmortizationSchedule
 import com.example.cashapp.domain.model.BankLoanEventType
-import com.example.cashapp.domain.model.CategoryType
 import com.example.cashapp.domain.model.PendingStatus
 import com.example.cashapp.domain.model.PrepaymentMode
 import com.example.cashapp.domain.model.TransactionType
@@ -50,7 +49,6 @@ class BankLoanRepository(private val db: CashDatabase) {
 
     private val dao = db.bankLoanDao()
     private val accountDao = db.accountDao()
-    private val categoryDao = db.categoryDao()
     private val transactionDao = db.transactionDao()
     private val recurringDao = db.recurringDao()
     private val ruleSync = BankLoanRuleSync(db)
@@ -87,12 +85,6 @@ class BankLoanRepository(private val db: CashDatabase) {
             "A bank szerinti hátralék csak korábban felvett hitelnél adható meg, és pozitív legyen"
         }
         val account = checkNotNull(accountDao.getById(loan.accountId)) { "Nincs ilyen számla" }
-        val category = checkNotNull(categoryDao.getById(loan.categoryId)) { "Nincs ilyen kategória" }
-        require(category.type == CategoryType.EXPENSE) { "A kategória kiadás kategória legyen" }
-        loan.subcategoryId?.let { subId ->
-            val sub = checkNotNull(categoryDao.getSubcategoryById(subId)) { "Nincs ilyen alkategória" }
-            require(sub.categoryId == category.id) { "Az alkategória nem ehhez a kategóriához tartozik" }
-        }
         val normalized = loan.copy(name = loan.name.trim(), bankName = loan.bankName.trim(), note = loan.note.trim(), currencyCode = account.currencyCode)
 
         val existing = loan.id.takeIf { it != 0L }?.let { dao.getById(it) }
@@ -134,8 +126,6 @@ class BankLoanRepository(private val db: CashDatabase) {
                 currencyCode = loan.currencyCode,
                 accountId = loan.accountId,
                 accountAmountMinor = amountMinor,
-                categoryId = loan.categoryId,
-                subcategoryId = loan.subcategoryId,
                 note = loan.name,
                 recurringRuleId = loan.recurringRuleId,
                 bankLoanId = loan.id,
@@ -185,8 +175,6 @@ class BankLoanRepository(private val db: CashDatabase) {
                 currencyCode = loan.currencyCode,
                 accountId = loan.accountId,
                 accountAmountMinor = total,
-                categoryId = loan.categoryId,
-                subcategoryId = loan.subcategoryId,
                 note = note.trim(),
                 bankLoanId = loan.id,
             )

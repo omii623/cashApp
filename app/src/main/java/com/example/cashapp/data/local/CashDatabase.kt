@@ -149,24 +149,47 @@ object Migrations {
      */
     val MIGRATION_4_5 = object : Migration(4, 5) {
         override fun migrate(db: SupportSQLiteDatabase) {
+            // Ismétlődő szabály kategória nélkül is lehet (banki hitel részletei) → a tábla újraépítése
+            // (SQLite-ban a NOT NULL nem vehető le). A migráció alatt a külső kulcsok nincsenek érvényesítve,
+            // így a régi tábla eldobása nem törli a függő tételeket.
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `recurring_rules_new` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`name` TEXT NOT NULL, `type` TEXT NOT NULL, `amountMinor` INTEGER NOT NULL, `currencyCode` TEXT NOT NULL, " +
+                    "`accountId` INTEGER NOT NULL, `categoryId` INTEGER, `subcategoryId` INTEGER, `note` TEXT NOT NULL, " +
+                    "`frequency` TEXT NOT NULL, `interval` INTEGER NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER, " +
+                    "`nextDueDate` INTEGER NOT NULL, `isActive` INTEGER NOT NULL, " +
+                    "FOREIGN KEY(`accountId`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
+                    "FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
+                    "FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
+                    "FOREIGN KEY(`subcategoryId`) REFERENCES `subcategories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )"
+            )
+            db.execSQL(
+                "INSERT INTO `recurring_rules_new` (`id`, `name`, `type`, `amountMinor`, `currencyCode`, `accountId`, " +
+                    "`categoryId`, `subcategoryId`, `note`, `frequency`, `interval`, `startDate`, `endDate`, `nextDueDate`, `isActive`) " +
+                    "SELECT `id`, `name`, `type`, `amountMinor`, `currencyCode`, `accountId`, `categoryId`, `subcategoryId`, " +
+                    "`note`, `frequency`, `interval`, `startDate`, `endDate`, `nextDueDate`, `isActive` FROM `recurring_rules`"
+            )
+            db.execSQL("DROP TABLE `recurring_rules`")
+            db.execSQL("ALTER TABLE `recurring_rules_new` RENAME TO `recurring_rules`")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_recurring_rules_accountId` ON `recurring_rules` (`accountId`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_recurring_rules_currencyCode` ON `recurring_rules` (`currencyCode`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_recurring_rules_categoryId` ON `recurring_rules` (`categoryId`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_recurring_rules_subcategoryId` ON `recurring_rules` (`subcategoryId`)")
+
             db.execSQL(
                 "CREATE TABLE IF NOT EXISTS `bank_loans` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     "`name` TEXT NOT NULL, `bankName` TEXT NOT NULL, `kind` TEXT NOT NULL, `currencyCode` TEXT NOT NULL, " +
                     "`principalMinor` INTEGER NOT NULL, `thmPercent` REAL NOT NULL, `termMonths` INTEGER NOT NULL, " +
                     "`firstDueDate` INTEGER NOT NULL, `monthlyPaymentOverrideMinor` INTEGER, " +
-                    "`paidMonthsBefore` INTEGER NOT NULL, `bankBalanceMinor` INTEGER, `accountId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, " +
-                    "`subcategoryId` INTEGER, `recurringRuleId` INTEGER, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `closedDate` INTEGER, " +
+                    "`paidMonthsBefore` INTEGER NOT NULL, `bankBalanceMinor` INTEGER, `accountId` INTEGER NOT NULL, " +
+                    "`recurringRuleId` INTEGER, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `closedDate` INTEGER, " +
                     "`color` INTEGER, `icon` TEXT, " +
                     "FOREIGN KEY(`currencyCode`) REFERENCES `currencies`(`code`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
                     "FOREIGN KEY(`accountId`) REFERENCES `accounts`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
-                    "FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , " +
-                    "FOREIGN KEY(`subcategoryId`) REFERENCES `subcategories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL , " +
                     "FOREIGN KEY(`recurringRuleId`) REFERENCES `recurring_rules`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )"
             )
             db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_currencyCode` ON `bank_loans` (`currencyCode`)")
             db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_accountId` ON `bank_loans` (`accountId`)")
-            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_categoryId` ON `bank_loans` (`categoryId`)")
-            db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_subcategoryId` ON `bank_loans` (`subcategoryId`)")
             db.execSQL("CREATE INDEX IF NOT EXISTS `index_bank_loans_recurringRuleId` ON `bank_loans` (`recurringRuleId`)")
 
             db.execSQL(

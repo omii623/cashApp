@@ -457,6 +457,7 @@
     <string name="calc_save_as_loan">Mentés banki hitelként</string>
     <!-- Banki kölcsönök -->
     <string name="bank_title">Banki kölcsönök</string>
+    <string name="form_bank_loan">Banki hitel</string>
     <string name="bank_new">Új hitel</string>
     <string name="bank_empty">Még nincs banki hitel. Rögzítsd a hiteleidet, és az app nyomon követi a részleteket és a hátralékot!</string>
     <string name="bank_total_outstanding">Összes tartozás</string>
@@ -488,7 +489,7 @@
     <string name="bank_override">Tényleges havi részlet</string>
     <string name="bank_override_hint">Nem kötelező. Ha a bank által terhelt összeg eltér a számolttól (%1$s).</string>
     <string name="bank_account">Terhelt számla</string>
-    <string name="bank_book_hint">A részletek havi ismétlődő kiadásként jelennek meg a Jóváhagyásra vár listában, ezen a számlán és kategóriában. A hitel pénzneme a számla pénzneme.</string>
+    <string name="bank_book_hint">A részletek havi ismétlődő kiadásként jelennek meg a Jóváhagyásra vár listában, erről a számláról, a hitel nevével. A hitel pénzneme a számla pénzneme.</string>
     <string name="bank_preview_end">Utolsó részlet: %1$s</string>
     <string name="bank_delete_title">Hitel törlése</string>
     <string name="bank_delete_text">Törlöd: „%1$s”? A hitel és a havi ismétlődő szabálya törlődik; a már könyvelt részletek kiadásként megmaradnak.</string>

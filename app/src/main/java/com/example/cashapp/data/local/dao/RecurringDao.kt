@@ -33,12 +33,14 @@ interface RecurringDao {
                r.name AS ruleName, r.type, r.amountMinor, r.currencyCode, r.accountId,
                a.name AS accountName,
                c.name AS categoryName, c.color AS categoryColor, c.icon AS categoryIcon,
-               s.name AS subcategoryName
+               s.name AS subcategoryName,
+               b.id AS bankLoanId, b.name AS bankLoanName, b.kind AS bankLoanKind, b.color AS bankLoanColor, b.icon AS bankLoanIcon
         FROM pending_recurring p
         JOIN recurring_rules r ON r.id = p.ruleId
         JOIN accounts a ON a.id = r.accountId
-        JOIN categories c ON c.id = r.categoryId
+        LEFT JOIN categories c ON c.id = r.categoryId
         LEFT JOIN subcategories s ON s.id = r.subcategoryId
+        LEFT JOIN bank_loans b ON b.recurringRuleId = r.id
         WHERE p.status = 'PENDING'
         ORDER BY COALESCE(p.postponedTo, p.dueDate), p.id
         """
@@ -48,10 +50,12 @@ interface RecurringDao {
     @Query(
         """
         SELECT r.*, a.name AS accountName,
-               c.name AS categoryName, c.color AS categoryColor, c.icon AS categoryIcon
+               c.name AS categoryName, c.color AS categoryColor, c.icon AS categoryIcon,
+               b.id AS bankLoanId, b.name AS bankLoanName, b.kind AS bankLoanKind, b.color AS bankLoanColor, b.icon AS bankLoanIcon
         FROM recurring_rules r
         JOIN accounts a ON a.id = r.accountId
-        JOIN categories c ON c.id = r.categoryId
+        LEFT JOIN categories c ON c.id = r.categoryId
+        LEFT JOIN bank_loans b ON b.recurringRuleId = r.id
         ORDER BY r.isActive DESC, r.nextDueDate, r.id
         """
     )

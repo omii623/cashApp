@@ -53,6 +53,7 @@ object AppViewModelProvider {
             with(container()) {
                 TransactionFormViewModel(
                     type, editId, accountRepository, categoryRepository, currencyRepository, transactionRepository,
+                    bankLoanRepository,
                 )
             }
         }
@@ -150,7 +151,7 @@ object AppViewModelProvider {
                 months = args.get<Int>(Routes.ARG_MONTHS)?.takeIf { it > 0 },
             ).takeIf { it.principalText != null || it.thmPercent != null || it.months != null }
             with(container()) {
-                BankLoanEditViewModel(id, prefill, bankLoanRepository, accountRepository, categoryRepository, currencyRepository)
+                BankLoanEditViewModel(id, prefill, bankLoanRepository, accountRepository, currencyRepository)
             }
         }
         initializer {

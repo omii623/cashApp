@@ -7,6 +7,7 @@ import com.example.cashapp.data.local.entity.CategoryEntity
 import com.example.cashapp.data.local.entity.SubcategoryEntity
 import com.example.cashapp.data.local.entity.TransactionEntity
 import com.example.cashapp.data.repository.AccountRepository
+import com.example.cashapp.data.repository.BankLoanRepository
 import com.example.cashapp.data.repository.CategoryRepository
 import com.example.cashapp.data.repository.CurrencyRepository
 import com.example.cashapp.data.repository.TransactionRepository
@@ -16,6 +17,7 @@ import com.example.cashapp.domain.model.TransactionType
 import com.example.cashapp.domain.money.AmountParser
 import com.example.cashapp.domain.money.CurrencyConverter
 import com.example.cashapp.domain.money.MoneyFormatter
+import com.example.cashapp.ui.bankloan.iconKey
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -37,6 +39,7 @@ class TransactionFormViewModel(
     private val categoryRepository: CategoryRepository,
     private val currencyRepository: CurrencyRepository,
     private val transactionRepository: TransactionRepository,
+    private val bankLoanRepository: BankLoanRepository? = null,
 ) : ViewModel() {
 
     init {
@@ -56,6 +59,9 @@ class TransactionFormViewModel(
             account = accountRepository.get(tx.accountId),
             category = tx.categoryId?.let { categoryRepository.getCategory(it) },
             subcategory = tx.subcategoryId?.let { categoryRepository.getSubcategory(it) },
+            // Banki hitel tétele kategória nélküli: a hitel jelöli, kategóriát nem kell választani.
+            bankLoan = tx.bankLoanId?.takeIf { tx.categoryId == null }?.let { bankLoanRepository?.get(it) }
+                ?.let { BankLoanTag(it.name, it.color, it.icon ?: it.kind.iconKey()) },
         )
         val decimals = currencyRepository.observeCurrencies().first()[tx.currencyCode]?.decimals ?: 0
         // A használt árfolyam ugyanabban az irányban, ahogy az űrlap mutatja (1 drágább = X olcsóbb).
@@ -102,6 +108,7 @@ class TransactionFormViewModel(
         val account: AccountEntity? = null,
         val category: CategoryEntity? = null,
         val subcategory: SubcategoryEntity? = null,
+        val bankLoan: BankLoanTag? = null,
     )
 
     private val pinned = MutableStateFlow(Pinned())
@@ -123,7 +130,7 @@ class TransactionFormViewModel(
         ::Data,
     )
 
-    val uiState: StateFlow<TransactionFormUiState> = combine(input, data, pinned) { i, d, p -> buildState(i, d.withPinned(p)) }
+    val uiState: StateFlow<TransactionFormUiState> = combine(input, data, pinned) { i, d, p -> buildState(i, d.withPinned(p), p.bankLoan) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TransactionFormUiState(type))
 
     // ------------------------------------------------------------------ események
@@ -184,7 +191,7 @@ class TransactionFormViewModel(
 
     // ------------------------------------------------------------------ állapot számítás
 
-    private fun buildState(input: Input, data: Data): TransactionFormUiState {
+    private fun buildState(input: Input, data: Data, bankLoan: BankLoanTag?): TransactionFormUiState {
         val account = data.accounts.firstOrNull { it.id == input.accountId } ?: data.accounts.firstOrNull()
         val currencyCode = input.currencyCode ?: account?.currencyCode
         val currency = currencyCode?.let { data.currencies[it] }
@@ -222,7 +229,7 @@ class TransactionFormViewModel(
             )
         }
 
-        val draft = if (amountMinor != null && category != null && rateToAccount != null) {
+        val draft = if (amountMinor != null && (category != null || bankLoan != null) && rateToAccount != null) {
             TransactionEntity(
                 type = type,
                 date = input.date,
@@ -232,7 +239,7 @@ class TransactionFormViewModel(
                 accountAmountMinor = if (rateField == null) amountMinor else
                     CurrencyConverter.convertWithRate(amountMinor, currency.decimals, accountCurrency.decimals, rateToAccount),
                 rateToAccount = if (rateField == null) null else rateToAccount,
-                categoryId = category.id,
+                categoryId = category?.id,
                 subcategoryId = input.subcategoryId?.takeIf { id -> subcategories.any { it.id == id } },
                 note = input.note.trim(),
             ).takeIf { it.accountAmountMinor > 0 }
@@ -254,7 +261,8 @@ class TransactionFormViewModel(
             note = input.note,
             rate = rateField,
             amountError = input.showErrors && amountMinor == null,
-            categoryError = input.showErrors && category == null,
+            categoryError = input.showErrors && category == null && bankLoan == null,
+            bankLoan = bankLoan,
             isSaving = input.isSaving,
             isSaved = input.isSaved,
             saveFailed = input.saveFailed,

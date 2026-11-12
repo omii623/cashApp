@@ -79,6 +79,7 @@ fun RecurringRoute(
     onBack: () -> Unit,
     onEditRule: (Long) -> Unit,
     onNewRule: () -> Unit,
+    onOpenBankLoan: (Long) -> Unit,
     viewModel: RecurringViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -86,7 +87,8 @@ fun RecurringRoute(
     RecurringScreen(
         state = state,
         onBack = onBack,
-        onEditRule = onEditRule,
+        // A banki hitel szabálya a hitel oldalán kezelhető (a hitel tartja karban).
+        onEditRule = { id -> state.rules.firstOrNull { it.id == id }?.bankLoanId?.let(onOpenBankLoan) ?: onEditRule(id) },
         onNewRule = onNewRule,
         onApprove = viewModel::approve,
         onSkip = viewModel::skip,
@@ -241,7 +243,7 @@ private fun PendingCard(
         Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(label, color = labelColor, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
             Row(verticalAlignment = Alignment.CenterVertically) {
-                CategoryBadge(item.categoryIcon, Color(item.categoryColor), item.categoryName, size = 40.dp)
+                CategoryBadge(item.categoryIcon, item.categoryColor?.let { Color(it) } ?: c.expense, item.categoryName ?: item.ruleName, size = 40.dp)
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(item.ruleName, style = MaterialTheme.typography.titleMedium)
@@ -286,7 +288,12 @@ private fun RuleCard(rule: RuleUi, onClick: () -> Unit, onActive: (Boolean) -> U
             Modifier.clickable(onClick = onClick).padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CategoryBadge(rule.categoryIcon, Color(rule.categoryColor).copy(alpha = alpha), rule.categoryName, size = 40.dp)
+            CategoryBadge(
+                rule.categoryIcon,
+                (rule.categoryColor?.let { Color(it) } ?: c.expense).copy(alpha = alpha),
+                rule.categoryName ?: rule.name,
+                size = 40.dp,
+            )
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(rule.name, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))

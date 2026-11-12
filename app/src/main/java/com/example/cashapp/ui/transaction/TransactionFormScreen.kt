@@ -41,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import com.example.cashapp.ui.components.CategoryBadge
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -179,11 +180,21 @@ fun TransactionFormScreen(
             }
             state.rate?.let { RateSection(it, onRateChange, onRateReset) }
 
-            SectionLabel(stringResource(R.string.form_category))
-            if (state.categoryError) ErrorText(stringResource(R.string.form_category_error))
-            CategoryGrid(state.categories, state.selectedCategoryId, accent, onCategorySelect)
+            val bankLoan = state.bankLoan
+            if (bankLoan != null) {
+                // Banki hitel tétele: kategória helyett a hitel (a hitel oldalán kezelhető).
+                SectionLabel(stringResource(R.string.form_bank_loan))
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    CategoryBadge(bankLoan.icon, bankLoan.color?.let { Color(it) } ?: accent, bankLoan.name, size = 40.dp)
+                    Text(bankLoan.name, style = MaterialTheme.typography.bodyLarge)
+                }
+            } else {
+                SectionLabel(stringResource(R.string.form_category))
+                if (state.categoryError) ErrorText(stringResource(R.string.form_category_error))
+                CategoryGrid(state.categories, state.selectedCategoryId, accent, onCategorySelect)
+            }
 
-            if (state.subcategories.isNotEmpty()) {
+            if (bankLoan == null && state.subcategories.isNotEmpty()) {
                 SectionLabel(stringResource(R.string.form_subcategory))
                 SubcategoryChips(state.subcategories, state.selectedSubcategoryId, accent, onSubcategorySelect)
             }

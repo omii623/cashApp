@@ -161,7 +161,7 @@ class BackupManagerTest {
     /** Banki hitel minden adatával: valós THM, futó hitel adatai, részlet tétel és előtörlesztés esemény. */
     @Test
     fun exportRestoreRoundtrip_bankiHitellel() = runTest {
-        val (accountId, categoryId) = TestDb.seedBasics(db)
+        val (accountId, _) = TestDb.seedBasics(db)
         val day = LocalDate.of(2026, 11, 15)
         val dao = db.bankLoanDao()
         val loanId = dao.insert(
@@ -169,13 +169,13 @@ class BackupManagerTest {
                 name = "Lakáshitel", bankName = "Bank", kind = BankLoanKind.MORTGAGE, currencyCode = "HUF",
                 principalMinor = 6_000_000, thmPercent = 6.37, termMonths = 120, firstDueDate = day.minusMonths(48),
                 monthlyPaymentOverrideMinor = 66_000, paidMonthsBefore = 48, bankBalanceMinor = 3_812_000,
-                accountId = accountId, categoryId = categoryId, color = 0xFF5C6BC0, icon = "home",
+                accountId = accountId, color = 0xFF5C6BC0, icon = "home",
             )
         )
         val txId = db.transactionDao().insert(
             TransactionEntity(
                 type = TransactionType.EXPENSE, date = day, amountMinor = 250_000, currencyCode = "HUF",
-                accountId = accountId, accountAmountMinor = 250_000, categoryId = categoryId, bankLoanId = loanId,
+                accountId = accountId, accountAmountMinor = 250_000, bankLoanId = loanId,
             )
         )
         dao.insertEvent(

@@ -10,6 +10,7 @@ import com.example.cashapp.data.settings.SettingsRepository
 import com.example.cashapp.domain.model.Currency
 import com.example.cashapp.domain.model.RecurrenceFrequency
 import com.example.cashapp.domain.model.TransactionType
+import com.example.cashapp.ui.bankloan.iconKey
 import com.example.cashapp.domain.money.MoneyFormatter
 import com.example.cashapp.ui.home.HomeViewModel
 import java.time.LocalDate
@@ -31,10 +32,12 @@ data class PendingUi(
     val id: Long,
     val type: TransactionType,
     val ruleName: String,
-    val categoryName: String,
+    /** Null: banki hitel részlete (a jelvény a hitelé). */
+    val categoryName: String?,
     val subcategoryName: String?,
-    val categoryColor: Long,
-    val categoryIcon: String,
+    /** Null: alapértelmezett (kiadás) szín. */
+    val categoryColor: Long?,
+    val categoryIcon: String?,
     val accountName: String,
     val amountText: String,
     /** Jóváhagyó ablakhoz: szerkeszthető összeg és a pénznem. */
@@ -48,9 +51,11 @@ data class RuleUi(
     val id: Long,
     val name: String,
     val type: TransactionType,
-    val categoryName: String,
-    val categoryColor: Long,
-    val categoryIcon: String,
+    val categoryName: String?,
+    val categoryColor: Long?,
+    val categoryIcon: String?,
+    /** Nem null: a banki hitel szabálya – a hitel oldalán kezelhető, nem a szabályszerkesztőben. */
+    val bankLoanId: Long? = null,
     val accountName: String,
     val amountText: String,
     val frequency: RecurrenceFrequency,
@@ -110,8 +115,8 @@ class RecurringViewModel(
         ruleName = ruleName,
         categoryName = categoryName,
         subcategoryName = subcategoryName,
-        categoryColor = categoryColor,
-        categoryIcon = categoryIcon,
+        categoryColor = categoryColor ?: bankLoanColor,
+        categoryIcon = categoryIcon ?: bankLoanIcon ?: bankLoanKind?.iconKey(),
         accountName = accountName,
         amountText = money(amountMinor, currencyCode, type, currencies, hidden),
         amountMinor = amountMinor,
@@ -129,8 +134,9 @@ class RecurringViewModel(
         name = rule.name,
         type = rule.type,
         categoryName = categoryName,
-        categoryColor = categoryColor,
-        categoryIcon = categoryIcon,
+        categoryColor = categoryColor ?: bankLoanColor,
+        categoryIcon = categoryIcon ?: bankLoanIcon ?: bankLoanKind?.iconKey(),
+        bankLoanId = bankLoanId,
         accountName = accountName,
         amountText = money(rule.amountMinor, rule.currencyCode, rule.type, currencies, hidden),
         frequency = rule.frequency,

@@ -180,6 +180,7 @@ fun CashApp(openPendingRequest: Int = 0) {
                     onBack = back,
                     onEditRule = { navController.navigate(Routes.ruleEdit(it)) },
                     onNewRule = { navController.navigate(Routes.RULE_NEW) },
+                    onOpenBankLoan = { navController.navigate(Routes.bankLoanDetail(it)) },
                 )
             }
             composable(

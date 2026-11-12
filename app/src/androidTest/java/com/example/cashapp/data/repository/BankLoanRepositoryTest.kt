@@ -5,12 +5,9 @@ import com.example.cashapp.data.TestDb
 import com.example.cashapp.data.local.CashDatabase
 import com.example.cashapp.data.local.entity.AccountEntity
 import com.example.cashapp.data.local.entity.BankLoanEntity
-import com.example.cashapp.data.local.entity.CategoryEntity
 import com.example.cashapp.data.local.entity.CurrencyEntity
-import com.example.cashapp.data.local.entity.SubcategoryEntity
 import com.example.cashapp.domain.loan.LoanCalculator
 import com.example.cashapp.domain.model.BankLoanKind
-import com.example.cashapp.domain.model.CategoryType
 import com.example.cashapp.domain.model.PendingStatus
 import com.example.cashapp.domain.model.PrepaymentMode
 import com.example.cashapp.domain.model.RecurrenceFrequency
@@ -36,14 +33,13 @@ class BankLoanRepositoryTest {
     private lateinit var repo: BankLoanRepository
     private lateinit var recurring: RecurringRepository
     private var accountId = 0L
-    private var categoryId = 0L
     private val first = LocalDate.of(2026, 1, 15)
     private val monthly = LoanCalculator.calculate(1_000_000, 13.79, 36).monthlyPaymentMinor // 34 076
 
     @Before
     fun setUp() = runTest {
         db = TestDb.inMemory()
-        TestDb.seedBasics(db).let { (a, c) -> accountId = a; categoryId = c }
+        accountId = TestDb.seedBasics(db).first
         repo = BankLoanRepository(db)
         recurring = RecurringRepository(db)
     }
@@ -54,7 +50,7 @@ class BankLoanRepositoryTest {
     private fun loan(id: Long = 0) = BankLoanEntity(
         id = id, name = " Személyi ", bankName = "Bank", kind = BankLoanKind.PERSONAL, currencyCode = "EUR",
         principalMinor = 1_000_000, thmPercent = 13.79, termMonths = 36, firstDueDate = first,
-        accountId = accountId, categoryId = categoryId,
+        accountId = accountId, color = 0xFF5C6BC0, icon = "home",
     )
 
     private suspend fun rule(loanId: Long) = db.recurringDao().getRule(repo.get(loanId)!!.recurringRuleId!!)!!
@@ -77,7 +73,7 @@ class BankLoanRepositoryTest {
         assertEquals(first, r.nextDueDate)
         assertEquals(LocalDate.of(2028, 12, 15), r.endDate)
         assertEquals(monthly, r.amountMinor)
-        assertEquals(categoryId, r.categoryId)
+        assertNull(r.categoryId) // a részletek kategória nélküliek (a hitel jelöli őket)
         assertTrue(r.isActive)
 
         val o = repo.observe(id).first()!!
@@ -228,18 +224,35 @@ class BankLoanRepositoryTest {
     }
 
     @Test
-    fun alkategoriaASzabalybanEsATetelekben() = runTest {
-        val subId = db.categoryDao().insertSubcategory(SubcategoryEntity(categoryId = categoryId, name = "Hiteltörlesztés"))
-        val id = repo.save(loan().copy(subcategoryId = subId))
-        assertEquals(subId, rule(id).subcategoryId)
-        val txId = repo.payNextInstallment(id, first, monthly)
-        assertEquals(subId, db.transactionDao().getById(txId)!!.subcategoryId)
+    fun reszletekKategoriaNelkul_aHitelJeloli() = runTest {
+        val id = repo.save(loan())
+        val ruleId = rule(id).id
 
-        // Másik kategória alkategóriája nem választható.
-        val other = db.categoryDao().insert(CategoryEntity(name = "Egyéb", type = CategoryType.EXPENSE, icon = "x", color = 0))
-        assertThrows(IllegalArgumentException::class.java) {
-            kotlinx.coroutines.runBlocking { repo.save(loan().copy(categoryId = other, subcategoryId = subId)) }
-        }
+        // Jóváhagyásra váró tétel: kategória helyett a hitel adatai.
+        recurring.generateDue(first)
+        val pending = db.recurringDao().observePending().first().single()
+        assertNull(pending.categoryName)
+        assertEquals(id, pending.bankLoanId)
+        assertEquals("Személyi", pending.bankLoanName)
+        assertEquals("home", pending.bankLoanIcon)
+        assertEquals(id, db.recurringDao().observeRules().first().single { it.rule.id == ruleId }.bankLoanId)
+
+        val txId = repo.payNextInstallment(id, first, monthly)
+        val tx = db.transactionDao().getById(txId)!!
+        assertNull(tx.categoryId)
+        assertEquals(id, tx.bankLoanId)
+        val row = db.transactionDao().observeRecent(10).first().single()
+        assertEquals("Személyi", row.bankLoanName)
+        assertEquals(BankLoanKind.PERSONAL, row.bankLoanKind)
+
+        // Kimutatásban a kölcsönök csoportjában (id = -1).
+        val totals = db.transactionDao().observeCategoryTotals("EXPENSE", first, first).first()
+        assertEquals(listOf(-1L to monthly), totals.map { it.id to it.amountMinor })
+
+        // A tétel szerkesztése (összeg) után is a hitelhez tartozik.
+        db.transactionDao().updateIncomeOrExpenseKeepingMeta(txId, tx.copy(id = 0, amountMinor = 35_000, accountAmountMinor = 35_000, bankLoanId = null))
+        assertEquals(id, db.transactionDao().getById(txId)!!.bankLoanId)
+        assertEquals(1, repo.getOverview(id)!!.paidInstallments)
     }
 
     @Test
@@ -279,9 +292,7 @@ class BankLoanRepositoryTest {
 
     @Test
     fun ervenytelenAdatok() = runTest {
-        val incomeCategory = db.categoryDao().insert(CategoryEntity(name = "Fizetés", type = CategoryType.INCOME, icon = "x", color = 0))
         assertThrows(IllegalArgumentException::class.java) { kotlinx.coroutines.runBlocking { repo.save(loan().copy(name = " ")) } }
-        assertThrows(IllegalArgumentException::class.java) { kotlinx.coroutines.runBlocking { repo.save(loan().copy(categoryId = incomeCategory)) } }
         assertThrows(IllegalArgumentException::class.java) {
             kotlinx.coroutines.runBlocking { repo.save(loan().copy(paidMonthsBefore = 36)) } // nem maradna részlet
         }

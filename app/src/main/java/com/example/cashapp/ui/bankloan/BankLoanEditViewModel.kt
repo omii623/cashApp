@@ -4,22 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cashapp.data.local.entity.AccountEntity
 import com.example.cashapp.data.local.entity.BankLoanEntity
-import com.example.cashapp.data.local.entity.CategoryEntity
-import com.example.cashapp.data.local.entity.SubcategoryEntity
 import com.example.cashapp.data.repository.AccountRepository
 import com.example.cashapp.data.repository.BankLoanRepository
-import com.example.cashapp.data.repository.CategoryRepository
 import com.example.cashapp.data.repository.CurrencyRepository
 import com.example.cashapp.domain.loan.AmortizationSchedule
 import com.example.cashapp.domain.loan.LoanCalculator
 import com.example.cashapp.domain.model.BankLoanKind
-import com.example.cashapp.domain.model.CategoryType
+import com.example.cashapp.domain.model.CategoryIcon
 import com.example.cashapp.domain.model.Currency
 import com.example.cashapp.domain.money.AmountParser
 import com.example.cashapp.domain.money.MoneyFormatter
 import com.example.cashapp.ui.loan.formatNumber
-import com.example.cashapp.ui.transaction.CategoryOption
-import com.example.cashapp.ui.transaction.SubcategoryOption
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -74,11 +69,9 @@ data class BankLoanEditUiState(
     val overrideError: Boolean = false,
     val accounts: List<AccountEntity> = emptyList(),
     val accountId: Long? = null,
-    val categories: List<CategoryOption> = emptyList(),
-    val categoryId: Long? = null,
-    val categoryError: Boolean = false,
-    val subcategories: List<SubcategoryOption> = emptyList(),
-    val subcategoryId: Long? = null,
+    /** Jelölés, mint a magánkölcsönnél; null → alapértelmezett (a kiadás színe / a fajta ikonja). */
+    val color: Long? = null,
+    val icon: String? = null,
     val note: String = "",
     val currency: Currency? = null,
     val preview: BankLoanPreview? = null,
@@ -98,7 +91,6 @@ class BankLoanEditViewModel(
     private val prefill: BankLoanPrefill?,
     private val bankLoanRepository: BankLoanRepository,
     private val accountRepository: AccountRepository,
-    private val categoryRepository: CategoryRepository,
     private val currencyRepository: CurrencyRepository,
 ) : ViewModel() {
 
@@ -106,10 +98,6 @@ class BankLoanEditViewModel(
     val uiState: StateFlow<BankLoanEditUiState> = _state.asStateFlow()
 
     private var currencies: Map<String, Currency> = emptyMap()
-    private var categories: List<CategoryEntity> = emptyList()
-    private var subcategories: List<SubcategoryEntity> = emptyList()
-    /** Szerkesztésnél a megtartandó mezők. */
-    private var original: BankLoanEntity? = null
 
     init {
         viewModelScope.launch { load() }
@@ -118,23 +106,15 @@ class BankLoanEditViewModel(
     private suspend fun load() {
         currencies = currencyRepository.observeCurrencies().first()
         val accounts = accountRepository.observeActive().first()
-        categories = categoryRepository.observeCategories(CategoryType.EXPENSE).first()
-        subcategories = categoryRepository.observeSubcategories(CategoryType.EXPENSE).first()
         val loan = loanId?.let { bankLoanRepository.get(it) }
-        original = loan
 
         if (loan == null) {
-            // Alapértelmezés: a „hitel” ikonú kategória (az alapadatokban a „Hitel”) az első alkategóriájával.
-            val category = categories.firstOrNull { it.icon == LOAN_CATEGORY_ICON } ?: categories.firstOrNull()
             val account = accounts.firstOrNull { it.icon == BANK_ACCOUNT_ICON } ?: accounts.firstOrNull()
             _state.update {
                 it.copy(
                     isLoading = false,
                     accounts = accounts,
                     accountId = account?.id,
-                    categoryId = category?.id,
-                    subcategoryId = category?.takeIf { c -> c.icon == LOAN_CATEGORY_ICON }
-                        ?.let { c -> subcategories.firstOrNull { s -> s.categoryId == c.id }?.id },
                     principalText = prefill?.principalText.orEmpty(),
                     thmText = prefill?.thmPercent?.let(::formatNumber).orEmpty(),
                     monthsText = prefill?.months?.toString().orEmpty(),
@@ -164,9 +144,9 @@ class BankLoanEditViewModel(
                 overrideText = loan.monthlyPaymentOverrideMinor?.let { p -> AmountParser.toEditText(p, decimals) }.orEmpty(),
                 accounts = accountList,
                 accountId = loan.accountId,
-                categoryId = loan.categoryId,
-                subcategoryId = loan.subcategoryId,
                 note = loan.note,
+                color = loan.color,
+                icon = loan.icon,
             ).withOptions()
         }
     }
@@ -176,7 +156,7 @@ class BankLoanEditViewModel(
         if (text.isBlank()) 0 else text.trim().toIntOrNull()?.takeIf { it >= 0 && (months == null || it < months) }
 
     /**
-     * Kategória- és alkategória-lista, pénznem, a „már befizetett” részletek automatikus értéke (új hitelnél,
+     * Pénznem, a „már befizetett” részletek automatikus értéke (új hitelnél,
      * amíg kézzel át nem írják: az első részlet dátumától máig esedékesek) és az előnézet.
      */
     private fun BankLoanEditUiState.withOptions(): BankLoanEditUiState {
@@ -217,11 +197,6 @@ class BankLoanEditViewModel(
         return copy(
             currency = currency,
             paidBeforeText = paidText,
-            // A ViewModel listái (az állapot azonos nevű mezői itt elfednék őket).
-            categories = this@BankLoanEditViewModel.categories.map { CategoryOption(it.id, it.name, it.color, it.icon) },
-            subcategories = this@BankLoanEditViewModel.subcategories
-                .filter { it.categoryId == categoryId }
-                .map { SubcategoryOption(it.id, it.name) },
             preview = preview,
         )
     }
@@ -239,8 +214,8 @@ class BankLoanEditViewModel(
     fun onBankBalance(text: String) = edit { it.copy(bankBalanceText = text, bankBalanceError = false) }
     fun onOverride(text: String) = edit { it.copy(overrideText = text, overrideError = false) }
     fun onAccount(id: Long) = edit { it.copy(accountId = id) }
-    fun onCategory(id: Long) = edit { if (it.categoryId == id) it else it.copy(categoryId = id, subcategoryId = null, categoryError = false) }
-    fun onSubcategory(id: Long) = edit { it.copy(subcategoryId = if (it.subcategoryId == id) null else id) }
+    fun onColor(color: Long) = edit { it.copy(color = color) }
+    fun onIcon(icon: CategoryIcon) = edit { it.copy(icon = icon.encode()) }
     fun onNote(text: String) = edit { it.copy(note = text) }
     fun dismissError() = _state.update { it.copy(saveFailed = false) }
 
@@ -260,7 +235,7 @@ class BankLoanEditViewModel(
         val bankBalanceOk = s.bankBalanceText.isBlank() || paidBefore == 0 || bankBalance != null
         val account = s.account
         if (name.isEmpty() || principal == null || thm == null || months == null || !overrideOk || paidBefore == null ||
-            !bankBalanceOk || account == null || s.categoryId == null
+            !bankBalanceOk || account == null
         ) {
             _state.update {
                 it.copy(
@@ -271,14 +246,12 @@ class BankLoanEditViewModel(
                     overrideError = !overrideOk,
                     paidBeforeError = paidBefore == null,
                     bankBalanceError = !bankBalanceOk,
-                    categoryError = s.categoryId == null,
                 )
             }
             return
         }
         _state.update { it.copy(isSaving = true) }
         viewModelScope.launch {
-            val base = original
             val result = runCatching {
                 bankLoanRepository.save(
                     BankLoanEntity(
@@ -295,11 +268,9 @@ class BankLoanEditViewModel(
                         paidMonthsBefore = paidBefore,
                         bankBalanceMinor = bankBalance,
                         accountId = account.id,
-                        categoryId = s.categoryId,
-                        subcategoryId = s.subcategoryId,
                         note = s.note.trim(),
-                        color = base?.color,
-                        icon = base?.icon,
+                        color = s.color,
+                        icon = s.icon,
                     )
                 )
             }
@@ -321,8 +292,6 @@ class BankLoanEditViewModel(
     }
 
     companion object {
-        /** Az alapadatok „Hitel” kategóriájának ikonja (nyelvfüggetlen azonosításhoz). */
-        const val LOAN_CATEGORY_ICON = "loan"
         const val BANK_ACCOUNT_ICON = "bank"
         /** Biztonsági határ (100 év). */
         const val MAX_MONTHS = 1200

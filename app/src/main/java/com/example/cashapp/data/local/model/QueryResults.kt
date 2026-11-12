@@ -5,6 +5,7 @@ import com.example.cashapp.data.local.entity.AccountEntity
 import com.example.cashapp.data.local.entity.BankLoanEntity
 import com.example.cashapp.data.local.entity.LoanEntity
 import com.example.cashapp.data.local.entity.RecurringRuleEntity
+import com.example.cashapp.domain.model.BankLoanKind
 import com.example.cashapp.domain.model.LoanDirection
 import com.example.cashapp.domain.model.LoanOpeningPart
 import com.example.cashapp.domain.model.TransactionType
@@ -41,10 +42,16 @@ data class PendingItem(
     val currencyCode: String,
     val accountId: Long,
     val accountName: String,
-    val categoryName: String,
-    val categoryColor: Long,
-    val categoryIcon: String,
+    /** Null: kategória nélküli (banki hitel) szabály – ekkor a bankLoan* mezők töltöttek. */
+    val categoryName: String?,
+    val categoryColor: Long?,
+    val categoryIcon: String?,
     val subcategoryName: String?,
+    val bankLoanId: Long? = null,
+    val bankLoanName: String? = null,
+    val bankLoanKind: BankLoanKind? = null,
+    val bankLoanColor: Long? = null,
+    val bankLoanIcon: String? = null,
 ) {
     /** Az elhalasztás után ez számít esedékességnek. */
     val effectiveDate: LocalDate get() = postponedTo ?: dueDate
@@ -54,9 +61,15 @@ data class PendingItem(
 data class RuleItem(
     @Embedded val rule: RecurringRuleEntity,
     val accountName: String,
-    val categoryName: String,
-    val categoryColor: Long,
-    val categoryIcon: String,
+    /** Null: kategória nélküli (banki hitel) szabály – ekkor a bankLoan* mezők töltöttek. */
+    val categoryName: String?,
+    val categoryColor: Long?,
+    val categoryIcon: String?,
+    val bankLoanId: Long? = null,
+    val bankLoanName: String? = null,
+    val bankLoanKind: BankLoanKind? = null,
+    val bankLoanColor: Long? = null,
+    val bankLoanIcon: String? = null,
 )
 
 /** Összeg kategóriánként és pénznemenként. */
@@ -96,6 +109,12 @@ data class TransactionListItem(
     /** A kölcsön választott jelölése (null: alapértelmezett). */
     val loanColor: Long? = null,
     val loanIcon: String? = null,
+    /** Banki hitel tételénél (részlet / előtörlesztés) a hitel adatai (különben null). */
+    val bankLoanId: Long? = null,
+    val bankLoanName: String? = null,
+    val bankLoanKind: BankLoanKind? = null,
+    val bankLoanColor: Long? = null,
+    val bankLoanIcon: String? = null,
 )
 
 /** Magánkölcsön + számolt hátralék (a kölcsön pénznemében; 0 = rendezve). */
