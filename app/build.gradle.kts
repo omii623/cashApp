@@ -21,8 +21,8 @@ android {
         applicationId = "com.example.cashapp"
         minSdk = 26
         targetSdk = 37
-        versionCode = 4
-        versionName = "1.3.0+$gitHash"
+        versionCode = 5
+        versionName = "1.4.0+$gitHash"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
