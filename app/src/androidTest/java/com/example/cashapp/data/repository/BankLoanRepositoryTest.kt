@@ -8,6 +8,7 @@ import com.example.cashapp.data.local.entity.BankLoanEntity
 import com.example.cashapp.data.local.entity.CurrencyEntity
 import com.example.cashapp.domain.loan.LoanCalculator
 import com.example.cashapp.domain.model.BankLoanKind
+import com.example.cashapp.domain.report.ReportCalculator
 import com.example.cashapp.domain.model.PendingStatus
 import com.example.cashapp.domain.model.PrepaymentMode
 import com.example.cashapp.domain.model.RecurrenceFrequency
@@ -245,9 +246,9 @@ class BankLoanRepositoryTest {
         assertEquals("Személyi", row.bankLoanName)
         assertEquals(BankLoanKind.PERSONAL, row.bankLoanKind)
 
-        // Kimutatásban a kölcsönök csoportjában (id = -1).
+        // Kimutatásban a banki hitelek külön csoportjában (nem a magánkölcsönöknél).
         val totals = db.transactionDao().observeCategoryTotals("EXPENSE", first, first).first()
-        assertEquals(listOf(-1L to monthly), totals.map { it.id to it.amountMinor })
+        assertEquals(listOf(ReportCalculator.BANK_LOAN_GROUP_ID to monthly), totals.map { it.id to it.amountMinor })
 
         // A tétel szerkesztése (összeg) után is a hitelhez tartozik.
         db.transactionDao().updateIncomeOrExpenseKeepingMeta(txId, tx.copy(id = 0, amountMinor = 35_000, accountAmountMinor = 35_000, bankLoanId = null))

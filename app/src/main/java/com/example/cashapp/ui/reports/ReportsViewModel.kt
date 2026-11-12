@@ -66,6 +66,8 @@ data class SliceUi(
     val canDrill: Boolean,
     /** A magánkölcsön-mozgások csoportja (nincs kategóriája, nem fúrható le). */
     val isLoans: Boolean = false,
+    /** A banki hitelek tételeinek csoportja (nincs kategóriája, nem fúrható le). */
+    val isBankLoans: Boolean = false,
 )
 
 data class CategoryChoice(val id: Long, val name: String, val color: Long, val icon: String)
@@ -199,6 +201,7 @@ class ReportsViewModel(
         val breakdown = ReportCalculator.breakdown(groups, c.base, c.converter)
         val slices = breakdown.slices.map { s ->
             val isLoans = drillCategory == null && s.id == ReportCalculator.LOAN_GROUP_ID
+            val isBankLoans = drillCategory == null && s.id == ReportCalculator.BANK_LOAN_GROUP_ID
             val cat = if (drillCategory == null) s.id?.let { catById[it] } else null
             val name = when {
                 s.isOther -> null
@@ -209,14 +212,19 @@ class ReportsViewModel(
                 id = s.id,
                 name = name ?: "",
                 // Lefúráskor az alkategóriák a kategória színének árnyalatai lesznek (a UI számolja).
-                color = if (isLoans) LOAN_COLOR else cat?.color ?: drillCategory?.color ?: 0,
+                color = when {
+                    isLoans -> LOAN_COLOR
+                    isBankLoans -> BANK_LOAN_COLOR
+                    else -> cat?.color ?: drillCategory?.color ?: 0
+                },
                 icon = cat?.icon,
                 share = s.share,
                 amountText = money(s.amountMinor),
                 percentText = "${(s.share * 100).let { if (it < 0.5f) "<1" else it.roundToInt().toString() }}%",
                 isOther = s.isOther,
-                canDrill = drillCategory == null && !s.isOther && s.id != null && !isLoans,
+                canDrill = drillCategory == null && !s.isOther && s.id != null && !isLoans && !isBankLoans,
                 isLoans = isLoans,
+                isBankLoans = isBankLoans,
             )
         }
 
@@ -244,5 +252,7 @@ class ReportsViewModel(
     private companion object {
         /** A „Magánkölcsönök” szelet színe (lila – a kategóriapalettától jól elüt). */
         const val LOAN_COLOR = 0xFF7E57C2
+        /** A „Banki kölcsönök” szelet színe (sötét türkiz). */
+        const val BANK_LOAN_COLOR = 0xFF00695C
     }
 }

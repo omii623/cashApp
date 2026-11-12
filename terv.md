@@ -203,7 +203,7 @@ Alsó sáv: **Főoldal | Tranzakciók | Kimutatások | Továbbiak**
 - **Nincs kategória** (mint a magánkölcsönnél): a részletek és az előtörlesztés kategória nélküli kiadások; a listákban (tranzakciók, Jóváhagyásra vár, szabályok) a hitel neve, színe és ikonja jelöli őket. A szabály kategóriája ezért lehet NULL (DB v5).
 - A hitel szabályára koppintva a hitel oldala nyílik (a szabályt a hitel tartja karban).
 - A részlet tétele a tranzakciólistában szerkeszthető / törölhető; az űrlapon kategória helyett a hitel látszik, és a hitelhez kötés megmarad.
-- A kimutatásokban a részletek a „Kölcsönök” csoportba kerülnek (a magánkölcsön-mozgásokkal együtt); a tőke / kamat bontás csak a hitel oldalán látszik.
+- A kimutatásokban a részletek külön „Banki kölcsönök” csoportba kerülnek (a magánkölcsönöktől elkülönítve); a tőke / kamat bontás csak a hitel oldalán látszik.
 - Mentés / visszaállítás: `bank_loans` a `recurring_rules` után, `bank_loan_events` a `transactions` után; régi mentés továbbra is betölthető.
 
 ## 10. Megvalósítási sorrend

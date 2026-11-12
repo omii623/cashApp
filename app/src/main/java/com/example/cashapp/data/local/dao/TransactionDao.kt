@@ -137,16 +137,16 @@ interface TransactionDao {
 
     /**
      * Összeg kategóriánként (a számla pénznemében) egy típusra és időszakra.
-     * A magánkölcsön-mozgások és a banki hitel tételei (kategória nélküliek) külön csoportba kerülnek:
-     * id = -1 (ReportCalculator.LOAN_GROUP_ID).
+     * A kategória nélküli kölcsöntételek külön csoportokba kerülnek: magánkölcsön-mozgások id = -1
+     * (ReportCalculator.LOAN_GROUP_ID), banki hitel tételei id = -2 (ReportCalculator.BANK_LOAN_GROUP_ID).
      */
     @Query(
         """
-        SELECT CASE WHEN t.loanId IS NOT NULL OR t.bankLoanId IS NOT NULL THEN -1 ELSE t.categoryId END AS id,
+        SELECT CASE WHEN t.loanId IS NOT NULL THEN -1 WHEN t.bankLoanId IS NOT NULL THEN -2 ELSE t.categoryId END AS id,
                a.currencyCode AS currencyCode, SUM(t.accountAmountMinor) AS amountMinor
         FROM transactions t JOIN accounts a ON a.id = t.accountId
         WHERE t.type = :type AND t.date BETWEEN :from AND :to
-        GROUP BY CASE WHEN t.loanId IS NOT NULL OR t.bankLoanId IS NOT NULL THEN -1 ELSE t.categoryId END, a.currencyCode
+        GROUP BY CASE WHEN t.loanId IS NOT NULL THEN -1 WHEN t.bankLoanId IS NOT NULL THEN -2 ELSE t.categoryId END, a.currencyCode
         """
     )
     fun observeCategoryTotals(type: String, from: LocalDate, to: LocalDate): Flow<List<GroupTotal>>

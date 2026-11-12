@@ -13,6 +13,9 @@ object ReportCalculator {
     /** A kategória-bontásban a magánkölcsön-mozgások csoportjának azonosítója (valódi kategória id-ja sosem negatív). */
     const val LOAN_GROUP_ID = -1L
 
+    /** A banki hitelek tételeinek (részlet, előtörlesztés) csoportja – külön a magánkölcsönöktől. */
+    const val BANK_LOAN_GROUP_ID = -2L
+
     /** Egy kategória (vagy alkategória) összege egy pénznemben. `id` = null → nincs besorolva. */
     data class GroupAmount(val id: Long?, val currencyCode: String, val amountMinor: Long)
 
