@@ -68,7 +68,8 @@ fun TransactionRow(item: TransactionRowUi, modifier: Modifier = Modifier, onClic
     val title = when {
         item.loanName != null ->
             stringResource(if (item.loanIncrease) R.string.loan_row_increase else R.string.loan_row_decrease, item.loanName)
-        item.bankLoanName != null -> item.bankLoanName
+        // Banki hitel tétele mindig törlesztés (csökken a tartozás) – mint a magánkölcsönnél.
+        item.bankLoanName != null -> stringResource(R.string.loan_row_decrease, item.bankLoanName)
         else -> when (item.type) {
         TransactionType.EXCHANGE -> stringResource(R.string.tx_exchange_title, item.fromCurrency, item.toCurrency ?: "?")
         else -> listOfNotNull(item.categoryName, item.subcategoryName).joinToString(" · ")
